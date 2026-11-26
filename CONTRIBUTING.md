@@ -7,15 +7,17 @@ technical writers, and performance engineers. Domain questions and documentation
 reviews are as valuable as code.
 
 > **Experimental · Pre-alpha · Research and Design.** This repository currently
-> contains documentation, assets and an initial M0 desk review. There is no application, package, test suite,
+> contains documentation, assets, M0 research and an M1 design draft. There is no application, package, test suite,
 > or CI workflow. Installation, lint, test, and benchmark commands will be added
-> when the corresponding tools exist. Bootstrap review authorized M0; its
-> [feasibility recommendation](docs/research/feasibility-decision.md) awaits review.
+> when the corresponding tools exist. The owner authorized advancing M0's
+> direction into [M1 design](docs/spec/README.md); RFC 0001 remains a draft.
 
 The owner selected regional retrieval and streaming for analysis tools, a Rust
 core and a possible Python high-level integration. See the
 [research pack](docs/research/README.md) before proposing implementation or a new
 wire protocol. Language direction does not imply a measured performance advantage.
+The [candidate vectors](docs/spec/vectors/cases.json) describe expected scenarios;
+they are not a running test suite or valid BAM fixture set.
 
 Please read the [Code of Conduct](CODE_OF_CONDUCT.md),
 [status](docs/project/STATUS.md), [roadmap](ROADMAP.md), and
@@ -152,8 +154,8 @@ protocol or specification changes. An RFC should cover:
 5. Validation or experiment plan, success criteria, and unresolved questions.
 
 Discuss first in an issue; after agreement on scope, submit a numbered Markdown
-RFC under `docs/rfcs/` in a PR. That directory will be introduced with the first
-RFC. Record the outcome in [DECISIONS.md](docs/project/DECISIONS.md). An accepted
+RFC under `docs/rfcs/` in a PR. [RFC 0001](docs/rfcs/0001-regional-streaming-profile.md)
+is the first draft. Record outcomes in [DECISIONS.md](docs/project/DECISIONS.md). An accepted
 proposal remains a design decision until implementation and verification exist.
 
 This process applies to new protocol features, alternative transports, format

@@ -1,5 +1,57 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="660" viewBox="0 0 1200 660" role="img" aria-labelledby="title desc">
-<title id="title">GeneWire conceptual transfer architecture</title><desc id="desc">Proposed sender and receiver exchange session control and bounded data; the receiver verifies objects and persists checkpoints. All components are conceptual.</desc>
-<style>text { font-family: Arial, Helvetica, sans-serif; } path,line { stroke-linecap: round; stroke-linejoin: round; }</style>
-<rect x="0" y="0" width="1200" height="660" rx="0" fill="#f3f7f0" stroke="none"/><defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#527262"/></marker></defs><text x="40" y="52" font-size="30" fill="#17201d" font-weight="700" >Transfer architecture</text><text x="40" y="83" font-size="16" fill="#52665b" font-weight="400" >A discussion model; no wire format, transport binding, or implementation exists.</text><rect x="936" y="28" width="224" height="32" rx="6" fill="#e5f3d7" stroke="none"/><text x="1048" y="49" font-size="12" fill="#3e592c" font-weight="700" text-anchor="middle">CONCEPTUAL / PROPOSED</text><rect x="40" y="130" width="300" height="154" rx="12" fill="#ffffff" stroke="#c6d2c9"/><text x="60" y="166" font-size="21" fill="#17201d" font-weight="700" >Sender</text><text x="60" y="198" font-size="16" fill="#52665b" font-weight="400" >Dataset + dependencies</text><text x="60" y="223" font-size="16" fill="#52665b" font-weight="400" >Optional format adapters</text><text x="60" y="248" font-size="16" fill="#52665b" font-weight="400" >Manifest + source reader</text><rect x="860" y="130" width="300" height="154" rx="12" fill="#ffffff" stroke="#c6d2c9"/><text x="880" y="166" font-size="21" fill="#17201d" font-weight="700" >Receiver</text><text x="880" y="198" font-size="16" fill="#52665b" font-weight="400" >Admission + object context</text><text x="880" y="223" font-size="16" fill="#52665b" font-weight="400" >Optional format adapters</text><text x="880" y="248" font-size="16" fill="#52665b" font-weight="400" >Acceptance + destination</text><rect x="402" y="143" width="396" height="130" rx="12" fill="#ffffff" stroke="#c6d2c9"/><text x="422" y="179" font-size="21" fill="#17201d" font-weight="700" >Session control</text><text x="422" y="211" font-size="16" fill="#52665b" font-weight="400" >Versions · limits · manifest</text><text x="422" y="236" font-size="16" fill="#52665b" font-weight="400" >Identity / authorization: research</text><line x1="340" y1="177" x2="402" y2="177" stroke="#527262" stroke-width="2.5" marker-end="url(#arrow)"/><line x1="798" y1="177" x2="860" y2="177" stroke="#527262" stroke-width="2.5" marker-end="url(#arrow)"/><line x1="860" y1="245" x2="798" y2="245" stroke="#527262" stroke-width="2.5" marker-end="url(#arrow)"/><line x1="402" y1="245" x2="340" y2="245" stroke="#527262" stroke-width="2.5" marker-end="url(#arrow)"/><rect x="40" y="336" width="300" height="136" rx="12" fill="#ffffff" stroke="#c6d2c9"/><text x="60" y="372" font-size="21" fill="#17201d" font-weight="700" >Source objects</text><text x="60" y="404" font-size="16" fill="#52665b" font-weight="400" >Read bounded units</text><text x="60" y="429" font-size="16" fill="#52665b" font-weight="400" >Track acknowledged progress</text><rect x="402" y="336" width="396" height="136" rx="12" fill="#ffffff" stroke="#c6d2c9"/><text x="422" y="372" font-size="21" fill="#17201d" font-weight="700" >Data movement</text><text x="422" y="404" font-size="16" fill="#52665b" font-weight="400" >Bounded streaming + backpressure</text><text x="422" y="429" font-size="16" fill="#52665b" font-weight="400" >Protected transport: under research</text><rect x="860" y="336" width="300" height="136" rx="12" fill="#ffffff" stroke="#c6d2c9"/><text x="880" y="372" font-size="21" fill="#17201d" font-weight="700" >Verify + persist</text><text x="880" y="404" font-size="16" fill="#52665b" font-weight="400" >Verify accepted data</text><text x="880" y="429" font-size="16" fill="#52665b" font-weight="400" >Bind durable checkpoint state</text><line x1="190" y1="284" x2="190" y2="336" stroke="#527262" stroke-width="2.5" marker-end="url(#arrow)"/><line x1="1010" y1="284" x2="1010" y2="336" stroke="#527262" stroke-width="2.5" marker-end="url(#arrow)"/><line x1="340" y1="395" x2="402" y2="395" stroke="#527262" stroke-width="2.5" marker-end="url(#arrow)"/><line x1="798" y1="395" x2="860" y2="395" stroke="#527262" stroke-width="2.5" marker-end="url(#arrow)"/><path d="M1010 472 V522 H190 V472" fill="none" stroke="#527262" stroke-width="2.5" marker-end="url(#arrow)"/><rect x="393" y="503" width="414" height="36" rx="4" fill="#f3f7f0" stroke="none"/><text x="600" y="527" font-size="16" fill="#3f5b47" font-weight="400" text-anchor="middle">Acknowledgements + validated recovery state</text><text x="40" y="591" font-size="18" fill="#17201d" font-weight="400" >Design intent: explicit object identity, bounded resources, and verifiable progress.</text><text x="40" y="624" font-size="16" fill="#52665b" font-weight="400" >Final acceptance and crash-recovery semantics remain open research questions.</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="780" viewBox="0 0 1280 780" role="img" aria-labelledby="title desc">
+<title id="title">GeneWire proposed M1 regional architecture</title>
+<desc id="desc">Existing htsget services feed a policy-checked Rust stream engine and Python bridge. A supervised analysis consumer has a separate completion gate. No component is implemented.</desc>
+<style>text { font-family: Arial, Helvetica, sans-serif; } path { stroke-linecap: round; stroke-linejoin: round; }</style>
+<rect width="1280" height="780" fill="#f3f7f0"/>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#527262"/></marker></defs>
+<text x="40" y="48" font-size="30" fill="#17201d" font-weight="700" text-anchor="start">Regional streaming architecture</text>
+<text x="40" y="78" font-size="16" fill="#52665b" font-weight="400" text-anchor="start">GW-M1-DRAFT-01 · Proposed Rust core, Python boundary and separate analysis gate</text>
+<rect x="1000" y="25" width="240" height="34" rx="12" fill="#e5f3d7" stroke="#e5f3d7"/>
+<text x="1120" y="48" font-size="12" fill="#3d6329" font-weight="700" text-anchor="middle">M1 DRAFT / UNIMPLEMENTED</text>
+<rect x="40" y="155" width="310" height="175" rx="12" fill="#ffffff" stroke="#c6d2c9"/>
+<text x="60" y="189" font-size="22" fill="#17201d" font-weight="700" text-anchor="start">Existing htsget services</text>
+<text x="60" y="221" font-size="17" fill="#52665b" font-weight="400" text-anchor="start">Ticket / ordered fragments</text>
+<text x="60" y="247" font-size="17" fill="#52665b" font-weight="400" text-anchor="start">HTTPS and bounded inline data</text>
+<text x="60" y="273" font-size="17" fill="#52665b" font-weight="400" text-anchor="start">Source semantics remain trusted</text>
+<rect x="410" y="130" width="430" height="420" rx="12" fill="#ffffff" stroke="#c6d2c9"/>
+<text x="430" y="164" font-size="22" fill="#17201d" font-weight="700" text-anchor="start">Rust core (proposed)</text>
+<text x="430" y="196" font-size="17" fill="#52665b" font-weight="400" text-anchor="start">HTTP + destination policy</text>
+<text x="430" y="222" font-size="17" fill="#52665b" font-weight="400" text-anchor="start">Credential isolation / ticket checks</text>
+<rect x="430" y="255" width="390" height="88" rx="12" fill="#e5f3d7" stroke="#c6d2c9"/>
+<text x="450" y="288" font-size="21" fill="#3d6329" font-weight="700" text-anchor="start">Bounded encoded-byte stream</text>
+<text x="450" y="318" font-size="17" fill="#3d6329" font-weight="400" text-anchor="start">Ordered delivery / backpressure</text>
+<text x="450" y="387" font-size="20" fill="#17201d" font-weight="700" text-anchor="start">Exposure-based retry</text>
+<text x="450" y="417" font-size="18" fill="#52665b" font-weight="400" text-anchor="start">Cancellation / task joins</text>
+<text x="450" y="447" font-size="18" fill="#52665b" font-weight="400" text-anchor="start">Immutable terminal outcome</text>
+<text x="450" y="494" font-size="16" fill="#52665b" font-weight="400" text-anchor="start">Tokio preferred; no implementation</text>
+<rect x="900" y="155" width="340" height="175" rx="12" fill="#ffffff" stroke="#c6d2c9"/>
+<text x="920" y="189" font-size="22" fill="#17201d" font-weight="700" text-anchor="start">Python bridge (proposed)</text>
+<text x="920" y="221" font-size="17" fill="#52665b" font-weight="400" text-anchor="start">Owned byte chunks / typed errors</text>
+<text x="920" y="247" font-size="17" fill="#52665b" font-weight="400" text-anchor="start">Synchronous reader preferred</text>
+<text x="920" y="273" font-size="17" fill="#52665b" font-weight="400" text-anchor="start">Explicit close and result report</text>
+<rect x="900" y="405" width="340" height="145" rx="12" fill="#ffffff" stroke="#c6d2c9"/>
+<text x="920" y="439" font-size="22" fill="#17201d" font-weight="700" text-anchor="start">Analysis consumer</text>
+<text x="920" y="471" font-size="17" fill="#52665b" font-weight="400" text-anchor="start">Full decode + declared filtering</text>
+<text x="920" y="497" font-size="17" fill="#52665b" font-weight="400" text-anchor="start">Supervised process / staging</text>
+<text x="920" y="523" font-size="17" fill="#52665b" font-weight="400" text-anchor="start">Provisional until final gate</text>
+<rect x="40" y="405" width="310" height="145" rx="12" fill="#ffffff" stroke="#c6d2c9"/>
+<text x="60" y="439" font-size="22" fill="#17201d" font-weight="700" text-anchor="start">Outcome report</text>
+<text x="60" y="471" font-size="17" fill="#52665b" font-weight="400" text-anchor="start">Transport outcome</text>
+<text x="60" y="497" font-size="17" fill="#52665b" font-weight="400" text-anchor="start">Separate cleanup status</text>
+<text x="60" y="523" font-size="17" fill="#52665b" font-weight="400" text-anchor="start">No implicit scientific proof</text>
+<path d="M350 235 L410 235" fill="none" stroke="#527262" stroke-width="2.5" marker-end="url(#arrow)"/>
+<path d="M840 235 L900 235" fill="none" stroke="#527262" stroke-width="2.5" marker-end="url(#arrow)"/>
+<path d="M1070 330 L1070 405" fill="none" stroke="#527262" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text x="1088" y="374" font-size="14" fill="#52665b" font-weight="400" text-anchor="start">Provisional bytes</text>
+<path d="M410 460 L350 460" fill="none" stroke="#527262" stroke-width="2.5" marker-end="url(#arrow)"/>
+<path d="M1070 155 V108 H195 V155" fill="none" stroke="#527262" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text x="640" y="102" font-size="14" fill="#52665b" font-weight="400" text-anchor="middle">Configured query using existing htsget</text>
+<rect x="40" y="610" width="1200" height="100" rx="12" fill="#e5f3d7" stroke="#c6d2c9"/>
+<text x="65" y="644" font-size="21" fill="#3d6329" font-weight="700" text-anchor="start">Transport complete</text>
+<text x="65" y="676" font-size="16" fill="#3d6329" font-weight="400" text-anchor="start">Ordered bytes + HTTP checks</text>
+<text x="475" y="644" font-size="21" fill="#3d6329" font-weight="700" text-anchor="start">Analysis complete</text>
+<text x="475" y="676" font-size="16" fill="#3d6329" font-weight="400" text-anchor="start">Full consumer success</text>
+<text x="875" y="644" font-size="21" fill="#3d6329" font-weight="700" text-anchor="start">Oracle matched</text>
+<text x="875" y="676" font-size="16" fill="#3d6329" font-weight="400" text-anchor="start">Independent synthetic truth</text>
+<text x="40" y="752" font-size="17" fill="#52665b" font-weight="400" text-anchor="start">P0: no durable checkpoint, cross-query resume, new wire format or measured performance.</text>
 </svg>

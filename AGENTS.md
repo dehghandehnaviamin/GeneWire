@@ -8,8 +8,9 @@ verified bootstrap. Then follow the approved milestone sequence in `ROADMAP.md`.
 An initial push alone is not permission to start the next phase.
 
 The owner approved M0 on 2026-11-26 and selected regional retrieval/streaming,
-a Rust core and possible Python high-level integration. M0's reuse-first
-recommendation remains proposed. Current authorized work is research; consult
+a Rust core and possible Python high-level integration. After M0 publication,
+the owner instructed continuation into reuse-first M1 design. RFC 0001 and the
+M1 contracts remain drafts; implementation has not been approved. Consult
 the decision register before advancing scope or publishing later changes.
 
 Read `docs/project/STATUS.md`, `docs/project/TASKS.md`,

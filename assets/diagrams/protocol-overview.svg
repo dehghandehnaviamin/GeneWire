@@ -1,5 +1,43 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="660" viewBox="0 0 1200 660" role="img" aria-labelledby="title desc">
-<title id="title">GeneWire proposed protocol responsibilities</title><desc id="desc">Five proposed layers covering genomic objects, session control, transfer, integrity and durable state, and a transport integration under research.</desc>
-<style>text { font-family: Arial, Helvetica, sans-serif; } path,line { stroke-linecap: round; stroke-linejoin: round; }</style>
-<rect x="0" y="0" width="1200" height="660" rx="0" fill="#f3f7f0" stroke="none"/><defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#527262"/></marker></defs><text x="40" y="52" font-size="30" fill="#17201d" font-weight="700" >Protocol overview</text><text x="40" y="83" font-size="16" fill="#52665b" font-weight="400" >Logical responsibilities only; the stack does not assign message fields or cryptographic algorithms.</text><rect x="936" y="28" width="224" height="32" rx="6" fill="#e5f3d7" stroke="none"/><text x="1048" y="49" font-size="12" fill="#3e592c" font-weight="700" text-anchor="middle">CONCEPTUAL / PROPOSED</text><rect x="40" y="125" width="1120" height="75" rx="10" fill="#ffffff" stroke="#c6d2c9"/><rect x="56" y="141" width="43" height="43" rx="7" fill="#e5f3d7" stroke="none"/><text x="78" y="169" font-size="17" fill="#365626" font-weight="700" text-anchor="middle">01</text><text x="120" y="154" font-size="21" fill="#17201d" font-weight="700" >Genomic objects</text><text x="120" y="181" font-size="16" fill="#52665b" font-weight="400" >Opaque data first; optional format, reference and index context</text><text x="1138" y="156" font-size="11" fill="#52665b" font-weight="700" text-anchor="end">UNDER RESEARCH</text><rect x="40" y="216" width="1120" height="75" rx="10" fill="#ffffff" stroke="#c6d2c9"/><rect x="56" y="232" width="43" height="43" rx="7" fill="#e5f3d7" stroke="none"/><text x="78" y="260" font-size="17" fill="#365626" font-weight="700" text-anchor="middle">02</text><text x="120" y="245" font-size="21" fill="#17201d" font-weight="700" >Session control</text><text x="120" y="272" font-size="16" fill="#52665b" font-weight="400" >Version negotiation, capabilities, manifest and explicit errors</text><text x="1138" y="247" font-size="11" fill="#52665b" font-weight="700" text-anchor="end">PROPOSED</text><rect x="40" y="307" width="1120" height="75" rx="10" fill="#ffffff" stroke="#c6d2c9"/><rect x="56" y="323" width="43" height="43" rx="7" fill="#e5f3d7" stroke="none"/><text x="78" y="351" font-size="17" fill="#365626" font-weight="700" text-anchor="middle">03</text><text x="120" y="336" font-size="21" fill="#17201d" font-weight="700" >Transfer engine</text><text x="120" y="363" font-size="16" fill="#52665b" font-weight="400" >Bounded data units, backpressure, cancellation and recovery</text><text x="1138" y="338" font-size="11" fill="#52665b" font-weight="700" text-anchor="end">PROPOSED</text><rect x="40" y="398" width="1120" height="75" rx="10" fill="#ffffff" stroke="#c6d2c9"/><rect x="56" y="414" width="43" height="43" rx="7" fill="#e5f3d7" stroke="none"/><text x="78" y="442" font-size="17" fill="#365626" font-weight="700" text-anchor="middle">04</text><text x="120" y="427" font-size="21" fill="#17201d" font-weight="700" >Integrity + durable state</text><text x="120" y="454" font-size="16" fill="#52665b" font-weight="400" >Verification, object binding and checkpoint acceptance</text><text x="1138" y="429" font-size="11" fill="#52665b" font-weight="700" text-anchor="end">UNDER RESEARCH</text><rect x="40" y="489" width="1120" height="75" rx="10" fill="#ffffff" stroke="#c6d2c9"/><rect x="56" y="505" width="43" height="43" rx="7" fill="#e5f3d7" stroke="none"/><text x="78" y="533" font-size="17" fill="#365626" font-weight="700" text-anchor="middle">05</text><text x="120" y="518" font-size="21" fill="#17201d" font-weight="700" >Transport integration</text><text x="120" y="545" font-size="16" fill="#52665b" font-weight="400" >Protected connection, peer identity and authorization policy</text><text x="1138" y="520" font-size="11" fill="#52665b" font-weight="700" text-anchor="end">UNDER RESEARCH</text><text x="40" y="627" font-size="17" fill="#52665b" font-weight="400" >No assigned wire format · No installable package · No conformance or performance claims</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="780" viewBox="0 0 1280 780" role="img" aria-labelledby="title desc">
+<title id="title">GeneWire proposed M1 profile boundaries</title>
+<desc id="desc">Five responsibility layers distinguish existing htsget and HTTPS wire behavior from proposed Rust policy, Python interface and independent analysis/evidence gates.</desc>
+<style>text { font-family: Arial, Helvetica, sans-serif; } path { stroke-linecap: round; stroke-linejoin: round; }</style>
+<rect width="1280" height="780" fill="#f3f7f0"/>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#527262"/></marker></defs>
+<text x="40" y="48" font-size="30" fill="#17201d" font-weight="700" text-anchor="start">Profile and interoperability boundaries</text>
+<text x="40" y="78" font-size="16" fill="#52665b" font-weight="400" text-anchor="start">Reuse upstream behavior; local contracts do not create a new binary network protocol.</text>
+<rect x="1000" y="25" width="240" height="34" rx="12" fill="#e5f3d7" stroke="#e5f3d7"/>
+<text x="1120" y="48" font-size="12" fill="#3d6329" font-weight="700" text-anchor="middle">M1 DRAFT / UNIMPLEMENTED</text>
+<rect x="40" y="120" width="1200" height="90" rx="12" fill="#ffffff" stroke="#c6d2c9"/>
+<rect x="56" y="140" width="44" height="46" rx="12" fill="#e5f3d7" stroke="#e5f3d7"/>
+<text x="78" y="170" font-size="18" fill="#3d6329" font-weight="700" text-anchor="middle">01</text>
+<text x="122" y="154" font-size="22" fill="#17201d" font-weight="700" text-anchor="start">Existing regional request</text>
+<text x="122" y="186" font-size="17" fill="#52665b" font-weight="400" text-anchor="start">One named interval / BAM; other API features deferred</text>
+<text x="1218" y="154" font-size="12" fill="#52665b" font-weight="700" text-anchor="end">UPSTREAM SUBSET</text>
+<rect x="40" y="226" width="1200" height="90" rx="12" fill="#ffffff" stroke="#c6d2c9"/>
+<rect x="56" y="246" width="44" height="46" rx="12" fill="#e5f3d7" stroke="#e5f3d7"/>
+<text x="78" y="276" font-size="18" fill="#3d6329" font-weight="700" text-anchor="middle">02</text>
+<text x="122" y="260" font-size="22" fill="#17201d" font-weight="700" text-anchor="start">Existing ticket and data blocks</text>
+<text x="122" y="292" font-size="17" fill="#52665b" font-weight="400" text-anchor="start">Ordered fragments over approved HTTPS or bounded inline data</text>
+<text x="1218" y="260" font-size="12" fill="#52665b" font-weight="700" text-anchor="end">UPSTREAM WIRE</text>
+<rect x="40" y="332" width="1200" height="90" rx="12" fill="#ffffff" stroke="#c6d2c9"/>
+<rect x="56" y="352" width="44" height="46" rx="12" fill="#e5f3d7" stroke="#e5f3d7"/>
+<text x="78" y="382" font-size="18" fill="#3d6329" font-weight="700" text-anchor="middle">03</text>
+<text x="122" y="366" font-size="22" fill="#17201d" font-weight="700" text-anchor="start">Rust client contract</text>
+<text x="122" y="398" font-size="17" fill="#52665b" font-weight="400" text-anchor="start">Finite budgets, exposure-based retry and explicit failure</text>
+<text x="1218" y="366" font-size="12" fill="#52665b" font-weight="700" text-anchor="end">PROPOSED LOCAL POLICY</text>
+<rect x="40" y="438" width="1200" height="90" rx="12" fill="#ffffff" stroke="#c6d2c9"/>
+<rect x="56" y="458" width="44" height="46" rx="12" fill="#e5f3d7" stroke="#e5f3d7"/>
+<text x="78" y="488" font-size="18" fill="#3d6329" font-weight="700" text-anchor="middle">04</text>
+<text x="122" y="472" font-size="22" fill="#17201d" font-weight="700" text-anchor="start">Python native boundary</text>
+<text x="122" y="504" font-size="17" fill="#52665b" font-weight="400" text-anchor="start">Owned encoded-byte chunks, cancellation and explicit cleanup</text>
+<text x="1218" y="472" font-size="12" fill="#52665b" font-weight="700" text-anchor="end">PROPOSED SDK</text>
+<rect x="40" y="544" width="1200" height="90" rx="12" fill="#ffffff" stroke="#c6d2c9"/>
+<rect x="56" y="564" width="44" height="46" rx="12" fill="#e5f3d7" stroke="#e5f3d7"/>
+<text x="78" y="594" font-size="18" fill="#3d6329" font-weight="700" text-anchor="middle">05</text>
+<text x="122" y="578" font-size="22" fill="#17201d" font-weight="700" text-anchor="start">Analysis and evidence</text>
+<text x="122" y="610" font-size="17" fill="#52665b" font-weight="400" text-anchor="start">Decode/filter, process completion and independent oracle</text>
+<text x="1218" y="578" font-size="12" fill="#52665b" font-weight="700" text-anchor="end">SEPARATE GATES</text>
+<text x="40" y="706" font-size="17" fill="#52665b" font-weight="400" text-anchor="start">Output: upstream regional response, potentially a superset; exact selection belongs to a declared adapter.</text>
+<text x="40" y="743" font-size="17" fill="#52665b" font-weight="400" text-anchor="start">Transport completion alone proves neither valid BAM nor absence of omitted records.</text>
 </svg>

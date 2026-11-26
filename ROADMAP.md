@@ -1,15 +1,15 @@
 # GeneWire roadmap
 
-**M0's initial desk review is prepared; its recommendation awaits review.**
-M1–M6 are planned. The owner selected regional retrieval/streaming, a Rust core
-and possible Python high-level integration. The scope refinements below are M0
-proposals, not approval to implement them. This roadmap has evidence gates rather than delivery dates. Feasibility
+**M0 is published; the owner authorized M1 design. RFC 0001 remains a draft.**
+M2–M6 are planned. The owner selected regional retrieval/streaming, a Rust core
+and Python high-level integration. The first subset and integration details
+remain proposals, not approval to implement them. This roadmap has evidence gates rather than delivery dates. Feasibility
 may lead to a scope reduction, an extension of an existing standard, or a no-go.
 
 | Milestone | Scope | Exit criteria |
 | --- | --- | --- |
-| M0 — Research and Feasibility | Regional use cases, constraints, existing standards, Rust/Python direction, evaluation plan | [Desk review prepared](docs/research/README.md); recommendation and domain assumptions require review; no experiments run |
-| M1 — Protocol Specification | Candidate reuse profile, stream/completion states, errors, security and Rust/Python boundaries | Reviewable design; resource limits; coordinate/reference semantics; candidate conformance vectors; clear decision on whether any wire extension is necessary |
+| M0 — Research and Feasibility | Regional use cases, constraints, existing standards, Rust/Python direction, evaluation plan | [Published desk review](docs/research/README.md); direction accepted for M1; domain review and experiments unclaimed |
+| M1 — Protocol Specification | [RFC 0001](docs/rfcs/0001-regional-streaming-profile.md), client profile, lifecycle, boundaries, security and 30 candidate scenarios | Draft prepared; review subset/retry/consumer policy and budgets; no new binary wire format justified |
 | M2 — Core Protocol | Proposed Rust core interoperating with the selected existing mechanism; bounded I/O and stream consumption | Working reference path; malformed/fragmented input tests; capability/incompatibility behavior; reproducible contributor setup and CI |
 | M3 — Reliable Transfer Engine | Streaming, acknowledgements, object verification, checkpoints, recovery | Fault tests covering interruption, truncation, corruption, stale state, cancellation and resource exhaustion; documented durable acceptance semantics |
 | M4 — Genomic Extensions | Incremental FASTA/FASTQ, SAM/BAM, CRAM, VCF/BCF investigation | Per-format scope and versions; synthetic licensed fixtures; reference/index dependency tests; domain review; explicit opaque-transfer versus semantic-support matrix |
@@ -19,8 +19,8 @@ may lead to a scope reduction, an extension of an existing standard, or a no-go.
 ## Sequence and review gates
 
 The bootstrap's initial push was verified and the owner authorized M0 on
-2026-11-26. M0's recommendation remains proposed for owner review; M1 has not
-started. Research decisions precede protocol specification;
+2026-11-26. After M0 publication, the owner instructed continuation into M1.
+M1 contracts are drafts, not implementation approval. Research decisions precede protocol specification;
 specification review precedes application or protocol implementation. Testing and
 security review accompany implementation, while comparative benchmarking and
 release preparation require a functioning, correctness-checked system.

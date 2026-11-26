@@ -23,16 +23,17 @@
   <a href="SECURITY.md">Security</a>
 </p>
 
-> **Current status:** documentation, visual identity and an initial M0 desk review. GeneWire has no
+> **Current status:** documentation, visual identity, M0 research and an M1 design draft. GeneWire has no
 > implementation, installable package, stable specification, or measured performance
 > results. Every capability described below is **proposed**, **planned**, or **under
 > research**. The tagline states the project's goal, not an achieved guarantee.
 
 **Current focus:** regional retrieval and streaming for analysis tools, with an
 owner-selected **Rust core** and a possible **Python high-level integration**.
-The [M0 research pack](docs/research/README.md) proposes evaluating existing
-regional retrieval mechanisms before introducing a new binary wire protocol.
-That feasibility recommendation is awaiting owner review; M1 has not started.
+The owner authorized advancing M0's direction into
+[M1 design](docs/spec/README.md). [RFC 0001](docs/rfcs/0001-regional-streaming-profile.md)
+proposes a narrow htsget-oriented BAM stream with explicit failure/completion
+semantics. It remains a draft; implementation has not started.
 
 ## Overview
 
@@ -42,9 +43,10 @@ deliver the intended regional result with explicit completion, bounded resource
 use and recoverable progress.
 
 Rust is the chosen core direction; Python can provide a convenient analysis and
-workflow interface. Runtime, bindings and libraries remain to be selected.
-Interoperability with existing standards is a research priority. Transport
-selection, wire encoding, and genomic semantics are not yet decided.
+workflow interface. The M1 draft prefers Tokio and a synchronous PyO3/maturin
+integration, with versions/features and actual support still to be qualified.
+The first proposed subset reuses existing HTTP/htsget behavior; no GeneWire binary
+wire format, endpoint or port is assigned.
 
 ## The problem
 
@@ -75,43 +77,40 @@ biological validity, consent, or permission to share a dataset.
 
 ## Proposed architecture
 
-The bootstrap's conceptual design separates session control from data movement and keeps
-format knowledge behind optional adapters. A manifest would identify the objects
-and dependencies in a transfer. The receiver would verify accepted data before
-advancing durable recovery state.
-
-This illustration remains an unapproved general transfer model. M0 selected
-regional streaming as the lead use case; the corresponding architecture and
-Rust/Python boundary require M1 review. The drawing is not evidence of a need
-for a new protocol or of implemented recovery.
+The proposed M1 subset separates an existing ticket/data service, a bounded Rust
+stream engine, the Python boundary and a supervised analysis consumer.
+Transport completion, successful analysis and an independent oracle match are
+different outcomes. Read the [draft contracts](docs/spec/README.md) for their limits.
 
 <p align="center">
-  <img src="assets/diagrams/architecture.svg" alt="Conceptual architecture: sender and receiver exchange proposed session control and data blocks through a transport under research; the receiver verifies data and persists checkpoints" width="100%">
+  <img src="assets/diagrams/architecture.svg" alt="Proposed M1 architecture: existing htsget services feed a policy-checked Rust stream engine, a Python bridge and a supervised analysis consumer; all components are unimplemented" width="100%">
 </p>
 
 | Proposed layer | Responsibility | Status |
 | --- | --- | --- |
-| Session control | Version negotiation, capabilities, transfer identity, errors | Proposed |
-| Transfer engine | Bounded streaming, acknowledgements, interruption recovery | Proposed |
-| Integrity and persistence | Object verification, checkpoint binding, final acceptance | Under research |
-| Genomic adapters | Format metadata, index and reference relationships | Under research |
-| Transport and security | Authenticated encryption, identity and authorization integration | Under research |
+| Upstream adapter | Existing htsget request, ticket and ordered data blocks | Draft |
+| Rust stream engine | Bounded delivery, exposure-based retry, cancellation and terminal reports | Draft |
+| Python integration | Owned byte chunks, typed errors and explicit close | Draft |
+| Analysis boundary | Full decode/filter and separate analysis-completion outcome | Draft |
+| Network/security policy | Credential isolation, destination checks and finite budgets | Draft |
 
 <details>
 <summary>View the conceptual protocol layers</summary>
 
-<img src="assets/diagrams/protocol-overview.svg" alt="Proposed protocol stack: genomic objects, session control, transfer engine, integrity and durable state, and a transport whose selection remains open" width="100%">
+<img src="assets/diagrams/protocol-overview.svg" alt="Proposed profile: one BAM region over htsget and HTTPS, a Rust core and Python interface; transport, analysis and oracle outcomes remain distinct" width="100%">
 
-No frame format, message identifier, port, cryptographic algorithm, or transport
-binding has been assigned. These illustrations are non-normative design aids.
+No GeneWire frame, message identifier, port or cryptographic scheme is assigned.
+The client profile reuses upstream behavior and intentionally supports a subset;
+these diagrams remain proposed design aids, not evidence of implementation.
 
 </details>
 
 ## Planned capabilities
 
 - **Planned:** bounded streaming with backpressure and cancellation.
-- **Planned:** resumable transfers bound to object identity and verified progress.
-- **Planned:** manifests for multi-object datasets and explicit dependencies.
+- **Draft P0:** retry a block only before its bytes are exposed; otherwise report
+  incomplete output and require an explicit fresh attempt.
+- **Later / under research:** durable checkpoints, object manifests and multi-object recovery.
 - **Under research:** integrity verification granularity and durable checkpoints.
 - **Under research:** authenticated transport and authorization integration.
 - **Under research:** format-aware extensions without changing scientific content.
@@ -137,18 +136,19 @@ those projects. See the [primary references](#references).
 
 ## Proposed protocol lifecycle
 
-<img src="assets/diagrams/transfer-lifecycle.svg" alt="Conceptual lifecycle: connect, negotiate, describe, transfer, verify, checkpoint, finalize, close; interruptions return through reconnect and checkpoint validation" width="100%">
+<img src="assets/diagrams/transfer-lifecycle.svg" alt="Proposed stream lifecycle: validate, get ticket, fetch ordered blocks, drain and report transport completion; retry only before current-block exposure and otherwise fail explicitly" width="100%">
 
-1. Establish a protected connection and validate the peer under a future policy.
-2. Negotiate compatible versions, capabilities, and resource limits.
-3. Describe transfer objects and dependencies in a proposed manifest.
-4. Stream bounded data units with explicit acceptance rules.
-5. Verify received data and reject inconsistent state.
-6. Persist verified progress; after interruption, reconnect and validate the checkpoint.
-7. Finalize only after all required objects satisfy acceptance rules.
-8. Close the session and release resources.
+1. Validate the supported interval, service configuration and finite budgets.
+2. Obtain and validate an existing htsget ticket.
+3. Apply destination and credential policy to every data request.
+4. Deliver ordered encoded bytes while enforcing backpressure.
+5. Retry only when current-block exposure and remaining budgets allow it.
+6. Drain output before reporting transport completion.
+7. Report analysis success only through the separate decoder/consumer gate.
+8. Close and join owned work; report unfinished cleanup truthfully.
 
-This is a discussion model, not an executable interface or normative state machine.
+This is a draft local lifecycle, not a new wire protocol. P0 has no persistent
+checkpoint, transparent cross-query resume or exactly-once analysis guarantee.
 
 ## Design principles
 
@@ -164,15 +164,15 @@ reproducible methods before making performance claims.
 
 | Milestone | Exit evidence |
 | --- | --- |
-| M0 · Research and Feasibility | Initial desk review prepared; feasibility recommendation awaits review |
-| M1 · Protocol Specification | Candidate reuse profile, state model, security boundaries and test vectors; wire extensions only if justified |
+| M0 · Research and Feasibility | Published; owner authorized the reuse-first direction for M1 |
+| M1 · Protocol Specification | RFC 0001 and contracts drafted; 30 candidate scenarios, no execution evidence |
 | M2 · Core Protocol | Proposed Rust reference core interoperating with the selected mechanism |
 | M3 · Reliable Transfer Engine | Verified recovery under interruption and corruption |
 | M4 · Genomic Extensions | Reviewed format, reference and index handling |
 | M5 · Developer Experience | Working CLI, package, examples and contributor tooling |
 | M6 · Alpha Release | Reproducible validation, release notes and documented limitations |
 
-M1–M6 remain planned; their M0 scope refinements are proposals. There are no delivery-date commitments. See the
+M1 remains a draft; M2–M6 are planned. There are no delivery-date commitments. See the
 [full roadmap](ROADMAP.md), [status](docs/project/STATUS.md), and
 [task register](docs/project/TASKS.md).
 

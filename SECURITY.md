@@ -40,6 +40,10 @@ resource use, cancellation, retention, and metadata exposure. These are unresolv
 requirements. A checksum alone does not authenticate a peer, and encryption alone
 does not authorize a transfer or establish consent.
 
+The [M1 security model](docs/spec/security-model.md) proposes controls and
+candidate tests for the initial regional-streaming subset. They are not
+implemented protections, an audit result or production approval.
+
 Access control, legal permission, consent, data minimization, retention, and
 deployment policy cannot be inferred from successful data transmission. GeneWire
 does not claim clinical suitability or regulatory compliance.

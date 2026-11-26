@@ -1,5 +1,55 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="660" viewBox="0 0 1200 660" role="img" aria-labelledby="title desc">
-<title id="title">GeneWire conceptual transfer lifecycle</title><desc id="desc">Eight proposed stages from connection to closure, with repeated verification and checkpointing and a reconnect path that validates state before resuming.</desc>
-<style>text { font-family: Arial, Helvetica, sans-serif; } path,line { stroke-linecap: round; stroke-linejoin: round; }</style>
-<rect x="0" y="0" width="1200" height="660" rx="0" fill="#f3f7f0" stroke="none"/><defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#527262"/></marker></defs><text x="40" y="52" font-size="30" fill="#17201d" font-weight="700" >Transfer lifecycle</text><text x="40" y="83" font-size="16" fill="#52665b" font-weight="400" >A proposed discussion sequence, not a normative state machine.</text><rect x="936" y="28" width="224" height="32" rx="6" fill="#e5f3d7" stroke="none"/><text x="1048" y="49" font-size="12" fill="#3e592c" font-weight="700" text-anchor="middle">CONCEPTUAL / PROPOSED</text><rect x="40" y="135" width="250" height="122" rx="12" fill="#ffffff" stroke="#c6d2c9"/><text x="58" y="163" font-size="14" fill="#4b702f" font-weight="700" >01</text><text x="58" y="196" font-size="24" fill="#17201d" font-weight="700" >Connect</text><text x="58" y="230" font-size="16" fill="#52665b" font-weight="400" >Validate peer policy</text><line x1="290" y1="196" x2="330" y2="196" stroke="#527262" stroke-width="2.5" marker-end="url(#arrow)"/><rect x="330" y="135" width="250" height="122" rx="12" fill="#ffffff" stroke="#c6d2c9"/><text x="348" y="163" font-size="14" fill="#4b702f" font-weight="700" >02</text><text x="348" y="196" font-size="24" fill="#17201d" font-weight="700" >Negotiate</text><text x="348" y="230" font-size="16" fill="#52665b" font-weight="400" >Versions + limits</text><line x1="580" y1="196" x2="620" y2="196" stroke="#527262" stroke-width="2.5" marker-end="url(#arrow)"/><rect x="620" y="135" width="250" height="122" rx="12" fill="#ffffff" stroke="#c6d2c9"/><text x="638" y="163" font-size="14" fill="#4b702f" font-weight="700" >03</text><text x="638" y="196" font-size="24" fill="#17201d" font-weight="700" >Describe</text><text x="638" y="230" font-size="16" fill="#52665b" font-weight="400" >Objects + context</text><line x1="870" y1="196" x2="910" y2="196" stroke="#527262" stroke-width="2.5" marker-end="url(#arrow)"/><rect x="910" y="135" width="250" height="122" rx="12" fill="#ffffff" stroke="#c6d2c9"/><text x="928" y="163" font-size="14" fill="#4b702f" font-weight="700" >04</text><text x="928" y="196" font-size="24" fill="#17201d" font-weight="700" >Transfer</text><text x="928" y="230" font-size="16" fill="#52665b" font-weight="400" >Bounded data units</text><rect x="40" y="330" width="250" height="122" rx="12" fill="#ffffff" stroke="#c6d2c9"/><text x="58" y="358" font-size="14" fill="#4b702f" font-weight="700" >05</text><text x="58" y="391" font-size="24" fill="#17201d" font-weight="700" >Verify</text><text x="58" y="425" font-size="16" fill="#52665b" font-weight="400" >Reject inconsistency</text><line x1="290" y1="391" x2="330" y2="391" stroke="#527262" stroke-width="2.5" marker-end="url(#arrow)"/><rect x="330" y="330" width="250" height="122" rx="12" fill="#ffffff" stroke="#c6d2c9"/><text x="348" y="358" font-size="14" fill="#4b702f" font-weight="700" >06</text><text x="348" y="391" font-size="24" fill="#17201d" font-weight="700" >Checkpoint</text><text x="348" y="425" font-size="16" fill="#52665b" font-weight="400" >Persist verified state</text><line x1="580" y1="391" x2="620" y2="391" stroke="#527262" stroke-width="2.5" marker-end="url(#arrow)"/><rect x="620" y="330" width="250" height="122" rx="12" fill="#ffffff" stroke="#c6d2c9"/><text x="638" y="358" font-size="14" fill="#4b702f" font-weight="700" >07</text><text x="638" y="391" font-size="24" fill="#17201d" font-weight="700" >Finalize</text><text x="638" y="425" font-size="16" fill="#52665b" font-weight="400" >Accept required objects</text><line x1="870" y1="391" x2="910" y2="391" stroke="#527262" stroke-width="2.5" marker-end="url(#arrow)"/><rect x="910" y="330" width="250" height="122" rx="12" fill="#ffffff" stroke="#c6d2c9"/><text x="928" y="358" font-size="14" fill="#4b702f" font-weight="700" >08</text><text x="928" y="391" font-size="24" fill="#17201d" font-weight="700" >Close</text><text x="928" y="425" font-size="16" fill="#52665b" font-weight="400" >Release resources</text><path d="M1035 257 V294 H165 V330" fill="none" stroke="#527262" stroke-width="2.5" marker-end="url(#arrow)"/><rect x="268" y="484" width="664" height="72" rx="10" fill="#e5f3d7" stroke="#c5d9b6"/><text x="600" y="512" font-size="15" fill="#365626" font-weight="700" text-anchor="middle">INTERRUPTED?</text><text x="600" y="540" font-size="17" fill="#365626" font-weight="400" text-anchor="middle">Reconnect → negotiate → validate checkpoint → resume transfer</text><text x="40" y="605" font-size="16" fill="#52665b" font-weight="400" >Verification and checkpointing would repeat during streaming; finalization requires complete acceptance.</text><text x="40" y="634" font-size="16" fill="#52665b" font-weight="400" >Recovery must reject stale, untrusted or object-mismatched state. Exact rules remain undecided.</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="780" viewBox="0 0 1280 780" role="img" aria-labelledby="title desc">
+<title id="title">GeneWire proposed M1 stream lifecycle</title>
+<desc id="desc">Local states run from validation to ticketing, fetching, draining and transport completion. Only unexposed blocks may be retried. Failure and cancellation are terminal and cleanup is tracked separately.</desc>
+<style>text { font-family: Arial, Helvetica, sans-serif; } path { stroke-linecap: round; stroke-linejoin: round; }</style>
+<rect width="1280" height="780" fill="#f3f7f0"/>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#527262"/></marker></defs>
+<text x="40" y="48" font-size="30" fill="#17201d" font-weight="700" text-anchor="start">Stream lifecycle</text>
+<text x="40" y="78" font-size="16" fill="#52665b" font-weight="400" text-anchor="start">Simplified proposed main path; the specification table defines all transitions.</text>
+<rect x="1000" y="25" width="240" height="34" rx="12" fill="#e5f3d7" stroke="#e5f3d7"/>
+<text x="1120" y="48" font-size="12" fill="#3d6329" font-weight="700" text-anchor="middle">M1 DRAFT / UNIMPLEMENTED</text>
+<rect x="40" y="150" width="220" height="115" rx="12" fill="#ffffff" stroke="#c6d2c9"/>
+<text x="60" y="184" font-size="22" fill="#17201d" font-weight="700" text-anchor="start">NEW</text>
+<text x="60" y="216" font-size="17" fill="#52665b" font-weight="400" text-anchor="start">Validate input</text>
+<text x="60" y="242" font-size="17" fill="#52665b" font-weight="400" text-anchor="start">Reserve client slot</text>
+<rect x="335" y="150" width="220" height="115" rx="12" fill="#ffffff" stroke="#c6d2c9"/>
+<text x="355" y="184" font-size="22" fill="#17201d" font-weight="700" text-anchor="start">TICKETING</text>
+<text x="355" y="216" font-size="17" fill="#52665b" font-weight="400" text-anchor="start">Bounded ticket</text>
+<text x="355" y="242" font-size="17" fill="#52665b" font-weight="400" text-anchor="start">Existing GET model</text>
+<rect x="630" y="150" width="240" height="115" rx="12" fill="#ffffff" stroke="#c6d2c9"/>
+<text x="650" y="184" font-size="22" fill="#17201d" font-weight="700" text-anchor="start">FETCHING</text>
+<text x="650" y="216" font-size="17" fill="#52665b" font-weight="400" text-anchor="start">Ordered block data</text>
+<text x="650" y="242" font-size="17" fill="#52665b" font-weight="400" text-anchor="start">Bounded delivery</text>
+<rect x="945" y="150" width="295" height="115" rx="12" fill="#ffffff" stroke="#c6d2c9"/>
+<text x="965" y="184" font-size="22" fill="#17201d" font-weight="700" text-anchor="start">DRAINING</text>
+<text x="965" y="216" font-size="17" fill="#52665b" font-weight="400" text-anchor="start">All HTTP checks passed</text>
+<text x="965" y="242" font-size="17" fill="#52665b" font-weight="400" text-anchor="start">Output still queued</text>
+<path d="M260 207 L335 207" fill="none" stroke="#527262" stroke-width="2.5" marker-end="url(#arrow)"/>
+<path d="M555 207 L630 207" fill="none" stroke="#527262" stroke-width="2.5" marker-end="url(#arrow)"/>
+<path d="M870 207 L945 207" fill="none" stroke="#527262" stroke-width="2.5" marker-end="url(#arrow)"/>
+<rect x="335" y="365" width="285" height="125" rx="12" fill="#ffffff" stroke="#c6d2c9"/>
+<text x="355" y="399" font-size="22" fill="#17201d" font-weight="700" text-anchor="start">RETRY_WAIT</text>
+<text x="355" y="431" font-size="17" fill="#52665b" font-weight="400" text-anchor="start">Only before block exposure</text>
+<text x="355" y="457" font-size="17" fill="#52665b" font-weight="400" text-anchor="start">Return to recorded target</text>
+<rect x="945" y="450" width="295" height="125" rx="12" fill="#ffffff" stroke="#c6d2c9"/>
+<text x="965" y="484" font-size="18" fill="#17201d" font-weight="700" text-anchor="start">TRANSPORT_COMPLETE</text>
+<text x="965" y="516" font-size="17" fill="#52665b" font-weight="400" text-anchor="start">Checks + delivery drained</text>
+<text x="965" y="542" font-size="17" fill="#52665b" font-weight="400" text-anchor="start">Next read returns EOF</text>
+<rect x="630" y="550" width="240" height="125" rx="12" fill="#ffffff" stroke="#c6d2c9"/>
+<text x="650" y="584" font-size="22" fill="#17201d" font-weight="700" text-anchor="start">FAILED</text>
+<text x="650" y="616" font-size="17" fill="#52665b" font-weight="400" text-anchor="start">Partial output possible</text>
+<text x="650" y="642" font-size="17" fill="#52665b" font-weight="400" text-anchor="start">No replay after exposure</text>
+<rect x="40" y="550" width="255" height="125" rx="12" fill="#ffffff" stroke="#c6d2c9"/>
+<text x="60" y="584" font-size="22" fill="#17201d" font-weight="700" text-anchor="start">CANCELLED</text>
+<text x="60" y="616" font-size="17" fill="#52665b" font-weight="400" text-anchor="start">No new handoffs</text>
+<text x="60" y="642" font-size="17" fill="#52665b" font-weight="400" text-anchor="start">Join cleanup separately</text>
+<path d="M750 265 V315 H477 V365" fill="none" stroke="#527262" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text x="590" y="305" font-size="14" fill="#52665b" font-weight="400" text-anchor="middle">Eligible transient failure only</text>
+<path d="M620 418 H650 V290 H750 V265" fill="none" stroke="#527262" stroke-width="2.5" marker-end="url(#arrow)"/>
+<path d="M1092 265 V450" fill="none" stroke="#527262" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text x="1110" y="360" font-size="15" fill="#52665b" font-weight="400" text-anchor="start">Drain fully</text>
+<path d="M750 315 V550" fill="none" stroke="#527262" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text x="775" y="505" font-size="14" fill="#52665b" font-weight="400" text-anchor="start">Exposed / fatal / exhausted</text>
+<text x="40" y="722" font-size="17" fill="#52665b" font-weight="400" text-anchor="start">Any active state can fail or cancel. Terminal outcomes are immutable; cleanup can remain in progress.</text>
+<text x="40" y="753" font-size="17" fill="#52665b" font-weight="400" text-anchor="start">A completed transport may still be followed by analysis failure or an independent oracle mismatch.</text>
 </svg>

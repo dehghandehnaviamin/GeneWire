@@ -47,8 +47,8 @@ Decisions record rationale and limits, not implementation claims.
 - **Limits:** Diagrams do not assign wire fields, algorithms, normative behavior,
   compatibility or performance. The original Python/asyncio core direction is
   superseded by the owner's Rust/Python direction in D007.
-- **Next gate:** Review the [M0 feasibility recommendation](../research/feasibility-decision.md).
-  The bootstrap model remains conceptual, not an approved regional-access architecture.
+- **Next gate:** Review [RFC 0001](../rfcs/0001-regional-streaming-profile.md).
+  M1 diagrams replace the bootstrap model with a proposed regional-access subset.
 
 ## D004 — Preserve the existing repository identity
 
@@ -74,7 +74,7 @@ Decisions record rationale and limits, not implementation claims.
 ## D006 — Reuse existing regional access before defining new wire behavior
 
 - **Date:** 2026-11-26
-- **State:** Proposed; owner and domain review outstanding
+- **State:** Owner accepted advancing this direction into M1; independent domain review outstanding
 - **Recommendation:** Conditional go for a reuse-first M1 design review. Compare
   existing regional mechanisms and clients before proposing a new binary protocol.
 - **Evidence:** [Primary-source comparison](../research/standards-comparison.md),
@@ -96,3 +96,29 @@ Decisions record rationale and limits, not implementation claims.
   zero-copy behavior or memory-safety guarantee is inferred from language alone.
 - **Follow-up:** Evaluate native bindings versus a process boundary and measure
   core-only and end-to-end overhead. See [technology direction](../research/technology-direction.md).
+
+## D008 — M0 publication verified; proceed to M1 design
+
+- **Date:** 2026-11-26
+- **State:** Accepted owner direction
+- **Evidence:** Owner approved publishing M0; Git/CLI verified branch
+  docs/m0-feasibility at 5e28a6283fed0445b89c09df17c3ec3087a6c5ec and all 43 file
+  hashes. After the publication report, the owner instructed continuation.
+- **Decision:** Develop the reuse-first regional-access architecture and
+  specification draft with Rust/Python boundaries. Do not infer scientific
+  sign-off, implementation approval or permission for subsequent pushes.
+- **Outstanding:** Domain review, actual baseline runs and M1 draft review.
+
+## D009 — Narrow htsget client subset and explicit incomplete results
+
+- **Date:** 2026-11-26
+- **State:** Proposed in RFC 0001; unimplemented
+- **Proposal:** One mapped-read interval/BAM over existing htsget behavior;
+  bounded encoded-byte streaming; separate transport/analysis/oracle outcomes;
+  retry a block only before any of its output is exposed.
+- **Technology preference:** Tokio Rust core; synchronous PyO3 binding and
+  maturin packaging candidate. Versions, build features and support remain M2 work.
+- **Tradeoff:** Conservative failure/restart behavior rather than ambiguous
+  transparent replay; no persistent checkpoint or new wire format in P0.
+- **Evidence and tests:** [RFC](../rfcs/0001-regional-streaming-profile.md),
+  [lifecycle](../spec/stream-lifecycle.md), [conformance plan](../spec/conformance.md).

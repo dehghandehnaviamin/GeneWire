@@ -2,7 +2,8 @@
 
 **Date:** 2026-11-26
 
-**State:** Initial desk review complete; recommendation proposed for owner review.
+**State:** Initial desk review published; owner authorized advancing its
+reuse-first direction into M1 design. Independent domain review remains outstanding.
 
 The owner approved starting M0 after the verified bootstrap and selected
 **regional retrieval and streaming for analysis tools** as the primary use case.
@@ -44,7 +45,8 @@ existing regional retrieval mechanisms. Require demonstrated unmet needs before
 proposing wire extensions. Keep protocol conformance, genomic correctness,
 pipeline completion, and cryptographic verification as separate claims.
 
-The bootstrap diagrams remain conceptual discussion aids, not an approved M1
-architecture. This directory contains no normative GeneWire API or wire format.
-M1 has not started. Remote publication and closure of the GitHub issues require
-separate review; a local research commit is not a published or accepted decision.
+This directory records M0 research, not a normative GeneWire API or wire format.
+M0 commit 5e28a6283fed0445b89c09df17c3ec3087a6c5ec was published and verified on
+docs/m0-feasibility. The subsequent [M1 draft](../spec/README.md) refines the scope
+and replaces the bootstrap diagrams. No interoperability or benchmark has run.
+GitHub issue closure and later remote publication remain separate review actions.

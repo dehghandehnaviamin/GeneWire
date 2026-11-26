@@ -9,6 +9,10 @@ This replaces the bootstrap's proposed Python/asyncio reference core. It does no
 select a new wire protocol or prove a speed advantage. Implementation, dependency
 versions, bindings and packaging remain future work.
 
+The subsequent [M1 boundary draft](../spec/rust-python.md) prefers a synchronous
+PyO3 extension over a Tokio core, with the process wrapper retained as a fallback.
+That is a proposed design choice, not implemented or measured integration.
+
 ## Proposed responsibility split
 
 | Layer | Intended role | Boundary to evaluate |
