@@ -23,33 +23,42 @@
   <a href="SECURITY.md">Security</a>
 </p>
 
-> **Current status:** documentation and visual identity only. GeneWire has no
+> **Current status:** documentation, visual identity and an initial M0 desk review. GeneWire has no
 > implementation, installable package, stable specification, or measured performance
 > results. Every capability described below is **proposed**, **planned**, or **under
 > research**. The tagline states the project's goal, not an achieved guarantee.
 
+**Current focus:** regional retrieval and streaming for analysis tools, with an
+owner-selected **Rust core** and a possible **Python high-level integration**.
+The [M0 research pack](docs/research/README.md) proposes evaluating existing
+regional retrieval mechanisms before introducing a new binary wire protocol.
+That feasibility recommendation is awaiting owner review; M1 has not started.
+
 ## Overview
 
-GeneWire is an open infrastructure project exploring how genomic datasets could
-move reliably between research systems. The initial direction is a versioned
-exchange protocol with explicit transfer state, verifiable data boundaries, and
-recoverable progress.
+GeneWire is an open infrastructure project exploring reliable genomic access
+between research systems and analysis tools. The current question is how to
+deliver the intended regional result with explicit completion, bounded resource
+use and recoverable progress.
 
-Python and asyncio are the proposed reference implementation environment. The
-protocol should remain implementable independently and in other languages.
-Transport selection, wire encoding, and genomic semantics are not yet decided.
+Rust is the chosen core direction; Python can provide a convenient analysis and
+workflow interface. Runtime, bindings and libraries remain to be selected.
+Interoperability with existing standards is a research priority. Transport
+selection, wire encoding, and genomic semantics are not yet decided.
 
 ## The problem
 
-A transfer can finish at the byte level while leaving a downstream workflow with
-an incomplete set of objects, missing reference context, or an unusable index.
-After a connection failure, systems also need a precise answer to a practical
-question: **which data has the receiver actually accepted and verified?**
+A regional stream can produce decodable output before a later failure reveals
+that the analysis result is incomplete. A downstream workflow also needs the
+right source, reference context and query semantics. After interruption, systems
+need a precise answer to a practical question: **which work can be safely reused,
+and which result is actually complete?**
 
-GeneWire proposes making transfer intent, dependencies, integrity, and recovery
-explicit. Its first research milestone will test whether a new protocol is
-justified, or whether extending existing standards is the better path. No
-superiority over existing tools is claimed.
+GeneWire proposes making query intent, dependencies, integrity, and recovery
+explicit. The initial [standards review](docs/research/standards-comparison.md)
+identifies htsget and direct HTSlib access as essential baselines.
+The [feasibility recommendation](docs/research/feasibility-decision.md) favors
+reuse-first design. No superiority over existing tools is claimed.
 
 ## Why genomic exchange is different
 
@@ -66,10 +75,15 @@ biological validity, consent, or permission to share a dataset.
 
 ## Proposed architecture
 
-The conceptual design separates session control from data movement and keeps
+The bootstrap's conceptual design separates session control from data movement and keeps
 format knowledge behind optional adapters. A manifest would identify the objects
 and dependencies in a transfer. The receiver would verify accepted data before
 advancing durable recovery state.
+
+This illustration remains an unapproved general transfer model. M0 selected
+regional streaming as the lead use case; the corresponding architecture and
+Rust/Python boundary require M1 review. The drawing is not evidence of a need
+for a new protocol or of implemented recovery.
 
 <p align="center">
   <img src="assets/diagrams/architecture.svg" alt="Conceptual architecture: sender and receiver exchange proposed session control and data blocks through a transport under research; the receiver verifies data and persists checkpoints" width="100%">
@@ -111,10 +125,10 @@ specified separately.
 
 | Format family | Intended exploration | Earliest target |
 | --- | --- | --- |
-| FASTA / FASTQ | Opaque objects first; variants, compression and metadata reviewed explicitly | M4 · Planned |
-| SAM / BAM | Alignment objects and associated index relationships | M4 · Planned |
-| CRAM | Reference dependencies and index relationships | M4 · Under research |
-| VCF / BCF | Variant objects, indexes and coordinate metadata | M4 · Under research |
+| SAM / BAM | Synthetic indexed BAM is the proposed first regional-evaluation fixture; SAM provides decoded context | Evaluation planned; broader extensions at M4 |
+| CRAM | Reference arrangements and index relationships need separate review | P1 evaluation · Under research |
+| VCF / BCF | Variant overlap, indexes and coordinate semantics need domain review | P1 evaluation · Under research |
+| FASTA / FASTQ | Reference lookup or secondary opaque-object exchange; no assumed reference-coordinate FASTQ API | Later / secondary · Under research |
 | BED | Feature intervals and coordinate conventions | Later extension · Under research |
 
 Existing standards such as htsget, refget, and Crypt4GH will inform the feasibility
@@ -150,15 +164,15 @@ reproducible methods before making performance claims.
 
 | Milestone | Exit evidence |
 | --- | --- |
-| M0 · Research and Feasibility | Existing-standard comparison and documented go/no-go decision |
-| M1 · Protocol Specification | Reviewable state model, wire proposal, threat model and test vectors |
-| M2 · Core Protocol | Minimal interoperable session and framing implementation |
+| M0 · Research and Feasibility | Initial desk review prepared; feasibility recommendation awaits review |
+| M1 · Protocol Specification | Candidate reuse profile, state model, security boundaries and test vectors; wire extensions only if justified |
+| M2 · Core Protocol | Proposed Rust reference core interoperating with the selected mechanism |
 | M3 · Reliable Transfer Engine | Verified recovery under interruption and corruption |
 | M4 · Genomic Extensions | Reviewed format, reference and index handling |
 | M5 · Developer Experience | Working CLI, package, examples and contributor tooling |
 | M6 · Alpha Release | Reproducible validation, release notes and documented limitations |
 
-All milestones are planned. There are no delivery-date commitments. See the
+M1–M6 remain planned; their M0 scope refinements are proposals. There are no delivery-date commitments. See the
 [full roadmap](ROADMAP.md), [status](docs/project/STATUS.md), and
 [task register](docs/project/TASKS.md).
 

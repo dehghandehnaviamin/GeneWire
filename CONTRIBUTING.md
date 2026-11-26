@@ -7,9 +7,15 @@ technical writers, and performance engineers. Domain questions and documentation
 reviews are as valuable as code.
 
 > **Experimental · Pre-alpha · Research and Design.** This repository currently
-> contains documentation and assets. There is no application, package, test suite,
+> contains documentation, assets and an initial M0 desk review. There is no application, package, test suite,
 > or CI workflow. Installation, lint, test, and benchmark commands will be added
-> when the corresponding tools exist. Research begins after the bootstrap review.
+> when the corresponding tools exist. Bootstrap review authorized M0; its
+> [feasibility recommendation](docs/research/feasibility-decision.md) awaits review.
+
+The owner selected regional retrieval and streaming for analysis tools, a Rust
+core and a possible Python high-level integration. See the
+[research pack](docs/research/README.md) before proposing implementation or a new
+wire protocol. Language direction does not imply a measured performance advantage.
 
 Please read the [Code of Conduct](CODE_OF_CONDUCT.md),
 [status](docs/project/STATUS.md), [roadmap](ROADMAP.md), and
@@ -86,8 +92,10 @@ configured at bootstrap; a successful check must never be implied when none ran.
 ## Engineering standards
 
 - **Quality:** keep changes focused, names explicit, and dependencies justified.
-- **Types:** future Python public interfaces should have type annotations; the
-  supported interpreter and type checker will be decided with implementation tooling.
+- **Types and language boundaries:** use explicit Rust types and ownership at core
+  interfaces; future Python public interfaces should have type annotations.
+  Runtime, binding, supported toolchains and interpreter policy will be selected
+  with implementation tooling.
 - **Tests:** test behavior and failure boundaries, including fragmented input,
   interruption, malformed lengths, cancellation, and corrupted recovery state.
 - **Documentation:** update status, diagrams, and compatibility notes with behavior.

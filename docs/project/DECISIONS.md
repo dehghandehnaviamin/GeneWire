@@ -45,8 +45,10 @@ Decisions record rationale and limits, not implementation claims.
   framing; identifiers; integrity granularity; authentication/authorization;
   durable acceptance; reference and coordinate semantics.
 - **Limits:** Diagrams do not assign wire fields, algorithms, normative behavior,
-  compatibility or performance. Python/asyncio is a proposed reference environment.
-- **Next gate:** M0 feasibility review, after bootstrap owner approval.
+  compatibility or performance. The original Python/asyncio core direction is
+  superseded by the owner's Rust/Python direction in D007.
+- **Next gate:** Review the [M0 feasibility recommendation](../research/feasibility-decision.md).
+  The bootstrap model remains conceptual, not an approved regional-access architecture.
 
 ## D004 — Preserve the existing repository identity
 
@@ -57,3 +59,40 @@ Decisions record rationale and limits, not implementation claims.
 - **Evidence:** GitHub CLI verified the authenticated owner, public visibility,
   empty remote and expected description before local file creation.
 - **Consequence:** All contributor links use the observed canonical repository name.
+
+## D005 — Bootstrap approved; regional access leads M0
+
+- **Date:** 2026-11-26
+- **State:** Accepted owner direction
+- **Evidence:** After the verified-push report and next-step explanation, the owner
+  instructed start and selected regional retrieval/streaming for analysis tools.
+- **Decision:** Begin M0 around that scenario. Keep bulk-object exchange secondary.
+- **Limits:** This authorizes research, not implementation or later remote pushes.
+  The current public bootstrap commit is 4549e772eab116b3ec0c1566ecd33e7ebae630a2.
+- **Outputs:** [Research pack](../research/README.md).
+
+## D006 — Reuse existing regional access before defining new wire behavior
+
+- **Date:** 2026-11-26
+- **State:** Proposed; owner and domain review outstanding
+- **Recommendation:** Conditional go for a reuse-first M1 design review. Compare
+  existing regional mechanisms and clients before proposing a new binary protocol.
+- **Evidence:** [Primary-source comparison](../research/standards-comparison.md),
+  [requirements](../research/use-cases.md), and [evaluation plan](../research/evaluation-plan.md).
+- **Limits:** No conformance, throughput, demand or production-feasibility result.
+  No claim that the candidate integration gap is novel or unsolved.
+- **Alternatives and stopping conditions:** [Feasibility recommendation](../research/feasibility-decision.md).
+
+## D007 — Rust core with possible Python high-level access
+
+- **Date:** 2026-11-26
+- **State:** Accepted owner technology direction
+- **Decision:** Pursue Rust for the performance-sensitive core. Python can provide
+  a convenient high-level interface and analysis/workflow integration.
+- **Supersedes:** The bootstrap's proposed Python/asyncio reference core; it does
+  not supersede the principle of protocol interoperability.
+- **Limits:** Responsibilities are a proposed split; runtime, format libraries,
+  binding, package layout and support matrix remain unselected. No speedup,
+  zero-copy behavior or memory-safety guarantee is inferred from language alone.
+- **Follow-up:** Evaluate native bindings versus a process boundary and measure
+  core-only and end-to-end overhead. See [technology direction](../research/technology-direction.md).
