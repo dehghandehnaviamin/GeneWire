@@ -30,6 +30,9 @@ build/
 dist/
 *.egg-info/
 
+# Future Rust build output
+/target/
+
 # Private data and local experiments must stay outside the repository
 data/
 datasets/
