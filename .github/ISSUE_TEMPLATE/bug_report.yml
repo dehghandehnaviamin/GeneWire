@@ -1,0 +1,58 @@
+name: Bug report
+description: Report a reproducible documentation or future software defect.
+title: "[Bug]: "
+labels:
+  - type:bug
+body:
+  - type: markdown
+    attributes:
+      value: GeneWire is experimental and documentation-only. Check existing issues and the
+        contribution guide. Report vulnerabilities privately through SECURITY.md. Never
+        attach identifiable genomic data, secrets, or sensitive logs.
+  - type: textarea
+    id: summary
+    attributes:
+      label: What is wrong?
+      description: At bootstrap, report documentation or asset defects; no software is released.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction steps
+      description: Use a minimal synthetic example and identify the relevant page or file.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected and observed result
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Document revision or commit
+      description: Provide a commit SHA or page URL; include OS/tool versions if relevant.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Supporting evidence
+      description: Sanitized logs or screenshots; no patient data or secrets.
+    validations:
+      required: false
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I checked existing issues and read the contribution guide and Code of Conduct.
+          required: true
+        - label: This report contains no secrets, private data, or identifiable patient genomic
+            data.
+          required: true
+        - label: This is not a private vulnerability report; I will use SECURITY.md for
+            security-sensitive details.
+          required: true

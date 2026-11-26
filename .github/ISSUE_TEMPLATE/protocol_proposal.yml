@@ -1,0 +1,57 @@
+name: Protocol proposal / RFC
+description: Discuss a substantial protocol or specification change.
+title: "[RFC]: "
+labels:
+  - type:rfc
+  - area:protocol
+body:
+  - type: markdown
+    attributes:
+      value: GeneWire is experimental and documentation-only. Check existing issues and the
+        contribution guide. Report vulnerabilities privately through SECURITY.md. Never
+        attach identifiable genomic data, secrets, or sensitive logs.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem, use cases and non-goals
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed design
+      description: Describe state, messages or semantics as proposals; no assigned wire format exists.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives and primary references
+    validations:
+      required: true
+  - type: textarea
+    id: impact
+    attributes:
+      label: Security, resource, compatibility and genomic implications
+    validations:
+      required: true
+  - type: textarea
+    id: validation
+    attributes:
+      label: Validation plan and unresolved questions
+      description: Define evidence needed before acceptance and implementation.
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I checked existing issues and read the contribution guide and Code of Conduct.
+          required: true
+        - label: This report contains no secrets, private data, or identifiable patient genomic
+            data.
+          required: true
+        - label: This is not a private vulnerability report; I will use SECURITY.md for
+            security-sensitive details.
+          required: true

@@ -1,0 +1,57 @@
+name: Feature request
+description: Propose a capability with a concrete use case.
+title: "[Feature]: "
+labels:
+  - type:feature
+body:
+  - type: markdown
+    attributes:
+      value: GeneWire is experimental and documentation-only. Check existing issues and the
+        contribution guide. Report vulnerabilities privately through SECURITY.md. Never
+        attach identifiable genomic data, secrets, or sensitive logs.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem and use case
+      description: Who needs this, and what cannot they do today?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed outcome
+      description: Describe requirements rather than implying implementation exists.
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives and existing standards
+    validations:
+      required: true
+  - type: textarea
+    id: implications
+    attributes:
+      label: Architecture, security and compatibility implications
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: State how the proposal could eventually be evaluated.
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I checked existing issues and read the contribution guide and Code of Conduct.
+          required: true
+        - label: This report contains no secrets, private data, or identifiable patient genomic
+            data.
+          required: true
+        - label: This is not a private vulnerability report; I will use SECURITY.md for
+            security-sensitive details.
+          required: true

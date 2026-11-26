@@ -1,0 +1,51 @@
+name: Documentation improvement
+description: Improve terminology, guides, accessibility or diagrams.
+title: "[Docs]: "
+labels:
+  - type:enhancement
+  - area:documentation
+body:
+  - type: markdown
+    attributes:
+      value: GeneWire is experimental and documentation-only. Check existing issues and the
+        contribution guide. Report vulnerabilities privately through SECURITY.md. Never
+        attach identifiable genomic data, secrets, or sensitive logs.
+  - type: input
+    id: location
+    attributes:
+      label: Affected page or asset
+      description: Link the document or name the repository path.
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What is unclear or inaccurate?
+    validations:
+      required: true
+  - type: textarea
+    id: change
+    attributes:
+      label: Suggested improvement and audience
+    validations:
+      required: true
+  - type: textarea
+    id: validation
+    attributes:
+      label: Validation or references
+      description: Include terminology sources or rendering/link checks where applicable.
+    validations:
+      required: false
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I checked existing issues and read the contribution guide and Code of Conduct.
+          required: true
+        - label: This report contains no secrets, private data, or identifiable patient genomic
+            data.
+          required: true
+        - label: This is not a private vulnerability report; I will use SECURITY.md for
+            security-sensitive details.
+          required: true

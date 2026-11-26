@@ -1,0 +1,58 @@
+name: Research proposal
+description: Plan a reproducible investigation with explicit evidence criteria.
+title: "[Research]: "
+labels:
+  - type:research
+body:
+  - type: markdown
+    attributes:
+      value: GeneWire is experimental and documentation-only. Check existing issues and the
+        contribution guide. Report vulnerabilities privately through SECURITY.md. Never
+        attach identifiable genomic data, secrets, or sensitive logs.
+  - type: textarea
+    id: question
+    attributes:
+      label: Question or hypothesis
+      description: Distinguish assumptions from evidence.
+    validations:
+      required: true
+  - type: textarea
+    id: sources
+    attributes:
+      label: Prior work and primary sources
+    validations:
+      required: true
+  - type: textarea
+    id: method
+    attributes:
+      label: Method and reproducibility
+      description: State environment, workloads, baselines, fault conditions and measurements as
+        applicable.
+    validations:
+      required: true
+  - type: textarea
+    id: data
+    attributes:
+      label: Data provenance, licensing and privacy
+      description: Use synthetic data; no identifiable patient data or private dataset attachments.
+    validations:
+      required: true
+  - type: textarea
+    id: criteria
+    attributes:
+      label: Success criteria, limitations and expected output
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I checked existing issues and read the contribution guide and Code of Conduct.
+          required: true
+        - label: This report contains no secrets, private data, or identifiable patient genomic
+            data.
+          required: true
+        - label: This is not a private vulnerability report; I will use SECURITY.md for
+            security-sensitive details.
+          required: true

@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Questions and design discussion
+    url: https://github.com/dehghandehnaviamin/GeneWire/discussions
+    about: Ask general questions; never post sensitive data.
+  - name: Private vulnerability report
+    url: https://github.com/dehghandehnaviamin/GeneWire/security/advisories/new
+    about: Report security-sensitive weaknesses privately; see SECURITY.md.
+  - name: Community conduct report
+    url: https://github.com/dehghandehnaviamin/GeneWire/blob/main/CODE_OF_CONDUCT.md
+    about: Use the confidential contact in the Code of Conduct.
