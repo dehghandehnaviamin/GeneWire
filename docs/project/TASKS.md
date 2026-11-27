@@ -66,7 +66,7 @@ basis; the full contract is not verified. See D013 in the decision register.
 - [x] Owner authorizes integration and publication of the prepared M1 history on main.
 - [x] Owner instructs local continuation and delegates product/business decisions.
 
-## M2 — First local implementation (in progress)
+## M2 — Narrow reference implementation (engineering gate complete)
 
 - [x] Build a Python-independent Rust core and synchronous PyO3 binding.
 - [x] Exercise ordered bytes, strict ticket/range/encoding checks and retry admission.
@@ -90,10 +90,10 @@ basis; the full contract is not verified. See D013 in the decision register.
 - [x] Add explicit accepted-payload/output-copy counters, test retained fragment
   extents and mixed large blocks, and check the counters on 64 MiB transfers.
 - [x] Exercise abrupt decoder/native-process exit and supervisor SIGINT cleanup.
-- [ ] Qualify the current counters/failure checks on CI and record their scope;
+- [x] Qualify the current counters/failure checks on CI and record their scope;
   allocator/TLS/HTTP/JSON memory and crash recovery remain distinct exclusions.
 - [x] Prepare pinned CI workflow with Rust/Python and independent-server checks.
-- [ ] Publish under D016 approval and verify actual Linux/macOS CI before M2 exit.
+- [x] Publish under D016 approval and verify actual Linux/macOS CI before M2 exit.
 
 See [M2 evidence/gaps](M2-LOCAL.md) and [working local commands](../development.md).
 On 2026-11-27 the owner authorized integrating the prepared history into main and
@@ -101,6 +101,12 @@ pushing main. This publication does not complete the remaining M2 evidence gates
 
 The owner will arrange the final university review and instructed continued
 development. External scientific review is deferred, not recorded as completed.
+
+Under D018, [the narrow M2 reference gates passed](CI-VALIDATION.md): both hosted
+runners completed 47 Rust and 34 Python/native tests without skips, independent
+server/baseline comparisons and resource assertions. Full conformance, allocator/
+TLS/HTTP/JSON accounting, hard-crash recovery and wider qualification remain
+explicitly outside this exit claim and part of later qualification work.
 
 ## Later milestones
 

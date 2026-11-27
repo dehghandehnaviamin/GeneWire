@@ -1,8 +1,8 @@
 # University review handoff — local M2 snapshot
 
 The owner will arrange the final university review. This document prepares the
-current narrow implementation for reproducible inspection; it is not a statement
-that the project or scientific review is complete.
+current narrow implementation for reproducible inspection. Its M2 engineering
+gate passed; the full project and scientific review are not claimed complete.
 
 ## What can be demonstrated now
 
@@ -47,9 +47,10 @@ decoder. Keep both negative controls in the review.
 - Compare outcomes with the [M2 ledger](M2-LOCAL.md) and
   [draft requirement/scenario map](../spec/conformance.md).
 
-Current evidence is macOS arm64 only. A Linux/macOS CI workflow is prepared;
-remote runs, complete native resource accounting and wider qualification remain
-open. One opaque resource run per mode is not a comparative performance result.
+The [verified CI run](CI-VALIDATION.md) covers Ubuntu x86_64 and macOS arm64 with
+CPython 3.14.10, in addition to local macOS evidence. Complete native allocator/
+library accounting and wider qualification remain unclaimed. One opaque resource
+run per mode is not a comparative performance result.
 
 ## Questions for the independent reviewers
 

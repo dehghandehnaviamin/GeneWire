@@ -10,7 +10,7 @@ reviews are as valuable as code.
 > contains a local experimental Rust core, Python binding and tests alongside
 > research/design documents. Follow [local development](docs/development.md) for
 > verified setup/check commands and [M2 evidence](docs/project/M2-LOCAL.md) for
-> exact scope. A CI workflow is prepared locally; remote execution is unverified.
+> exact scope. The narrow reference path passed [Linux/macOS CI](docs/project/CI-VALIDATION.md).
 > No software release exists.
 
 The owner selected regional retrieval and streaming for analysis tools, a Rust
@@ -91,9 +91,9 @@ CI validation when configured → Maintainer merge
 ```
 
 For documentation and assets, manual rendering and link checks are appropriate.
-Implementation changes require meaningful automated tests. The prepared CI
-workflow has no verified remote run; local test success is not a passing GitHub
-workflow. Include applicable supervised-analysis and independent-server checks
+Implementation changes require meaningful automated tests. The reference CI
+workflow has a verified Linux/macOS run; each later implementation change still
+needs its own checks. Include applicable supervised-analysis and independent-server checks
 from the development guide when changing the regional BAM path.
 
 ## Engineering standards

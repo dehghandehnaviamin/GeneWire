@@ -6,6 +6,9 @@ Notable project changes will be recorded here. GeneWire has no software release 
 
 ### Added
 
+- Published M2 narrow-reference engineering exit with successful Linux/macOS CI,
+  47 Rust and 34 Python/native tests per runner, source-checked synthetic server/
+  resource artifacts, payload/copy counters and additional process-failure checks.
 - Local supervised BAM filtering with separate transport/analysis outcomes,
   atomic staging and bounded process cleanup; configured-profile/cleanup reports,
   explicit CA trust, IPv6 and native race/panic tests.

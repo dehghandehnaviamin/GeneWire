@@ -7,8 +7,9 @@ Read the [implementation evidence and gaps](project/M2-LOCAL.md).
 ## Verified environment and setup
 
 The initial checks used macOS 27.0 on arm64, Rust/Cargo 1.93.0, CPython 3.14.6,
-uv 0.13.10 and maturin 1.16.0. Other operating systems/interpreters have not been
-qualified. The abi3 wheel tag and Python metadata are not a tested support matrix.
+uv 0.13.10 and maturin 1.16.0. [Actual CI](project/CI-VALIDATION.md) also passed on
+Ubuntu 26.04.1 x86_64 and macOS 26.7.2 arm64 with CPython 3.14.10. This records
+those runners; the abi3 wheel tag/Python metadata do not establish broader support.
 Rust and uv must already be installed. From the repository root:
 
 ```bash
@@ -124,8 +125,8 @@ Defaults: 600 s analysis deadline, 5 s child-cleanup policy, 1 GiB output budget
 waits share cleanup_timeout_s; input-thread join gets another such budget, then
 stream.close uses its native cleanup budget. Reports identify unfinished cleanup.
 Blocking filesystem/kernel operations are not given a hard termination guarantee.
-The supervisor currently requires POSIX and is locally exercised on macOS;
-Linux awaits CI. Windows, arbitrary spawned descendants and clinical analysis are
+The supervisor currently requires POSIX and passed on the recorded macOS/Linux
+runners. Windows, arbitrary spawned descendants and clinical analysis are
 outside this adapter's qualification. No general-purpose subprocess API is public.
 SIGINT cleanup and abrupt decoder death have dedicated checks. A hard-killed
 supervisor cannot run finalizers or promise removal of its provisional files;
@@ -160,13 +161,14 @@ checks byte count and SHA-256. It records RSS high-water marks, Python tracemall
 and elapsed time once per mode. The payload is not valid BAM, and timings are not
 a benchmark or advantage claim. Native allocation/copy accounting remains open.
 
-## Prepared continuous integration
+## Continuous integration evidence
 
-[checks.yml](../.github/workflows/checks.yml) pins action commits, Rust/Python/uv
-versions and the independent server source. Its Linux/macOS jobs run native,
-Python, server and resource checks without publishing packages. YAML and local
-commands are checked; no remote run has occurred. A passing local suite is not
-GitHub CI evidence or a Linux support claim.
+[checks.yml](../.github/workflows/checks.yml) pins action commits, Rust/uv versions,
+the Python minor line and the independent server source. Its Linux/macOS jobs run
+native, Python, server and resource checks without publishing packages. The
+[recorded run](project/CI-VALIDATION.md) passed and its synthetic JSON artifacts
+were downloaded, source-checked and archived. This qualifies the tested revision
+and observed runners, not future changes or all Python/OS versions.
 
 ## Source layout
 

@@ -299,3 +299,29 @@ Decisions record rationale and limits, not implementation claims.
 - **Evidence chronology:** Reports from D015 are anchored to prepared commit
   f4d886692f8b4c32f4803ef8556b164db2ea1060. Follow-up reports contain the new
   source hashes. Neither report set implies that a different revision was tested.
+
+## D018 — Record the narrow M2 engineering exit from actual CI evidence
+
+- **Date:** 2026-11-27; execution under D016 and delegated engineering decisions.
+- **Observed:** Published implementation da92bc9a1d56b51bed7f7035e980c71da026b424
+  passed GitHub Actions run 45995255517. Ubuntu 26.04.1 x86_64 and macOS 26.7.2
+  arm64 each passed 47 Rust and 34 Python/native tests without skips, static/build
+  checks, independently built htsget-rs/HTSlib Q1–Q5 and both resource modes.
+- **Verification:** Downloaded JSON artifacts matched the published implementation
+  file hashes. Expected/observed/indexed/htsget-baseline record sets agreed.
+  Both copy counters equaled each 64 MiB result; accepted payload peaks were
+  within 2 MiB and zero remained after close. Archive identities, test counts,
+  normalized raw reports and method limits are retained in [CI evidence](CI-VALIDATION.md).
+- **Exit decision:** The [minimum M2 reference gates](CI-VALIDATION.md#m2-exit-scope)
+  are met for the implemented single-region BAM subset. This closes the narrow
+  engineering prototype milestone, not every provisional M1 requirement/vector
+  or general native allocation/security/platform qualification. Preserve those
+  limits explicitly; do not recast logical payload counts as a process-memory cap.
+- **Remaining phases:** Durable/crash recovery remains M3; expanded genomic
+  semantics require later review; packaging/release, comparative benchmarks and
+  security qualification remain later work. No M3 implementation, release or
+  deployment is included in this publication. University review remains pending.
+- **Final publication:** Publish the evidence/status documentation with all
+  implementation/build/workflow inputs byte-identical to da92bc9. Use a CI-skip
+  marker only for that documentation update; its evidence points to the actual
+  successful run rather than inventing a new successful check for the final SHA.

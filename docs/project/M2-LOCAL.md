@@ -1,23 +1,23 @@
 # M2 local implementation evidence
 
-**Evaluation:** 2026-11-26 through 2026-11-27. **State:** Working local M2 path;
-remaining qualification and remote CI gates are open.
+**Evaluation:** 2026-11-26 through 2026-11-27. **State:** Narrow M2 engineering
+gate complete; broader qualification and scientific review remain unclaimed.
 
 **D016/D017 follow-up:** The owner approved remaining engineering checks,
 commit/push and actual CI verification. The prepared D015 state is preserved at
 f4d8866; later payload/copy instrumentation and process-failure checks passed
-47 Rust and 34 Python/native tests locally. Publication/CI verification is now
-authorized; remote results will be recorded after observation.
+47 Rust and 34 Python/native tests locally. Under D018, publication and actual
+Linux/macOS CI succeeded for da92bc9. See [CI exit evidence](CI-VALIDATION.md).
 
 The owner instructed continued development and will arrange the final university
 review. This defers external scientific review; it does not establish scientific
-sign-off, production readiness, release approval or new publication authorization.
-D010/D014/D015 in [the decision register](DECISIONS.md) define local scope.
+sign-off, production readiness or release approval. D016 authorized this M2
+publication; [the decision register](DECISIONS.md) retains the scope and chronology.
 
 Initial implementation b741872 was integrated with the prepared M1/M2 history
-at e9be690 and published under D012. D014/D015 are later local working-tree
-changes. Raw reports bind the evaluated implementation inputs to SHA-256 file
-hashes without claiming those changes have been committed or published.
+at e9be690 and published under D012. D014/D015 were preserved at f4d8866;
+follow-up implementation da92bc9 was published and verified in CI. Raw reports
+bind each evaluated revision to SHA-256 file hashes and retain their chronology.
 
 ## Implemented transport
 
@@ -118,14 +118,14 @@ the 1.25 manual reviewed during M1 and is not a platform support matrix.
 
 | Check | Observed scope |
 | --- | --- |
-| Rust tests | 45 passed: 39 HTTP/fault tests plus six private lifecycle tests; no skips |
-| Python/native tests | 31 passed without skips; byte ownership, lifetime, profiles, TLS/IPv6, normal process exit and supervised BAM success/failure/cleanup |
+| Rust tests | 47 passed: 40 HTTP/fault tests plus seven private lifecycle/accounting tests; no skips |
+| Python/native tests | 34 passed without skips; ownership/lifetime, profiles, TLS/IPv6, process exits, supervised BAM success/failure/cleanup and copy accounting |
 | Static/build | Locked setup with analysis extra, editable native rebuild, clippy with warnings denied, formatting |
 | Tiny oracle | Q1–Q5 matched A/B/C/D handwritten names and multiplicities; invalid-BAM and decodable-omission controls retained |
 | Independent server | Q1–Q5 through real local htsget-rs; full supervised decode and exact declared filtering matched truth |
 | Independent baselines | HTSlib's own htsget ticket/block retrieval and direct indexed HTSlib both matched the same five cases |
 | Resource probe | One 64 MiB opaque transfer in each of two fresh client processes; byte count/SHA-256 matched, server RSS excluded |
-| CI | Immutable-action-pinned Linux/macOS workflow prepared and YAML parsed; no remote execution result |
+| CI | Actual Linux/macOS run succeeded at da92bc9; each passed the suites, real-server/baseline and resource gates; artifacts source-checked and archived |
 | Documentation/assets | 158 local Markdown file links resolved; SVG structure/accessibility and evidence source hashes checked; updated architecture/lifecycle PNG renders inspected |
 
 Source and method details: [interoperability report](evidence/2026-11-27-interop.json),
@@ -160,7 +160,7 @@ module support; its feature labels do not establish interpreter compatibility.
 The dependency report records declared licenses and effective features without
 machine paths. It is not a vulnerability scan or a redistribution-license audit.
 
-## Candidate scenarios and remaining gates
+## Candidate scenarios, exit scope and remaining limits
 
 The [follow-up resource report](evidence/2026-11-27-followup-resources.json)
 checks current/peak accepted payload, original pending storage extents and
@@ -184,16 +184,12 @@ C06 fresh-query separation, C20 handoff orderings, C22 cleanup timeout/retry,
 C25 panic translation, C26 supervised consumer and one C28 unsupported-profile
 case. C12 full native allocation/copy accounting and other variants remain open.
 
-Before M2 exit:
-
-- Qualify the accepted-payload accounting and process checks on CI runners. Do
-  not reinterpret those counters as allocator/TLS/HTTP/JSON/decoder RSS limits.
-- Retain explicit exclusions for interpreter teardown, hard-killed supervisors,
-  arbitrary descendants and other failure variants beyond the narrow P0 path.
-- Exercise the prepared CI on actual Linux/macOS runners after authorized remote
-  publication. Local YAML/command checks do not supply a passing GitHub run.
-- Keep domain/scientific review deferred to the owner's university process and
-  record actual findings before making wider scientific or release claims.
+The [M2 minimum reference gates passed](CI-VALIDATION.md#m2-exit-scope) on both
+observed runners. The named accounting/process policies have actual CI evidence;
+their explicit exclusions remain. Do not reinterpret counters as allocator/TLS/
+HTTP/JSON/decoder RSS limits, or infer hard-killed-supervisor cleanup, arbitrary
+descendant control or interpreter-teardown guarantees. Scientific review remains
+deferred to the owner's university process; record findings before wider claims.
 
 No comparative performance advantage, full conformance, security audit, durable
 resume, production approval or release is claimed. M3–M6 remain planned.

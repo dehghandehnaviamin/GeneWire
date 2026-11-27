@@ -7,14 +7,14 @@
 <text x="40" y="48" font-size="30" fill="#17201d" font-weight="700" text-anchor="start">Regional streaming architecture</text>
 <text x="40" y="78" font-size="16" fill="#52665b" font-weight="400" text-anchor="start">GW-M1-DRAFT-01 · Local Rust/Python prototype and separate analysis gate</text>
 <rect x="1000" y="25" width="240" height="34" rx="12" fill="#e5f3d7" stroke="#e5f3d7"/>
-<text x="1120" y="48" font-size="12" fill="#3d6329" font-weight="700" text-anchor="middle">M1 DESIGN / M2 PARTIAL</text>
+<text x="1120" y="48" font-size="12" fill="#3d6329" font-weight="700" text-anchor="middle">M2 REFERENCE / PRE-ALPHA</text>
 <rect x="40" y="155" width="310" height="175" rx="12" fill="#ffffff" stroke="#c6d2c9"/>
 <text x="60" y="189" font-size="22" fill="#17201d" font-weight="700" text-anchor="start">Existing htsget services</text>
 <text x="60" y="221" font-size="17" fill="#52665b" font-weight="400" text-anchor="start">Ticket / ordered fragments</text>
 <text x="60" y="247" font-size="17" fill="#52665b" font-weight="400" text-anchor="start">HTTPS and bounded inline data</text>
 <text x="60" y="273" font-size="17" fill="#52665b" font-weight="400" text-anchor="start">Source semantics remain trusted</text>
 <rect x="410" y="130" width="430" height="420" rx="12" fill="#ffffff" stroke="#c6d2c9"/>
-<text x="430" y="164" font-size="22" fill="#17201d" font-weight="700" text-anchor="start">Rust core (partial)</text>
+<text x="430" y="164" font-size="22" fill="#17201d" font-weight="700" text-anchor="start">Rust core (local)</text>
 <text x="430" y="196" font-size="17" fill="#52665b" font-weight="400" text-anchor="start">HTTP + destination policy</text>
 <text x="430" y="222" font-size="17" fill="#52665b" font-weight="400" text-anchor="start">Credential isolation / ticket checks</text>
 <rect x="430" y="255" width="390" height="88" rx="12" fill="#e5f3d7" stroke="#c6d2c9"/>
@@ -25,7 +25,7 @@
 <text x="450" y="447" font-size="18" fill="#52665b" font-weight="400" text-anchor="start">Immutable terminal outcome</text>
 <text x="450" y="494" font-size="16" fill="#52665b" font-weight="400" text-anchor="start">Tokio core; local evaluation only</text>
 <rect x="900" y="155" width="340" height="175" rx="12" fill="#ffffff" stroke="#c6d2c9"/>
-<text x="920" y="189" font-size="22" fill="#17201d" font-weight="700" text-anchor="start">Python bridge (partial)</text>
+<text x="920" y="189" font-size="22" fill="#17201d" font-weight="700" text-anchor="start">Python bridge (local)</text>
 <text x="920" y="221" font-size="17" fill="#52665b" font-weight="400" text-anchor="start">Owned byte chunks / typed errors</text>
 <text x="920" y="247" font-size="17" fill="#52665b" font-weight="400" text-anchor="start">Synchronous pull reader</text>
 <text x="920" y="273" font-size="17" fill="#52665b" font-weight="400" text-anchor="start">Explicit close and result report</text>

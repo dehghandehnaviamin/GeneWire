@@ -24,7 +24,8 @@
 </p>
 
 > **Current status:** experimental Rust core and synchronous Python binding, built
-> and tested locally. M2 is in progress. There is no released package, full
+> and tested locally and in Linux/macOS CI. The narrow M2 reference path has
+> passed its engineering gates. There is no released package, full
 > conformance result or measured performance comparison. The tagline states the
 > project's goal, not an achieved guarantee.
 
@@ -172,13 +173,14 @@ reproducible methods before making performance claims.
 | --- | --- |
 | M0 · Research and Feasibility | Published; owner authorized the reuse-first direction for M1 |
 | M1 · Protocol Specification | Design direction adopted locally; 30 candidate scenarios with partial executable evidence |
-| M2 · Core Protocol | Local Rust/Python path works against controlled fixtures; real-server interoperability pending |
+| M2 · Core Protocol | Narrow BAM reference path passed real-server/HTSlib, failure/resource and Linux/macOS CI checks |
 | M3 · Reliable Transfer Engine | Verified recovery under interruption and corruption |
 | M4 · Genomic Extensions | Reviewed format, reference and index handling |
 | M5 · Developer Experience | Working CLI, package, examples and contributor tooling |
 | M6 · Alpha Release | Reproducible validation, release notes and documented limitations |
 
-M1 remains a provisional design; M2 is in progress and M3–M6 are planned. There are no delivery-date commitments. See the
+M1 remains provisional beyond the implemented subset; M2's narrow engineering
+gate is complete and M3–M6 are planned. There are no delivery-date commitments. See the
 [full roadmap](ROADMAP.md), [status](docs/project/STATUS.md), and
 [task register](docs/project/TASKS.md).
 
