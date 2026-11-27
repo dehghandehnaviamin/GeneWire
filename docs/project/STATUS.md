@@ -1,6 +1,6 @@
 # Project status
 
-**Experimental — Pre-alpha — Narrow M2 reference gate complete; local M3 in development**
+**Experimental — Pre-alpha — Narrow M2 complete; first M3 subset passed CI**
 
 Snapshot: 2026-11-27. Status must be updated when verified evidence changes.
 
@@ -16,14 +16,14 @@ Snapshot: 2026-11-27. Status must be updated when verified evidence changes.
 | M0 research | Published; direction accepted for M1 | [5e28a62](https://github.com/dehghandehnaviamin/GeneWire/commit/5e28a6283fed0445b89c09df17c3ec3087a6c5ec); no independent domain sign-off or experiments |
 | M1 design | Direction adopted for local prototype | [RFC 0001](../rfcs/0001-regional-streaming-profile.md); complete contract remains provisional |
 | M2 reference implementation | Narrow engineering gate complete | Rust/Python byte reader and supervised BAM adapter; [exit evidence and limits](CI-VALIDATION.md) |
-| M3 recovery | Local verified-BAM-job increment | [RFC 0002](../rfcs/0002-recoverable-bam-jobs.md) and [local evidence](M3-LOCAL.md); complete-source reuse and publication receipts, full M3 exit open |
-| Testing and CI | Verified on the observed Linux/macOS runners with Node.js 24 actions | Each passed 47 Rust and 34 Python/native tests without skips; [workflow 46021619658](https://github.com/dehghandehnaviamin/GeneWire/actions/runs/46021619658); no warning annotations, one macOS capacity notice |
+| M3 recovery | First verified-BAM-job subset published and CI-checked | [RFC 0002](../rfcs/0002-recoverable-bam-jobs.md) and [evidence](M3-LOCAL.md); complete-source reuse and publication receipts, full M3 exit open |
+| Testing and CI | Verified on the observed Linux/macOS runners with Node.js 24 actions | Each passed 47 Rust and 53 Python/native tests without skips, plus a repeated 19-case recovery harness; [workflow 46035043779](https://github.com/dehghandehnaviamin/GeneWire/actions/runs/46035043779); no warning annotations, one macOS capacity notice |
 | Scientific evaluation | Tiny controlled oracle exercised; university review deferred | Q1–Q5 and negative controls; owner will arrange final review, no independent sign-off yet |
 | Performance and interoperability | Narrow local evidence | Pinned real htsget-rs and two HTSlib paths matched Q1–Q5; one 64 MiB opaque resource probe per retention mode; no ranking or full resource certification |
 | Release and security support | No release | No supported version or production readiness |
 
 Diagrams show the design target and partial local components. Only the behavior
-in the M2 ledger has evidence; broader format support remains prospective.
+in the M2/M3 ledgers has evidence; broader format support remains prospective.
 [Local setup and checks](../development.md) work in the recorded environment.
 A proposed lifecycle is not a stable protocol or complete implementation claim.
 
@@ -94,3 +94,11 @@ Local Python/native and Rust suites plus process/storage fault evidence are
 recorded in the M3 ledger. The earlier CI result qualifies its historical M2
 revision; this new increment has not been pushed or observed in remote CI.
 Full M3, power-loss durability and scientific review remain open.
+
+**D021 verified M3 publication:** a32062f, a06ccc2 and the retry-test fixture fix
+87732e7 are published on main. The fresh workflow for 87732e7 succeeded on both
+observed runners. Recovery, independent-server and resource JSON matched its
+source hashes and are [archived](CI-VALIDATION.md#m3-verified-source-bam-jobs).
+The first failed macOS run is preserved as a separate observation. This closes
+publication/CI qualification of the first job subset, not full M3, broader
+platform qualification, scientific review or release approval.

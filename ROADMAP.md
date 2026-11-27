@@ -1,7 +1,7 @@
 # GeneWire roadmap
 
 **M0 is published; M1 is the design basis. The narrow M2 reference gate is complete.**
-M3 has a local verified-BAM-job increment; its full exit remains open. M4–M6
+M3's first verified-BAM-job subset passed Linux/macOS CI; its full exit remains open. M4–M6
 are planned. The owner selected regional retrieval/streaming, a Rust core
 and Python high-level integration. The first subset and integration details
 remain provisional beyond the implemented subset. The owner authorized local work
@@ -13,7 +13,7 @@ may lead to a scope reduction, an extension of an existing standard, or a no-go.
 | M0 — Research and Feasibility | Regional use cases, constraints, existing standards, Rust/Python direction, evaluation plan | [Published desk review](docs/research/README.md); direction accepted for M1; domain review and experiments unclaimed |
 | M1 — Protocol Specification | [RFC 0001](docs/rfcs/0001-regional-streaming-profile.md), client profile, lifecycle, boundaries, security and 30 candidate scenarios | Draft prepared; review subset/retry/consumer policy and budgets; no new binary wire format justified |
 | M2 — Core Protocol | Rust/Python transport, supervised BAM adapter, real-server/HTSlib comparison, failure/race checks and payload/copy/RSS probes; [scope](docs/project/M2-LOCAL.md) | Complete for the narrow single-region BAM reference path: [observed Linux/macOS CI and exit gates](docs/project/CI-VALIDATION.md); full M1 conformance, broader qualification and scientific sign-off unclaimed |
-| M3 — Reliable Transfer Engine | Streaming, acknowledgements, object verification, checkpoints, recovery | Fault tests covering interruption, truncation, corruption, stale state, cancellation and resource exhaustion; documented durable acceptance semantics. [Local verified-source BAM jobs](docs/project/M3-LOCAL.md) are a first subset; full exit and cross-platform qualification remain open |
+| M3 — Reliable Transfer Engine | Streaming, acknowledgements, object verification, checkpoints, recovery | Fault tests covering interruption, truncation, corruption, stale state, cancellation and resource exhaustion; documented durable acceptance semantics. [Verified-source BAM jobs](docs/project/M3-LOCAL.md) passed CI as a first subset; full exit and wider platform qualification remain open |
 | M4 — Genomic Extensions | Incremental FASTA/FASTQ, SAM/BAM, CRAM, VCF/BCF investigation | Per-format scope and versions; synthetic licensed fixtures; reference/index dependency tests; domain review; explicit opaque-transfer versus semantic-support matrix |
 | M5 — Developer Experience | CLI, Rust/Python integration, packaging, examples, operational guidance | Installation from a real artifact; executable examples; supported toolchain/interpreter and wheel policy; diagnostics that avoid sensitive data; interoperability guide |
 | M6 — Alpha Release | Conformance, reproducible performance evaluation, release preparation | Published methods and limitations; security review findings tracked; interoperability evidence; changelog, versioning and support policy; explicit release approval |

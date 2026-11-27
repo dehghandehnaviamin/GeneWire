@@ -25,8 +25,8 @@
 
 > **Current status:** experimental Rust core and synchronous Python binding, built
 > and tested locally and in Linux/macOS CI. The narrow M2 reference path has
-> passed its engineering gates. An optional verified-source BAM recovery wrapper
-> is now exercised locally; its M3 remote qualification remains open.
+> passed its engineering gates. An optional verified-source BAM recovery subset
+> also passed Linux/macOS CI; the full M3 milestone remains open.
 > There is no released package, full
 > conformance result or measured performance comparison. The tagline states the
 > project's goal, not an achieved guarantee.
@@ -119,7 +119,7 @@ ledger defines what has actually been exercised.
 - **Local prototype:** supervised full BAM decode/overlap filtering and staged
   output; five synthetic queries matched an independent local htsget server and
   HTSlib clients. See the [evaluation ledger](docs/project/M2-LOCAL.md).
-- **Local M3 increment:** SHA-256-pinned complete BAM spools and locked job
+- **M3 job subset:** SHA-256-pinned complete BAM spools and locked job
   receipts recover processing/publication after a process crash. Partial input
   starts a fresh query; see [scope and evidence](docs/project/M3-LOCAL.md).
 - **Later / under research:** byte-offset resume, object manifests, multi-object
@@ -181,13 +181,13 @@ reproducible methods before making performance claims.
 | M0 · Research and Feasibility | Published; owner authorized the reuse-first direction for M1 |
 | M1 · Protocol Specification | Design direction adopted locally; 30 candidate scenarios with partial executable evidence |
 | M2 · Core Protocol | Narrow BAM reference path passed real-server/HTSlib, failure/resource and Linux/macOS CI checks |
-| M3 · Reliable Transfer Engine | Local verified-BAM-job recovery subset; broader durability and remote qualification open |
+| M3 · Reliable Transfer Engine | First verified-BAM-job subset passed Linux/macOS CI; full milestone and broader durability open |
 | M4 · Genomic Extensions | Reviewed format, reference and index handling |
 | M5 · Developer Experience | Working CLI, package, examples and contributor tooling |
 | M6 · Alpha Release | Reproducible validation, release notes and documented limitations |
 
 M1 remains provisional beyond the implemented subset; M2's narrow engineering
-gate is complete; M3 has a local increment and M4–M6 are planned. There are no delivery-date commitments. See the
+gate is complete; the first M3 subset passed CI and M4–M6 are planned. There are no delivery-date commitments. See the
 [full roadmap](ROADMAP.md), [status](docs/project/STATUS.md), and
 [task register](docs/project/TASKS.md).
 

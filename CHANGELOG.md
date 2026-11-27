@@ -9,7 +9,8 @@ Notable project changes will be recorded here. GeneWire has no software release 
 - Local M3 SHA-256-pinned complete-source BAM jobs with private locked receipts,
   recoverable no-overwrite publication, actual process-crash and storage-failure
   checks; 19 recovery tests, Q1–Q5 reuse and source-bound evaluation harness.
-  Full M3, remote qualification and power-loss durability remain open.
+  The first subset passed Linux/macOS CI with 47 Rust and 53 Python/native tests
+  per runner; full M3 and power-loss durability remain open.
 
 - Published M2 narrow-reference engineering exit with successful Linux/macOS CI,
   47 Rust and 34 Python/native tests per runner, source-checked synthetic server/
@@ -44,6 +45,9 @@ The bootstrap itself contained no protocol or application implementation; the
 later local M2 increment introduces the partial client described above.
 
 ### Changed
+
+- Widened the shared ticket-deadline test fixture's scheduling margins after an
+  observed macOS CI failure; production timeout policy remains unchanged.
 
 - Upgraded all four CI actions to official Node.js 24 releases pinned by commit;
   kept the Rust/Python/uv evaluation versions and Linux/macOS arm64 matrix.

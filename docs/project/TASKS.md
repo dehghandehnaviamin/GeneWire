@@ -110,7 +110,7 @@ server/baseline comparisons and resource assertions. Full conformance, allocator
 TLS/HTTP/JSON accounting, hard-crash recovery and wider qualification remain
 explicitly outside this exit claim and part of later qualification work.
 
-## M3 — Verified BAM job recovery (local increment; full exit open)
+## M3 — Verified BAM job recovery (first subset passed CI; full exit open)
 
 - [x] Define complete-source reuse, query binding, receipt transitions and limits
   in [RFC 0002](../rfcs/0002-recoverable-bam-jobs.md) under the owner's M3 instruction.
@@ -122,7 +122,8 @@ explicitly outside this exit claim and part of later qualification work.
   changed/truncated files, lock contention, limits and storage/sync errors.
 - [x] Recover Q1–Q5 from verified source without new network requests; preserve
   existing M2 independent-server and resource checks locally.
-- [ ] Obtain authorization for M3 remote publication and observe Linux/macOS CI.
+- [x] Obtain authorization for M3 remote publication and observe successful
+  Linux/macOS CI for 87732e7; source-check and archive each runner's reports.
 - [ ] Qualify broader durable acceptance/storage behavior before full M3 exit;
   byte-offset resume, multi-object recovery and generic analysis effects remain outside this increment.
 

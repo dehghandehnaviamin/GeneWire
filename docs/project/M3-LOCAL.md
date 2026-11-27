@@ -1,11 +1,12 @@
-# M3 local verified BAM jobs
+# M3 verified BAM job evidence
 
-Snapshot: 2026-11-27. **First local increment; full M3 exit remains open.**
+Snapshot: 2026-11-27. **First subset passed Linux/macOS CI; full M3 exit remains open.**
 The owner instructed starting recovery work after M2. See D020 and
 [RFC 0002](../rfcs/0002-recoverable-bam-jobs.md) for the adopted subset.
-The initial evidence below is local. D021 now authorizes publication and an
-observed Linux/macOS CI run; results will be appended after execution. No software
-release or deployment is claimed.
+The initial evidence below is local. Under D021, a32062f and the CI wiring/fix
+were published on main. Revision 87732e7 passed
+[Linux/macOS CI](CI-VALIDATION.md#m3-verified-source-bam-jobs). No software release
+or deployment is claimed.
 
 ## Behavior and storage boundary
 
@@ -70,7 +71,28 @@ qualified digest-discovery interface for arbitrary htsget servers.
 
 Run [the documented local commands](../development.md#optional-recoverable-bam-jobs)
 to reproduce the source-bound evidence. Historical CI evidence remains tied to
-its original tested revision; the current local changes need their own remote run.
+its original tested revision. Initial local reports are now explicitly anchored
+to a32062f; their hashes describe that version of the tests, before the CI fixture
+fix. The later reports below bind the fresh CI revision independently.
+
+## Observed CI qualification
+
+[Run 46035043779](https://github.com/dehghandehnaviamin/GeneWire/actions/runs/46035043779)
+completed successfully for 87732e7 on Ubuntu x86_64 and macOS arm64 with
+CPython 3.14.10. Each passed 47 Rust and 53 Python/native tests without skips,
+then repeated the 19 recovery cases to produce a structured report. The harness
+is a subset rerun, not 19 additional distinct tests. Both passed the eight
+SIGKILL boundaries, recovered Q1–Q5 without new requests after Verified,
+independent-server comparison and 64 MiB resource checks. Downloaded artifacts
+matched the tested source hashes; [per-runner reports and metadata](CI-VALIDATION.md#m3-verified-source-bam-jobs)
+are permanently archived. Neither job has warning annotations; the macOS capacity
+notice remains.
+
+The first M3 run failed on macOS before recovery checks due to the short existing
+ticket-deadline test; D021 records the wider scheduling margins and stronger
+successful-retry negative control. The fresh successful run includes that fix.
+Only documentation/evidence changes follow this tested revision in the final
+publication; no new workflow success is invented for that docs-only commit.
 
 ## Remaining gates
 

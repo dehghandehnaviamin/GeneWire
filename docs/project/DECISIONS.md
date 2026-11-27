@@ -411,3 +411,15 @@ Decisions record rationale and limits, not implementation claims.
   while their six-second total must fail the correct shared deadline. This widens
   initial scheduling headroom and strengthens the negative control without
   changing production timeouts or removing the retry-count assertions.
+- **Observed final result:** 87732e7c41dde4cdda181d7807a1b80f869ba576 passed
+  run 46035043779 on Ubuntu x86_64 and macOS arm64. Each passed 47 Rust and
+  53 Python/native tests without skips, then repeated the 19-case recovery subset
+  for evidence. The eight SIGKILL boundaries, recovered Q1–Q5 and existing
+  independent-server/resource gates passed. Source-checked reports, annotations
+  and initial failure chronology are [archived](evidence/ci-46035043779/summary.json).
+  No warning annotations remain; only the hosted macOS capacity notice persists.
+- **Qualification/publication:** The first RFC 0002 job subset has observed
+  cross-platform evidence; full M3 remains open. Publish the final documentation
+  and evidence with a docs-only CI skip after verifying implementation/build/
+  workflow inputs are unchanged from 87732e7. Attribute success to that actual
+  run, not an unrun documentation revision. No release/deployment is included.

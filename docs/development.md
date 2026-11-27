@@ -10,6 +10,8 @@ The initial checks used macOS 27.0 on arm64, Rust/Cargo 1.93.0, CPython 3.14.6,
 uv 0.13.10 and maturin 1.16.0. [Actual CI](project/CI-VALIDATION.md) also passed on
 Ubuntu 26.04.1 x86_64 and macOS 26.7.2 arm64 with CPython 3.14.10. This records
 those runners; the abi3 wheel tag/Python metadata do not establish broader support.
+The first M3 job subset also passed these CI targets with 53 Python/native tests
+and its repeated 19-case recovery harness; see the separate M3 evidence scope.
 Rust and uv must already be installed. From the repository root:
 
 ```bash
@@ -209,7 +211,8 @@ a benchmark or advantage claim. Native allocation/copy accounting remains open.
 [checks.yml](../.github/workflows/checks.yml) pins action commits, Rust/uv versions,
 the Python minor line and the independent server source. Its Linux/macOS jobs run
 native, Python, server and resource checks without publishing packages. The
-[recorded run](project/CI-VALIDATION.md) passed and its synthetic JSON artifacts
+M3 workflow also runs the recovery fault harness and retains its JSON report.
+The [recorded run](project/CI-VALIDATION.md) passed and its synthetic JSON artifacts
 were downloaded, source-checked and archived. This qualifies the tested revision
 and observed runners, not future changes or all Python/OS versions.
 
@@ -224,4 +227,4 @@ and observed runners, not future changes or all Python/OS versions.
 
 Generated native libraries, virtual environments, build output, certificates and
 genomic files must stay untracked. Evaluation JSON contains synthetic outputs and
-method/source hashes only. No published artifact exists.
+method/source hashes only. No released package artifact exists.

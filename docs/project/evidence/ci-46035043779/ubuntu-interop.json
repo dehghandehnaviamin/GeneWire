@@ -1,0 +1,332 @@
+{
+  "server": "htsget-axum 0.23.0",
+  "server_binary_sha256": "8e1feccf54296fa6e99592df5a6cf4a26386038e779db4cdf057a7ebe346a5c2",
+  "server_build_source_revision": "2a91e661e6a287e3adf30e65c26a8f47697f3548",
+  "implementation_file_sha256": {
+    "Cargo.lock": "9234d1600e45afcb4ddd1c28f722ca1eddc9e9425212c2c1ce4f2b02e0e18554",
+    "Cargo.toml": "026670dc1d647e0a7f0c7873144db075ba107fe8849ad010a045cc7f7d1390aa",
+    "crates/genewire-core/Cargo.toml": "f5599b71db59b5838a4cc91b8b3051f7e7b112adaab4a73868d057dbbaa8f308",
+    "crates/genewire-core/src/error.rs": "97663d71a93caee3884469bce0c92566e7ff4b6cb5c12342b25b2c539d6eeb3a",
+    "crates/genewire-core/src/lib.rs": "3e3db4badd586ebad801da94d62fbbcd848107c14f9c7dc47d97d67ae5a1836c",
+    "crates/genewire-core/src/model.rs": "11410892db931f6dfb58f3e9ab6459819b73d108a3f779e8ac5fc0d93572880b",
+    "crates/genewire-core/src/network.rs": "bafeb1ab2635a0a18483dcb58af2379f606077b4a0df58cb2f41e046cc470d85",
+    "crates/genewire-core/src/stream.rs": "065632185a8357b99144b74ff3597d005e829dfd964f6e240a3313265148b157",
+    "crates/genewire-core/src/ticket.rs": "bab65f2b5fd1035ca95f5115c7f2fa0cb5e412f46da56a3af77efb57ef72690f",
+    "crates/genewire-core/tests/streaming.rs": "dcae04c77d5053fe907007e7bf23ee9421d7d9c143a173795891b04f1bc8503a",
+    "crates/genewire-python/Cargo.toml": "ff4d51ec9cbb2ed3d7f66e53c0b43a96b559dc914dedce8783f768f41d410683",
+    "crates/genewire-python/src/lib.rs": "51575b3a61f0b207b0a90a2a6a9c45642952a06ebbfb11fb9fe70d9ae0b8805a",
+    "pyproject.toml": "bcc8d22cb29e9ed6cd1cc899371375550333e1661f7936559634b159486f6e8a",
+    "python/genewire/__init__.py": "66d9ddfc3c4cfa3d4389a6da8b0b3cdbe3ef4c2643d6700f5e5f95ea91c07c70",
+    "python/genewire/_bam_consumer.py": "5f5f39912652996a6f132d36ed11ae012d755973c2cd5a91e91f1bf30362b1a8",
+    "python/genewire/analysis.py": "dc63bc03f3aa6bfc0399bbf614ddb1946509c7574db10e2d61893bbe06094647",
+    "python/genewire/recovery.py": "287768e985ff559b5c189c5c30148afc5fe9a0db9f82a5fcd2326bf624674931",
+    "tests/test_analysis.py": "0c20632788c69184b5683632b28d8eee229529e5c9a2c7e398e34f9201320a48",
+    "tests/test_python_stream.py": "ccf8ac9201df3fbed1114de39f7bebed0cd49d215a93b8020415a652928699af",
+    "tests/test_recovery.py": "ef523bd90d236b29648bfedd0709861682f0e06fc8e0019d99b2ca40dbd3f9f7",
+    "tools/_evidence.py": "303159ca657f3e5f81ef87e647a33b87c0044fed30e2e34541dca5d945e2facb",
+    "tools/check_interop.py": "261e081732ee5ac8733a15d6715e167bbdd3d37c1271d4ad61fb5ff3659145e5",
+    "tools/check_recovery.py": "ed7e1d0ee90c94ee5c70d5d24f912d5e0197038c601f2fceae1bb7a598ae21ef",
+    "tools/check_resources.py": "820923ee0fdbca3620210a0246184e102c127586167adc3e216f49f9ad22ab28",
+    "uv.lock": "074b916b880b80af240d199837139fe8d8737d229df903eabf083cc75d0417e5"
+  },
+  "python": "3.14.10",
+  "platform": "Linux-7.0.0-1020-azure-x86_64-with-glibc2.43",
+  "pysam": "0.24.1",
+  "htslib_samtools": "1.24",
+  "server_features": "no-default-features; local file storage",
+  "fixture": "original synthetic A/B/C/D; generated BAM/BAI; no upstream bundled data",
+  "transport": "two explicit loopback HTTP origins; test mode only",
+  "service_info": {
+    "name": "htsget-axum",
+    "organization": {
+      "name": "",
+      "url": ""
+    },
+    "description": "A webserver instance of htsget-rs using Axum, which serves data according to the htsget protocol.",
+    "id": "htsget-axum/0.10.0",
+    "version": "0.10.0",
+    "documentationUrl": "https://github.com/umccr/htsget-rs",
+    "createdAt": "2026-11-27T16:40:09.199758897+00:00",
+    "updatedAt": "2026-11-27T16:40:09.199769063+00:00",
+    "type": {
+      "group": "org.ga4gh",
+      "artifact": "htsget",
+      "version": "1.3.0"
+    },
+    "htsget": {
+      "datatype": "reads",
+      "formats": [
+        "BAM",
+        "CRAM"
+      ],
+      "fieldsParametersEffective": false,
+      "tagsParametersEffective": false
+    }
+  },
+  "results": [
+    {
+      "case": "Q1",
+      "interval": [
+        0,
+        1
+      ],
+      "expected": [
+        "A"
+      ],
+      "observed": [
+        "A"
+      ],
+      "indexed_baseline": [
+        "A"
+      ],
+      "htslib_htsget_baseline": [
+        "A"
+      ],
+      "report": {
+        "state": "AnalysisComplete",
+        "error": null,
+        "transport": {
+          "state": "TransportComplete",
+          "bytes_delivered": 215,
+          "retries": 0,
+          "cleanup_complete": true,
+          "error": null,
+          "phase": "Draining",
+          "may_have_partial_output": false,
+          "cleanup": "Complete",
+          "cleanup_error": null,
+          "upstream_profile": "HtsgetBamRegional",
+          "capability_evidence": "Configured",
+          "memory": {
+            "current_payload_bytes": 0,
+            "peak_payload_bytes": 430,
+            "largest_http_fragment_bytes": 215,
+            "rust_output_copy_bytes": 215,
+            "python_output_copy_bytes": 215
+          },
+          "output_kind": "UpstreamRegionalResponse",
+          "source_consistency": "Unverified",
+          "integrity": "TransportOnly"
+        },
+        "exit_code": 0,
+        "output_bytes": 179,
+        "output_committed": true,
+        "cleanup_complete": true,
+        "policy": "MappedReadOverlapBam"
+      }
+    },
+    {
+      "case": "Q2",
+      "interval": [
+        99,
+        100
+      ],
+      "expected": [
+        "B",
+        "D"
+      ],
+      "observed": [
+        "B",
+        "D"
+      ],
+      "indexed_baseline": [
+        "B",
+        "D"
+      ],
+      "htslib_htsget_baseline": [
+        "B",
+        "D"
+      ],
+      "report": {
+        "state": "AnalysisComplete",
+        "error": null,
+        "transport": {
+          "state": "TransportComplete",
+          "bytes_delivered": 215,
+          "retries": 0,
+          "cleanup_complete": true,
+          "error": null,
+          "phase": "Draining",
+          "may_have_partial_output": false,
+          "cleanup": "Complete",
+          "cleanup_error": null,
+          "upstream_profile": "HtsgetBamRegional",
+          "capability_evidence": "Configured",
+          "memory": {
+            "current_payload_bytes": 0,
+            "peak_payload_bytes": 430,
+            "largest_http_fragment_bytes": 215,
+            "rust_output_copy_bytes": 215,
+            "python_output_copy_bytes": 215
+          },
+          "output_kind": "UpstreamRegionalResponse",
+          "source_consistency": "Unverified",
+          "integrity": "TransportOnly"
+        },
+        "exit_code": 0,
+        "output_bytes": 201,
+        "output_committed": true,
+        "cleanup_complete": true,
+        "policy": "MappedReadOverlapBam"
+      }
+    },
+    {
+      "case": "Q3",
+      "interval": [
+        100,
+        101
+      ],
+      "expected": [
+        "C",
+        "D"
+      ],
+      "observed": [
+        "C",
+        "D"
+      ],
+      "indexed_baseline": [
+        "C",
+        "D"
+      ],
+      "htslib_htsget_baseline": [
+        "C",
+        "D"
+      ],
+      "report": {
+        "state": "AnalysisComplete",
+        "error": null,
+        "transport": {
+          "state": "TransportComplete",
+          "bytes_delivered": 215,
+          "retries": 0,
+          "cleanup_complete": true,
+          "error": null,
+          "phase": "Draining",
+          "may_have_partial_output": false,
+          "cleanup": "Complete",
+          "cleanup_error": null,
+          "upstream_profile": "HtsgetBamRegional",
+          "capability_evidence": "Configured",
+          "memory": {
+            "current_payload_bytes": 0,
+            "peak_payload_bytes": 430,
+            "largest_http_fragment_bytes": 215,
+            "rust_output_copy_bytes": 215,
+            "python_output_copy_bytes": 215
+          },
+          "output_kind": "UpstreamRegionalResponse",
+          "source_consistency": "Unverified",
+          "integrity": "TransportOnly"
+        },
+        "exit_code": 0,
+        "output_bytes": 201,
+        "output_committed": true,
+        "cleanup_complete": true,
+        "policy": "MappedReadOverlapBam"
+      }
+    },
+    {
+      "case": "Q4",
+      "interval": [
+        499,
+        500
+      ],
+      "expected": [],
+      "observed": [],
+      "indexed_baseline": [],
+      "htslib_htsget_baseline": [],
+      "report": {
+        "state": "AnalysisComplete",
+        "error": null,
+        "transport": {
+          "state": "TransportComplete",
+          "bytes_delivered": 215,
+          "retries": 0,
+          "cleanup_complete": true,
+          "error": null,
+          "phase": "Draining",
+          "may_have_partial_output": false,
+          "cleanup": "Complete",
+          "cleanup_error": null,
+          "upstream_profile": "HtsgetBamRegional",
+          "capability_evidence": "Configured",
+          "memory": {
+            "current_payload_bytes": 0,
+            "peak_payload_bytes": 430,
+            "largest_http_fragment_bytes": 215,
+            "rust_output_copy_bytes": 215,
+            "python_output_copy_bytes": 215
+          },
+          "output_kind": "UpstreamRegionalResponse",
+          "source_consistency": "Unverified",
+          "integrity": "TransportOnly"
+        },
+        "exit_code": 0,
+        "output_bytes": 128,
+        "output_committed": true,
+        "cleanup_complete": true,
+        "policy": "MappedReadOverlapBam"
+      }
+    },
+    {
+      "case": "Q5",
+      "interval": [
+        99,
+        101
+      ],
+      "expected": [
+        "B",
+        "C",
+        "D"
+      ],
+      "observed": [
+        "B",
+        "C",
+        "D"
+      ],
+      "indexed_baseline": [
+        "B",
+        "C",
+        "D"
+      ],
+      "htslib_htsget_baseline": [
+        "B",
+        "C",
+        "D"
+      ],
+      "report": {
+        "state": "AnalysisComplete",
+        "error": null,
+        "transport": {
+          "state": "TransportComplete",
+          "bytes_delivered": 215,
+          "retries": 0,
+          "cleanup_complete": true,
+          "error": null,
+          "phase": "Draining",
+          "may_have_partial_output": false,
+          "cleanup": "Complete",
+          "cleanup_error": null,
+          "upstream_profile": "HtsgetBamRegional",
+          "capability_evidence": "Configured",
+          "memory": {
+            "current_payload_bytes": 0,
+            "peak_payload_bytes": 430,
+            "largest_http_fragment_bytes": 215,
+            "rust_output_copy_bytes": 215,
+            "python_output_copy_bytes": 215
+          },
+          "output_kind": "UpstreamRegionalResponse",
+          "source_consistency": "Unverified",
+          "integrity": "TransportOnly"
+        },
+        "exit_code": 0,
+        "output_bytes": 208,
+        "output_committed": true,
+        "cleanup_complete": true,
+        "policy": "MappedReadOverlapBam"
+      }
+    }
+  ],
+  "source_commit": "87732e7c41dde4cdda181d7807a1b80f869ba576"
+}
