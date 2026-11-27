@@ -29,6 +29,9 @@ htmlcov/
 build/
 dist/
 *.egg-info/
+*.so
+*.dylib
+*.pyd
 
 # Future Rust build output
 /target/

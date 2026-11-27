@@ -1,0 +1,109 @@
+"""Experimental encoded BAM streams. Successful transfer is not scientific proof."""
+from __future__ import annotations
+
+from dataclasses import dataclass
+from typing import Iterator, Mapping, Sequence
+
+from ._native import GeneWireError, NativeClient, NativeStream
+
+__all__ = ["Client", "Destination", "GeneWireError", "Report", "Stream"]
+MAX_CHUNK = 256 * 1024
+
+
+@dataclass(frozen=True)
+class Destination:
+    """Explicit IP allowlist for one origin; no implicit credential forwarding."""
+    addresses: Sequence[str]
+    allow_ticket_authorization: bool = False
+
+
+@dataclass(frozen=True)
+class Report:
+    state: str
+    bytes_delivered: int
+    retries: int
+    cleanup_complete: bool
+    error: str | None
+    output_kind: str = "UpstreamRegionalResponse"
+    source_consistency: str = "Unverified"
+    integrity: str = "TransportOnly"
+
+
+class Client:
+    def __init__(
+        self,
+        service: str,
+        destinations: Mapping[str, Destination],
+        *,
+        control_token: str | None = None,
+        loopback_http_for_tests: bool = False,
+        timeout_ms: int = 600_000,
+        result_bytes: int = 1024**3,
+    ) -> None:
+        for value in (timeout_ms, result_bytes):
+            if type(value) is not int or not 0 < value <= 2**63 - 1:
+                raise GeneWireError("InvalidQuery")
+        self._native = NativeClient(
+            service,
+            [(origin, list(d.addresses), d.allow_ticket_authorization) for origin, d in destinations.items()],
+            control_token,
+            loopback_http_for_tests,
+            timeout_ms,
+            result_bytes,
+        )
+
+    def open(self, object_id: str, reference: str, start: int, end: int) -> Stream:
+        if any(type(n) is not int or not 0 <= n <= 2**32 - 1 for n in (start, end)):
+            raise GeneWireError("InvalidQuery")
+        return Stream(self._native.open(object_id, reference, start, end))
+
+    def close(self) -> None:
+        self._native.close()
+
+    def __enter__(self) -> Client:
+        return self
+
+    def __exit__(self, exc_type, exc, tb) -> None:
+        _exit(self, exc)
+
+
+class Stream:
+    def __init__(self, native: NativeStream) -> None:
+        self._native = native
+
+    def read_chunk(self, max_bytes: int = MAX_CHUNK) -> bytes:
+        if type(max_bytes) is not int or not 0 < max_bytes <= MAX_CHUNK:
+            raise GeneWireError("InvalidQuery")
+        return self._native.read_chunk(max_bytes)
+
+    def iter_chunks(self, max_bytes: int = MAX_CHUNK) -> Iterator[bytes]:
+        while chunk := self.read_chunk(max_bytes):
+            yield chunk
+
+    def result(self) -> Report:
+        return Report(*self._native.result())
+
+    def finish(self) -> Report:
+        return Report(*self._native.finish())
+
+    def cancel(self) -> None:
+        self._native.cancel()
+
+    def close(self) -> None:
+        self._native.close()
+
+    def __enter__(self) -> Stream:
+        return self
+
+    def __exit__(self, exc_type, exc, tb) -> None:
+        _exit(self, exc)
+
+
+def _exit(resource: Client | Stream, original: BaseException | None) -> None:
+    try:
+        resource.close()
+    except GeneWireError as cleanup_error:
+        if original is None:
+            raise
+        if hasattr(original, "add_note"):
+            original.add_note(f"GeneWire cleanup failed: {cleanup_error}")
