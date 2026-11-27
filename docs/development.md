@@ -194,11 +194,18 @@ For `recover_bam`, inspect `state`, `error`, `phase`, `source_reused`, `source_b
 sync calls and original output publication were confirmed. A post-link failure
 can report `output_committed=True`, `sync_confirmed=False`; retry the same job.
 False does not assert no conflicting path exists. A recovered invocation has
-`transport=None`; it does not invent a network attempt. Local invalid scalar
+`transport=None` when it uses retained input/result; an incomplete-input restart
+reports its actual new network attempt. Local invalid scalar
 options raise GeneWireError before touching disk; runtime failures return
 categories including CheckpointInvalid, CheckpointMismatch, IntegrityFailed,
 DestinationExists, RecoveryBusy, StorageFailure and the existing stream/consumer
 categories. KeyboardInterrupt propagates; the next invocation can recover.
+
+Committed recovery needs only the accepted result hash and original destination
+inode; missing/corrupt redundant source content is no longer required. Unsafe
+source file types/permissions/links still fail closed. `source_reused=False` for
+Committed/Releasing/Released; Verified/Ready validate the retained source and
+report true. Dot-only object IDs fail locally before workspace creation.
 
 Import `Cancellation` from `genewire` to request a cooperative stop from another
 thread. Both `filter_bam` and `recover_bam` accept `cancellation=token`; call
@@ -232,6 +239,19 @@ cancellation races and injected storage errors. It includes recovery,
 cancellation, workspace management and storage-boundary cases, with structured
 observations for each group. See [M3 evidence and remaining gates](project/M3-LOCAL.md).
 The full unittest discovery command above also includes the recovery tests.
+
+The harness also records B01–B16 span/flag/multiplicity/header/field controls and
+a 6,000-record multiblock replay against explicit truth and indexed samtools.
+The local D025 run passed 88 Python/native tests and the repeated 54-case job
+harness without skips; the preceding CI counts remain historical. Verify draft
+test references separately with this exercised command:
+
+```bash
+.venv/bin/python tools/check_contract.py --report /tmp/genewire-contract-index.json
+```
+
+That command checks the C01–C30 reference index and executes zero behavior tests.
+See the [contract review and replanning boundary](project/CONTRACT-REVIEW.md).
 
 ## Independent server and resource checks
 

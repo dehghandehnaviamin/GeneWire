@@ -52,6 +52,12 @@ Expand each scenario into concrete inputs, response bytes, scheduling points,
 expected observations and negative controls before counting it as executed.
 Test code must challenge implementation behavior, not merely repeat this table.
 
+The subsequent [C01–C30 reference index](vectors/coverage-map.json) identifies
+actual named checks and explicit coverage limits. Its structural checker executes
+zero behavior tests; use the recorded full Rust/Python run for execution evidence.
+The [implemented-contract review](../project/CONTRACT-REVIEW.md) records current
+choices, expanded B01–B16 BAM truth and the remaining milestone-definition boundary.
+
 ## Scientific and baseline setup
 
 Use [M0 W1 and Q1–Q5](../research/evaluation-plan.md#tiny-independent-truth-fixture)

@@ -143,7 +143,8 @@ def _request_token(client, object_id, reference, start, end, expected_sha256,
     if os.name != "posix":
         _fail("Unsupported")
     if (not isinstance(client, Client) or not _digest(expected_sha256)
-            or not _valid_text(object_id) or not _valid_text(reference) or reference == "*"
+            or not _valid_text(object_id) or object_id in (".", "..")
+            or not _valid_text(reference) or reference == "*"
             or any(type(n) is not int or not 0 <= n <= 2**32 - 1 for n in (start, end))
             or start >= end
             or any(type(n) is not int or not 0 < n <= 2**63 - 1
@@ -434,12 +435,16 @@ def recover_bam(
             os.replace(job / "source.partial", job / "source.bam")
             _sync_dir(job)
             state = _advance(job, state, phase="Verified", source_bytes=total)
-        elif state["phase"] not in ("Releasing", "Released"):
+        elif state["phase"] in ("Verified", "Ready"):
             reused = True
-        if state["phase"] not in ("Releasing", "Released"):
+        if state["phase"] in ("Verified", "Ready"):
             size, digest = _hash_file(job / "source.bam", max_source_bytes, cancellation=token)
             if size != state["source_bytes"] or digest != expected_sha256:
                 _fail("IntegrityFailed")
+        elif state["phase"] == "Committed":
+            # The accepted result is authoritative now. Redundant input content
+            # is not needed, but an unsafe artifact must still fail closed.
+            _preflight_removals(job, ("source.bam", "source.partial"))
         if state["phase"] == "Verified":
             _discard(job / "result.bam")
             local = _VerifiedFileStream(job / "source.bam", (reference, start, end))

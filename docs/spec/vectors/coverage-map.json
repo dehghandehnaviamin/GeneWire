@@ -1,0 +1,421 @@
+{
+  "document_id": "GW-CONTRACT-REFERENCES-01",
+  "kind": "test_reference_index_not_a_conformance_result",
+  "runtime_evidence": "References are checked structurally. Only a separately recorded full test run of the same source revision establishes execution. Mapping does not execute tests or prove every candidate variant.",
+  "cases": [
+    {
+      "id": "C01",
+      "coverage": "mapped_subset",
+      "checks": [
+        {
+          "file": "crates/genewire-core/tests/streaming.rs",
+          "symbol": "ordered_inline_and_ranged_fragments_own_their_output"
+        },
+        {
+          "file": "tests/test_python_stream.py",
+          "symbol": "test_explicit_ca_preserves_tls_hostname_verification"
+        }
+      ],
+      "limits": "Ordered mixed fragments and TLS are separate controls; not every TLS fragmentation schedule."
+    },
+    {
+      "id": "C02",
+      "coverage": "mapped_subset",
+      "checks": [
+        {
+          "file": "crates/genewire-core/tests/streaming.rs",
+          "symbol": "malformed_ticket_variants_never_start_data_fetches"
+        },
+        {
+          "file": "crates/genewire-core/tests/streaming.rs",
+          "symbol": "ticket_size_and_depth_are_bounded"
+        }
+      ],
+      "limits": "Concrete malformed/size/depth variants; not parser fuzzing or exhaustive JSON inputs."
+    },
+    {
+      "id": "C03",
+      "coverage": "mapped_subset",
+      "checks": [
+        {
+          "file": "crates/genewire-core/tests/streaming.rs",
+          "symbol": "ticket_attempt_budget_is_independent_of_the_first_block_budget"
+        }
+      ],
+      "limits": "Concrete transient ticket/block attempts, not all possible network errors."
+    },
+    {
+      "id": "C04",
+      "coverage": "mapped_subset",
+      "checks": [
+        {
+          "file": "crates/genewire-core/tests/streaming.rs",
+          "symbol": "retry_after_prior_inline_output_does_not_replay_prefix"
+        }
+      ],
+      "limits": "One controlled exposed-prefix/unexposed-block retry."
+    },
+    {
+      "id": "C05",
+      "coverage": "mapped_subset",
+      "checks": [
+        {
+          "file": "crates/genewire-core/tests/streaming.rs",
+          "symbol": "exposed_chunked_prefix_is_never_retried"
+        }
+      ],
+      "limits": "Controlled disconnect after exposure."
+    },
+    {
+      "id": "C06",
+      "coverage": "mapped_subset",
+      "checks": [
+        {
+          "file": "crates/genewire-core/tests/streaming.rs",
+          "symbol": "a_fresh_query_after_exposed_failure_never_splices_the_old_prefix"
+        }
+      ],
+      "limits": "Independent new query; no global source-snapshot claim."
+    },
+    {
+      "id": "C07",
+      "coverage": "mapped_subset",
+      "checks": [
+        {
+          "file": "crates/genewire-core/tests/streaming.rs",
+          "symbol": "changed_validator_on_an_unexposed_retry_is_rejected"
+        }
+      ],
+      "limits": "Changed validator is rejected; validators do not authenticate genomic identity."
+    },
+    {
+      "id": "C08",
+      "coverage": "mapped_subset",
+      "checks": [
+        {
+          "file": "crates/genewire-core/tests/streaming.rs",
+          "symbol": "whole_response_to_range_is_rejected"
+        }
+      ],
+      "limits": "Explicit closed range only."
+    },
+    {
+      "id": "C09",
+      "coverage": "mapped_subset",
+      "checks": [
+        {
+          "file": "crates/genewire-core/tests/streaming.rs",
+          "symbol": "declared_range_endpoints_and_lengths_must_match"
+        },
+        {
+          "file": "crates/genewire-core/tests/streaming.rs",
+          "symbol": "truncated_known_length_fails_without_success"
+        }
+      ],
+      "limits": "Matching endpoints and known-length truncation variants."
+    },
+    {
+      "id": "C10",
+      "coverage": "mapped_subset",
+      "checks": [
+        {
+          "file": "crates/genewire-core/tests/streaming.rs",
+          "symbol": "http_content_decoding_is_not_confused_with_bam_compression"
+        }
+      ],
+      "limits": "Identity-only HTTP subset; no alternate content coding support."
+    },
+    {
+      "id": "C11",
+      "coverage": "mapped_subset",
+      "checks": [
+        {
+          "file": "crates/genewire-core/tests/streaming.rs",
+          "symbol": "finite_result_limit_is_failure_not_truncated_success"
+        }
+      ],
+      "limits": "Logical encoded-result budget, not filesystem or process RSS cap."
+    },
+    {
+      "id": "C12",
+      "coverage": "mapped_subset",
+      "checks": [
+        {
+          "file": "crates/genewire-core/tests/streaming.rs",
+          "symbol": "mixed_large_blocks_reserve_inline_and_pending_payload_without_replay"
+        },
+        {
+          "file": "crates/genewire-core/tests/streaming.rs",
+          "symbol": "caller_backpressure_does_not_consume_the_idle_read_budget"
+        },
+        {
+          "file": "tests/test_python_stream.py",
+          "symbol": "test_partial_close_and_original_exception_are_preserved"
+        }
+      ],
+      "limits": "Lazy pull reader; payload extents and early close, not allocator/TLS/HTTP memory certification."
+    },
+    {
+      "id": "C13",
+      "coverage": "mapped_subset",
+      "checks": [
+        {
+          "file": "crates/genewire-core/tests/streaming.rs",
+          "symbol": "control_credentials_do_not_cross_into_a_separate_allowed_data_origin"
+        }
+      ],
+      "limits": "Explicit operator pins and synthetic credentials."
+    },
+    {
+      "id": "C14",
+      "coverage": "mapped_subset",
+      "checks": [
+        {
+          "file": "crates/genewire-core/tests/streaming.rs",
+          "symbol": "unapproved_redirect_never_receives_the_control_token"
+        },
+        {
+          "file": "crates/genewire-core/tests/streaming.rs",
+          "symbol": "ticket_retries_recheck_redirect_policy_before_data_access"
+        }
+      ],
+      "limits": "Cross-origin redirects rejected even for separately allowed origins; no credential remapping."
+    },
+    {
+      "id": "C15",
+      "coverage": "mapped_subset",
+      "checks": [
+        {
+          "file": "crates/genewire-core/tests/streaming.rs",
+          "symbol": "a_hostname_uses_only_its_explicit_ip_pins_without_ambient_dns"
+        },
+        {
+          "file": "crates/genewire-core/tests/streaming.rs",
+          "symbol": "destination_ip_must_match_the_operator_policy"
+        },
+        {
+          "file": "tests/test_python_stream.py",
+          "symbol": "test_explicit_ipv6_loopback_pin_fetches_ticket_and_data"
+        }
+      ],
+      "limits": "Immutable explicit pins replace ambient DNS; no dynamic resolver/rebinding implementation is claimed."
+    },
+    {
+      "id": "C16",
+      "coverage": "mapped_subset",
+      "checks": [
+        {
+          "file": "tests/test_python_stream.py",
+          "symbol": "test_sensitive_remote_ticket_text_is_absent_from_errors"
+        },
+        {
+          "file": "tests/test_python_stream.py",
+          "symbol": "test_failure_report_marks_exposed_output_and_preserves_terminal_phase"
+        }
+      ],
+      "limits": "Synthetic redaction controls, not comprehensive side-channel or privacy audit."
+    },
+    {
+      "id": "C17",
+      "coverage": "mapped_subset",
+      "checks": [
+        {
+          "file": "tests/test_python_stream.py",
+          "symbol": "test_successful_transport_can_still_fail_a_mature_decoder"
+        },
+        {
+          "file": "tests/test_analysis.py",
+          "symbol": "test_decoder_failure_does_not_promote_invalid_bam"
+        }
+      ],
+      "limits": "Transport and analysis gates remain separate."
+    },
+    {
+      "id": "C18",
+      "coverage": "mapped_subset",
+      "checks": [
+        {
+          "file": "tests/test_python_stream.py",
+          "symbol": "test_a_decodable_omission_is_not_detected_by_transport"
+        },
+        {
+          "file": "tests/test_bam_semantics.py",
+          "symbol": "test_a_missing_duplicate_is_detected_by_the_oracle_not_transport"
+        }
+      ],
+      "limits": "Controlled oracle catches omission; production source completeness is not inferred."
+    },
+    {
+      "id": "C19",
+      "coverage": "mapped_subset",
+      "checks": [
+        {
+          "file": "crates/genewire-core/tests/streaming.rs",
+          "symbol": "deadline_expires_even_when_caller_does_not_read"
+        }
+      ],
+      "limits": "Overall deadline bounds a paused query; no hard kernel-I/O termination guarantee."
+    },
+    {
+      "id": "C20",
+      "coverage": "mapped_subset",
+      "checks": [
+        {
+          "file": "crates/genewire-core/src/stream.rs",
+          "symbol": "a_committed_handoff_can_finish_after_cancellation_is_observed"
+        },
+        {
+          "file": "crates/genewire-core/src/stream.rs",
+          "symbol": "cancellation_before_handoff_prevents_new_exposure"
+        }
+      ],
+      "limits": "Test-only core scheduling hooks; not exhaustive interleaving/model checking."
+    },
+    {
+      "id": "C21",
+      "coverage": "mapped_subset",
+      "checks": [
+        {
+          "file": "tests/test_python_stream.py",
+          "symbol": "test_native_wait_releases_python_and_concurrent_read_is_rejected"
+        },
+        {
+          "file": "crates/genewire-core/tests/streaming.rs",
+          "symbol": "premature_finish_and_invalid_reads_do_not_erase_outcomes"
+        }
+      ],
+      "limits": "Concrete concurrent read and premature-finish controls."
+    },
+    {
+      "id": "C22",
+      "coverage": "mapped_subset",
+      "checks": [
+        {
+          "file": "crates/genewire-core/src/stream.rs",
+          "symbol": "cleanup_timeout_keeps_the_slot_and_can_be_retried"
+        },
+        {
+          "file": "crates/genewire-core/src/stream.rs",
+          "symbol": "competing_close_obeys_its_own_cleanup_budget"
+        }
+      ],
+      "limits": "Core scheduling controls; a timeout is not successful cleanup."
+    },
+    {
+      "id": "C23",
+      "coverage": "mapped_subset",
+      "checks": [
+        {
+          "file": "tests/test_python_stream.py",
+          "symbol": "test_owned_bytes_result_and_context_cleanup"
+        },
+        {
+          "file": "crates/genewire-core/tests/streaming.rs",
+          "symbol": "ordered_inline_and_ranged_fragments_own_their_output"
+        }
+      ],
+      "limits": "Drained success survives explicit late native cancellation; no exhaustive scheduling guarantee."
+    },
+    {
+      "id": "C24",
+      "coverage": "mapped_subset",
+      "checks": [
+        {
+          "file": "tests/test_python_stream.py",
+          "symbol": "test_owned_bytes_result_and_context_cleanup"
+        },
+        {
+          "file": "tests/test_python_stream.py",
+          "symbol": "test_stream_retains_runtime_after_client_is_collected"
+        }
+      ],
+      "limits": "Owned bytes and retained runtime; free-threaded/subinterpreter/fork-inherited clients excluded."
+    },
+    {
+      "id": "C25",
+      "coverage": "mapped_subset",
+      "checks": [
+        {
+          "file": "crates/genewire-core/src/stream.rs",
+          "symbol": "reader_panic_becomes_sanitized_failure_and_remains_closable"
+        },
+        {
+          "file": "crates/genewire-core/src/stream.rs",
+          "symbol": "watchdog_join_failure_is_separate_from_the_transport_outcome"
+        }
+      ],
+      "limits": "Core test-only panic injection; not arbitrary FFI fault injection."
+    },
+    {
+      "id": "C26",
+      "coverage": "mapped_subset",
+      "checks": [
+        {
+          "file": "tests/test_analysis.py",
+          "symbol": "test_early_exit_nonzero_and_broken_input_do_not_promote_output"
+        },
+        {
+          "file": "tests/test_analysis.py",
+          "symbol": "test_child_success_cannot_hide_late_transport_failure"
+        }
+      ],
+      "limits": "Supervised process gates; arbitrary descendants after supervisor SIGKILL excluded."
+    },
+    {
+      "id": "C27",
+      "coverage": "mapped_subset",
+      "checks": [
+        {
+          "file": "tests/test_python_stream.py",
+          "symbol": "test_boolean_float_overflow_and_empty_coordinates_fail_before_network"
+        },
+        {
+          "file": "tests/test_bam_semantics.py",
+          "symbol": "test_explicit_span_flag_multiplicity_and_field_truth_against_indexed_samtools"
+        }
+      ],
+      "limits": "One-region zero-based BAM; no implicit aliases or conversion."
+    },
+    {
+      "id": "C28",
+      "coverage": "mapped_subset",
+      "checks": [
+        {
+          "file": "tests/test_python_stream.py",
+          "symbol": "test_unsupported_profile_is_rejected_before_network"
+        }
+      ],
+      "limits": "Only the configured-profile rejection is executable here; unsupported multi-region/projection APIs do not exist."
+    },
+    {
+      "id": "C29",
+      "coverage": "mapped_subset",
+      "checks": [
+        {
+          "file": "crates/genewire-core/tests/streaming.rs",
+          "symbol": "query_encoding_preserves_authority_and_half_open_coordinates"
+        },
+        {
+          "file": "tests/test_jobs.py",
+          "symbol": "test_dot_object_ids_fail_before_workspace_or_network"
+        }
+      ],
+      "limits": "Selected slash/dot/percent/Unicode examples, not exhaustive Unicode/URL fuzzing."
+    },
+    {
+      "id": "C30",
+      "coverage": "mapped_subset",
+      "checks": [
+        {
+          "file": "crates/genewire-core/tests/streaming.rs",
+          "symbol": "authentication_denial_is_sanitized_and_not_retried"
+        },
+        {
+          "file": "crates/genewire-core/tests/streaming.rs",
+          "symbol": "ticket_validation_authorization_and_framing_failures_are_not_retried"
+        }
+      ],
+      "limits": "Synthetic 401/403; no credential renewal or production authorization integration."
+    }
+  ]
+}

@@ -23,6 +23,7 @@ class EvidenceResult(unittest.TextTestResult):
             "cancellation": getattr(test, "cancellation_observations", []),
             "workspace": getattr(test, "workspace_observations", []),
             "storage": getattr(test, "storage_observations", []),
+            "semantics": getattr(test, "semantic_observations", []),
         })
 
 
@@ -34,7 +35,7 @@ def main():
     sys.path.insert(0, str(root / "tests"))
     suite = unittest.TestSuite(
         unittest.defaultTestLoader.discover(str(root / "tests"), pattern=pattern)
-        for pattern in ("test_recovery.py", "test_cancellation.py", "test_jobs.py", "test_storage.py")
+        for pattern in ("test_recovery.py", "test_cancellation.py", "test_jobs.py", "test_storage.py", "test_bam_semantics.py")
     )
     result = unittest.TextTestRunner(verbosity=2, resultclass=EvidenceResult).run(suite)
     report = {

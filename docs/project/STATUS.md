@@ -138,3 +138,11 @@ Linux/macOS run 46068024173. Both runners passed all counts/gates above, includi
 ZIP digests matched GitHub metadata. [Archived evidence](CI-VALIDATION.md#m3-workspace-management-and-storage-faults)
 records actual runner results and annotations. The final evidence-only update
 preserves the tested implementation/build/workflow/assets. Full M3 remains open.
+
+**D025 autonomous qualification:** The owner authorized exhausting defined work
+without repeated confirmation. Local admission/Committed recovery fixes,
+B01–B16 BAM controls and the structural C01–C30 reference index are complete:
+88 Python/native and 47 Rust tests passed; the repeated 54-case job harness and
+independent-server/resource checks passed. Fresh CI qualification remains pending.
+The [contract review and planning boundary](CONTRACT-REVIEW.md) separates the
+completed concrete RFC 0002 backlog from undefined full-M3 and later scope.

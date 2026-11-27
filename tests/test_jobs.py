@@ -141,6 +141,34 @@ class WorkspaceTests(unittest.TestCase):
                 self.assertEqual((root / "output.bam").read_bytes(), original)
                 self.assertEqual(run_job(root, data, c).state, "Complete")
 
+    def test_committed_recovery_needs_only_the_accepted_output(self):
+        for change in ("corrupt", "missing"):
+            with self.subTest(change=change), fixture() as (root, data, _, seen, c):
+                prepare(root, data, c, "Committed")
+                source = root / "job/source.bam"
+                source.write_bytes(b"obsolete") if change == "corrupt" else source.unlink()
+                inode = (root / "output.bam").stat().st_ino
+                before = len(seen)
+                with patch.object(c, "open", side_effect=AssertionError("unexpected network")), patch.object(store, "filter_bam", side_effect=AssertionError("unexpected decoder")):
+                    report = run_job(root, data, c)
+                self.assertEqual(report.state, "Complete", report)
+                self.assertFalse(report.source_reused)
+                self.assertEqual(report.phase, "Committed")
+                self.assertEqual((root / "output.bam").stat().st_ino, inode)
+                self.assertEqual(len(seen), before)
+                self.observe("CommittedWithoutRedundantInput", manage(inspect_bam_job, root, data, c))
+
+    def test_committed_recovery_still_rejects_unsafe_redundant_source(self):
+        with fixture() as (root, data, _, seen, c):
+            prepare(root, data, c, "Committed")
+            source = root / "job/source.bam"
+            source.unlink()
+            source.symlink_to(root / "fixture.bam")
+            before = len(seen)
+            report = run_job(root, data, c)
+            self.assertEqual(report.state, "Failed", report)
+            self.assertEqual(len(seen), before)
+
     def test_cleanup_preserves_verified_source_and_ready_result(self):
         for phase in ("Downloading", "Verified", "Ready"):
             with self.subTest(phase=phase), fixture() as (root, data, _, seen, c):
@@ -330,6 +358,17 @@ class WorkspaceTests(unittest.TestCase):
                 with self.assertRaisesRegex(GeneWireError, "InvalidQuery"):
                     operation(c, "\ud800", "chrSynthetic", 99, 101, root / "output.bam", root / "job",
                               expected_sha256=hashlib.sha256(data).hexdigest())
+            self.assertFalse((root / "job").exists())
+            self.assertEqual(seen, [])
+
+    def test_dot_object_ids_fail_before_workspace_or_network(self):
+        with fixture() as (root, data, _, seen, c):
+            for object_id in (".", ".."):
+                for operation in (inspect_bam_job, clean_bam_job, store.recover_bam):
+                    with self.assertRaisesRegex(GeneWireError, "InvalidQuery"):
+                        operation(c, object_id, "chrSynthetic", 99, 101,
+                                  root / "output.bam", root / "job",
+                                  expected_sha256=hashlib.sha256(data).hexdigest())
             self.assertFalse((root / "job").exists())
             self.assertEqual(seen, [])
 

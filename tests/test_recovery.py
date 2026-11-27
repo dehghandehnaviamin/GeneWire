@@ -132,7 +132,7 @@ class RecoveryTests(unittest.TestCase):
             count = len(seen)
             again = run_job(root, data, c)
             self.assertEqual(again.state, "Complete", again)
-            self.assertTrue(again.source_reused)
+            self.assertFalse(again.source_reused)
             self.assertIsNone(again.transport)
             self.assertEqual(len(seen), count)
             self.assertEqual((root / "output.bam").stat().st_ino, inode)
@@ -157,7 +157,7 @@ class RecoveryTests(unittest.TestCase):
                     self.assertFalse(result.source_reused)
                 else:
                     self.assertEqual(len(seen), before)
-                    self.assertTrue(result.source_reused)
+                    self.assertEqual(result.source_reused, boundary != "Committed")
                 self.assert_output(root)
                 self.assertFalse(list((root / "job").glob("*.partial")))
 

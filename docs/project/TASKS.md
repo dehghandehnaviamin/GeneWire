@@ -38,7 +38,10 @@ The initial review does not establish a need for a new binary wire protocol.
 - [x] Owner authorizes advancing the proposed scope and reuse-first direction into M1.
 - [x] Choose a Python/HTSlib evaluation consumer with provisional-output policy.
 - [ ] Identify a production consumer beyond the tiny evaluation harness.
-- [ ] Select actual baseline implementations and a controlled future runner.
+- [x] Select and qualify pinned htsget-rs, indexed HTSlib and independent HTSlib
+  htsget baselines on the observed CI runners.
+- [ ] Select controlled comparative benchmark hardware/workloads in replanning;
+  hosted functional CI is not that benchmark qualification.
 - [x] Approve and verify M0 publication at 5e28a6283fed0445b89c09df17c3ec3087a6c5ec.
 
 On 2026-11-27, issues #1–#3 were updated with published evidence and closed as
@@ -60,7 +63,8 @@ for the historical issue state and D022 for the current review policy.
 | Updated three architecture/lifecycle diagrams | Design target with partial local components labeled |
 
 - [x] Select evaluation consumer and require transport/decode success before the test oracle gate.
-- [ ] Review retry, cleanup, outbound policy, budgets and native lifetime choices.
+- [x] Review retry, cleanup, outbound policy, budgets and native lifetime choices
+  for the implemented subset; [review and explicit limits](CONTRACT-REVIEW.md).
 - [ ] Specify expanded query semantics and independent expected outputs before
   qualifying broader behavior with executable tests and baselines.
 - [ ] Qualify real baseline implementations and actual dependency/build versions.
@@ -138,6 +142,20 @@ explicitly outside this exit claim and part of later qualification work.
   cases, fresh-process retry and phase-preserving cleanup locally; archive hashes.
 - [x] Follow the D024 storage increment through Linux/macOS CI and archive each
   runner's source-checked reports before claiming cross-platform qualification.
+- [x] Align recovery admission with native dot-ID rejection and make Committed
+  recovery independent of redundant source content while rejecting unsafe files.
+- [x] Add B01–B16 explicit BAM span/flag/multiplicity/field controls, indexed
+  samtools comparison, a 6,000-record replay and omission/truncation controls.
+- [x] Map C01–C30 to real named checks with subset limits; validate the index
+  structurally without counting it as behavioral conformance execution.
+- [ ] Qualify D025 on fresh Linux/macOS CI and archive the four reports per runner.
+
+After that qualification, the current RFC 0002 implementation/failure backlog is
+exhausted. Full M3 remains open for contract-changing scope, followed by M4–M6;
+continue through [milestone replanning](CONTRACT-REVIEW.md#where-autonomous-execution-stops-for-replanning),
+not by silently relabeling the broad roadmap as complete. Production adoption,
+controlled benchmarks and expanded query/format semantics above remain inputs to
+that planning, not verified deliveries.
 
 See [M3 source-bound evidence and exclusions](M3-LOCAL.md).
 

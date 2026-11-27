@@ -46,6 +46,13 @@ release prerequisite. Do not repeat it in routine progress/final messages.
 Continue engineering with explicit automated correctness evidence and honest
 scope; this instruction does not turn untested behavior into verified behavior.
 
+The owner then authorized autonomous continuation without repeated confirmation,
+through the remaining defined engineering work until further progress requires
+milestone replanning. Make routine product/implementation decisions, commit/push
+checked increments and follow CI to completion under this instruction. Preserve
+phase sequence and evidence gates; do not invent missing acceptance criteria or
+claim production/release readiness from unfinished qualification.
+
 Read `docs/project/STATUS.md`, `docs/project/TASKS.md`,
 `docs/project/DECISIONS.md`, `CONTRIBUTING.md`, and `SECURITY.md` before work.
 Keep status, roadmap, architecture diagrams, and contributor instructions aligned

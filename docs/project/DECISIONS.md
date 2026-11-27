@@ -515,3 +515,35 @@ Decisions record rationale and limits, not implementation claims.
 - **Final evidence publication:** Keep implementation/build/workflow/assets
   byte-identical to e599df7 and publish documentation/evidence with a docs-only
   CI skip. Attribute observed success to that tested run; full M3 remains open.
+
+## D025 — Exhaust defined engineering work autonomously before replanning
+
+- **Date:** 2026-11-27. The owner instructed autonomous continuation without
+  repeated confirmation until no executable defined work remains and further
+  progress needs milestone replanning. This supersedes repeated approval gates
+  for routine engineering/publication of checked increments, not evidence gates.
+- **Sequence:** Finish concrete gaps in the existing BAM/transport/recovery
+  contract before treating later format/product/release headings as implemented.
+  Preserve historical CI and report the exact boundary if a broad milestone lacks
+  acceptance criteria that the existing architecture can actually satisfy.
+- **Admission:** Match the native query rejection of dot-only object IDs before
+  creating a workspace or making a network request.
+- **Accepted result:** Committed recovery verifies retained result/destination,
+  not redundant source content. Missing/corrupt redundant input cannot invalidate
+  already accepted output. Unsafe source artifacts still fail closed. For this
+  phase source_reused is false; only Verified/Ready actually use a pinned source.
+- **Correctness:** Add explicit BAM span/multiplicity/flag/field truth and indexed
+  samtools comparisons, a 6,000-record multiblock replay, omission negative
+  control, truncation and missing-reference failures. No additional genomic
+  format, biological-completeness or power-loss guarantee follows from this.
+- **Contract review:** Map candidate C01–C30 to actual named checks with explicit
+  partial-coverage limits; a reference map is not another executable test or
+  evidence that every possible variant passed. Keep unimplemented contracts
+  separate from tested behavior and carry remaining scope decisions to replanning.
+- **Local results:** 88 Python/native and 47 Rust tests passed without skips;
+  formatting/clippy clean. The repeated 54-case harness records nine workspace,
+  108 storage and 16 semantic observations. All four local reports match 35
+  source inputs; independent-server/resource gates passed. The structural
+  reference index validates 30 candidate IDs and executes zero behavior tests.
+  [Review and remaining definition boundary](CONTRACT-REVIEW.md) are explicit;
+  fresh Linux/macOS qualification of this source is still pending.

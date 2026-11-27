@@ -190,6 +190,37 @@ annotations. Neither runner has warnings; macOS retains only the hosted-capacity
 notice. The final documentation/evidence update preserves the tested code,
 build, workflow and assets; success belongs to the actual e599df7 run.
 
+## Admission, accepted-result and contract qualification
+
+D025 closes two implementation gaps: dot-only object IDs are rejected before
+workspace/network work just as in Rust, and Committed recovery verifies the
+accepted output without requiring redundant source content. Unsafe source
+artifacts still fail closed. This corrects the pre-alpha source_reused flag:
+Committed/Releasing/Released return false; Verified/Ready reuse a pinned source.
+Historical reports retain their original implementation semantics.
+
+Local results: 88 Python/native and 47 Rust tests passed without skips; formatting
+and clippy passed. The repeated 54-case harness includes 19 recovery, 12
+cancellation, 16 workspace, three storage and four BAM-semantics test methods.
+It records nine workspace observations, the existing 108 storage observations
+and 16 B01–B16 semantic observations. The 236,498-byte synthetic source contains
+6,000 records and replays from Verified with no new network request. Header,
+tested fields/qualities/tags and multiplicity are preserved. Twelve explicit
+interval/flag/CIGAR/reference cases agree with independently indexed samtools;
+the duplicate-omission negative control remains distinguishable from analysis
+success. Truncated BAM and an unknown reference publish no output.
+
+The [contract review](CONTRACT-REVIEW.md) records implementation choices, primary
+format references and the remaining milestone-definition boundary. The C01–C30
+index is checked structurally and executes zero behavior tests. All four local
+reports match 35 implementation/build/test/tool/vector inputs:
+[job/semantics](evidence/2026-11-27-m3-contract-recovery.json),
+[independent server](evidence/2026-11-27-m3-contract-interop.json),
+[resources](evidence/2026-11-27-m3-contract-resources.json),
+[contract reference index](evidence/2026-11-27-m3-contract-contract-index.json).
+This increment still awaits its own remote CI qualification; previous runs do
+not qualify new source. Existing Q1–Q5 and both resource modes passed locally.
+
 ## Remaining gates
 
 Full M3 acceptance remains open. This increment does not supply byte-offset
