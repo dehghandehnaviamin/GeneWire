@@ -467,3 +467,14 @@ Decisions record rationale and limits, not implementation claims.
   recovery/cancellation harness passed without skips. Independent htsget-rs and
   HTSlib Q1–Q5 still matched. Follow this M3 lifecycle increment through the
   established publication/CI workflow and archive the actual runner results.
+- **Observed CI:** Published 7f15c77132861ddda0192e5cd130976e158407f3 passed
+  run 46039605642 on Ubuntu x86_64 and macOS arm64. Each passed 47 Rust and
+  65 Python/native tests without skips, then repeated the 31-case job harness.
+  All six downloaded reports matched source hashes. The ten cancellation
+  observation points, previous SIGKILL/truth gates and independent-server/
+  resource checks passed; [runner evidence](evidence/ci-46039605642/summary.json)
+  records actual annotations (no warnings; one macOS capacity notice).
+- **Final evidence update:** Publish only documentation/evidence changes after
+  verifying implementation/build/workflow/assets match the tested 7f15c77;
+  use a docs-only CI skip and attribute success to the actual observed run.
+  Keep the local report anchors and earlier CI records intact.

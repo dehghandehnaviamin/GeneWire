@@ -17,7 +17,7 @@ Snapshot: 2026-11-27. Status must be updated when verified evidence changes.
 | M1 design | Direction adopted for local prototype | [RFC 0001](../rfcs/0001-regional-streaming-profile.md); complete contract remains provisional |
 | M2 reference implementation | Narrow engineering gate complete | Rust/Python byte reader and supervised BAM adapter; [exit evidence and limits](CI-VALIDATION.md) |
 | M3 recovery | First verified-BAM-job subset published and CI-checked | [RFC 0002](../rfcs/0002-recoverable-bam-jobs.md) and [evidence](M3-LOCAL.md); complete-source reuse and publication receipts, full M3 exit open |
-| Testing and CI | Verified on the observed Linux/macOS runners with Node.js 24 actions | Each passed 47 Rust and 53 Python/native tests without skips, plus a repeated 19-case recovery harness; [workflow 46035043779](https://github.com/dehghandehnaviamin/GeneWire/actions/runs/46035043779); no warning annotations, one macOS capacity notice |
+| Testing and CI | Verified on the observed Linux/macOS runners with Node.js 24 actions | Each passed 47 Rust and 65 Python/native tests without skips, plus a repeated 31-case recovery/cancellation harness; [workflow 46039605642](https://github.com/dehghandehnaviamin/GeneWire/actions/runs/46039605642); no warning annotations, one macOS capacity notice |
 | Correctness evaluation | Tiny controlled oracle and negative controls exercised | Q1–Q5, independent HTSlib paths and source-bound failure evidence; expanded cases need their own executable expectations |
 | Performance and interoperability | Narrow local evidence | Pinned real htsget-rs and two HTSlib paths matched Q1–Q5; one 64 MiB opaque resource probe per retention mode; no ranking or full resource certification |
 | Release and security support | No release | No supported version or production readiness |
@@ -114,3 +114,10 @@ Cancellation tokens, native-read interruption, cancellable hashing/supervision
 and a serialized output-publication boundary. Local evidence and subsequent CI
 qualification are tracked in the M3 ledger; the 87732e7 run remains historical
 evidence for the preceding version.
+
+**D023 verified continuation:** 7f15c77 is published on main and passed the fresh
+Linux/macOS run 46039605642. The cancellation/publication/cleanup cases and
+existing recovery, independent-server and resource gates passed. Source-bound
+reports are [archived](CI-VALIDATION.md#m3-cooperative-cancellation). The final
+evidence update preserves the tested implementation and workflow; full M3 remains
+open for its separately listed engineering gates.

@@ -3,10 +3,10 @@
 Snapshot: 2026-11-27. **First subset passed Linux/macOS CI; full M3 exit remains open.**
 The owner instructed starting recovery work after M2. See D020 and
 [RFC 0002](../rfcs/0002-recoverable-bam-jobs.md) for the adopted subset.
-The initial evidence below is local. Under D021, a32062f and the CI wiring/fix
-were published on main. Revision 87732e7 passed
-[Linux/macOS CI](CI-VALIDATION.md#m3-verified-source-bam-jobs). No software release
-or deployment is claimed.
+Initial local and first-subset CI evidence is preserved below. The current D023
+job-lifecycle revision 7f15c77 passed
+[Linux/macOS cancellation CI](CI-VALIDATION.md#m3-cooperative-cancellation).
+No software release or deployment is claimed.
 
 ## Behavior and storage boundary
 
@@ -45,7 +45,7 @@ their placeholder counters are not native-memory measurements and are not
 returned as a reconstructed network report. RecoveryReport.transport is present
 only when this invocation actually opened a network stream.
 
-## Local evidence
+## Initial local evidence
 
 The recorded environment is macOS 27.0 arm64, CPython 3.14.6, Rust 1.93.0,
 uv 0.13.10 and the locked M2 dependencies. No dependency was added.
@@ -104,13 +104,22 @@ serialized with output-link admission; a valid published result is preserved.
 The expanded harness covers 19 recovery plus 12 cancellation cases. Its local
 source-bound [recovery/cancellation report](evidence/2026-11-27-m3-cancellation.json)
 and [independent-server regression](evidence/2026-11-27-m3-cancellation-interop.json)
-identify the exact tested source. Remote qualification for this follow-up is
-recorded only after its own completed run.
+identify the exact tested source at 7f15c77.
 
 Observed locally for D023: 65 Python/native tests and the repeated 31-case
 recovery/cancellation harness passed without skips; independent htsget-rs and
 both HTSlib paths still matched Q1–Q5. The two linked local reports bind these
 results to source-file hashes and preserve the preceding CI evidence unchanged.
+
+The follow-up was published and [run 46039605642](https://github.com/dehghandehnaviamin/GeneWire/actions/runs/46039605642)
+completed successfully on Ubuntu x86_64 and macOS arm64. Each passed 47 Rust and
+65 Python/native tests without skips, then repeated the 31-case job harness.
+The ten structured cancellation observation points and all earlier SIGKILL/truth
+gates passed; downloaded reports matched the published source hashes.
+[Permanent per-runner evidence](CI-VALIDATION.md#m3-cooperative-cancellation)
+includes independent-server/resource checks and actual annotations. Only the
+hosted macOS capacity notice remains; the final docs-only update preserves the
+tested code/workflow/assets.
 
 RecoveryReport now exposes cleanup_complete separately from its error and
 publication/sync flags. A cancelled operation with incomplete supervisor cleanup

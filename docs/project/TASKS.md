@@ -127,8 +127,9 @@ explicitly outside this exit claim and part of later qualification work.
   Linux/macOS CI for 87732e7; source-check and archive each runner's reports.
 - [x] Add cooperative cancellation for blocked native reads, bounded hash work
   and supervised workers, with serialized publication admission and resume checks.
-- [ ] Qualify the cancellation follow-up on the existing CI matrix and retain
-  source-bound evidence for its 31-case recovery/cancellation harness.
+- [x] Qualify the cancellation follow-up on Linux/macOS at 7f15c77 and retain
+  source-bound evidence for its 31-case recovery/cancellation harness; each
+  runner also passed the complete 65-case Python/native suite without skips.
 - [ ] Qualify broader durable acceptance/storage behavior before full M3 exit;
   byte-offset resume, multi-object recovery and generic analysis effects remain outside this increment.
 

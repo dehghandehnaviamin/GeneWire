@@ -10,8 +10,8 @@ The initial checks used macOS 27.0 on arm64, Rust/Cargo 1.93.0, CPython 3.14.6,
 uv 0.13.10 and maturin 1.16.0. [Actual CI](project/CI-VALIDATION.md) also passed on
 Ubuntu 26.04.1 x86_64 and macOS 26.7.2 arm64 with CPython 3.14.10. This records
 those runners; the abi3 wheel tag/Python metadata do not establish broader support.
-The first M3 job subset also passed these CI targets with 53 Python/native tests
-and its repeated 19-case recovery harness; see the separate M3 evidence scope.
+The M3 cancellation follow-up also passed these CI targets with 65 Python/native
+tests and its repeated 31-case job harness; see the separate M3 evidence scope.
 Rust and uv must already be installed. From the repository root:
 
 ```bash
@@ -40,7 +40,7 @@ service or send data outside the machine.
 
 ## Current public Python operations
 
-Import Client, Destination, Stream, Report and GeneWireError from genewire.
+Import Client, Destination, Stream, Report, Cancellation and GeneWireError from genewire.
 Client takes a reads-service URL ending in a slash and a mapping from allowed
 origin to Destination(addresses, allow_ticket_authorization=False). The IPs are
 explicit connection pins; the core does not discover them through ambient DNS.

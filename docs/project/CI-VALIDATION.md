@@ -1,9 +1,9 @@
 # Cross-platform CI evidence
 
-The latest observed run covers the first M3 verified-source BAM job subset:
-[46035043779](https://github.com/dehghandehnaviamin/GeneWire/actions/runs/46035043779)
-at 87732e7. See [M3 results](#m3-verified-source-bam-jobs) below. Historical M2
-results and their separate engineering exit remain preserved here.
+The latest observed run covers the M3 BAM job cancellation/cleanup follow-up:
+[46039605642](https://github.com/dehghandehnaviamin/GeneWire/actions/runs/46039605642)
+at 7f15c77. See [cancellation results](#m3-cooperative-cancellation) below.
+Historical M2 and first-subset M3 results remain preserved here.
 
 ## Historical M2 reference evidence
 
@@ -147,3 +147,47 @@ package, general genomic correctness or a release. The final evidence/status
 commit is docs-only with CI skipped after verifying implementation/build/workflow
 inputs remain byte-identical to 87732e7. Its parent run is the observed evidence;
 the documentation commit does not claim another successful workflow.
+
+## M3 cooperative cancellation
+
+Evaluation date: 2026-11-27. Source
+[7f15c77](https://github.com/dehghandehnaviamin/GeneWire/commit/7f15c77132861ddda0192e5cd130976e158407f3)
+passed [run 46039605642](https://github.com/dehghandehnaviamin/GeneWire/actions/runs/46039605642).
+
+| Observed job | Rust | Python/native | Repeated job harness | Skips |
+| --- | --- | --- | --- | --- |
+| [Ubuntu x86_64](https://github.com/dehghandehnaviamin/GeneWire/actions/runs/46039605642/job/140643675414) | 47 passed | 65 passed | 31 passed | 0 |
+| [macOS arm64](https://github.com/dehghandehnaviamin/GeneWire/actions/runs/46039605642/job/140643674872) | 47 passed | 65 passed | 31 passed | 0 |
+
+The 31-case harness repeats 19 recovery and 12 cancellation tests already in
+the 65-test Python suite. Both jobs passed locked builds, formatting/clippy,
+independent-server/HTSlib Q1–Q5 and both 64 MiB resource modes on CPython 3.14.10.
+The toolchain/action pins remain unchanged. Ubuntu had no annotations; macOS
+retained only the hosted-capacity notice. Neither job had warning annotations or
+a Node.js 20 warning in its log.
+
+The permanent [summary](evidence/ci-46039605642/summary.json) binds the tested
+source/workflow, job/artifact identities, actual test counts, annotation messages
+and normalized report hashes:
+
+- Ubuntu: [recovery/cancellation](evidence/ci-46039605642/ubuntu-recovery.json),
+  [interoperability](evidence/ci-46039605642/ubuntu-interop.json),
+  [resources](evidence/ci-46039605642/ubuntu-resources.json).
+- macOS: [recovery/cancellation](evidence/ci-46039605642/macos-recovery.json),
+  [interoperability](evidence/ci-46039605642/macos-interop.json),
+  [resources](evidence/ci-46039605642/macos-resources.json).
+
+All six reports matched the source hashes at 7f15c77. In addition to the earlier
+SIGKILL/oracle gates, both runners observed cancellation of a blocked native data
+read, bounded rehash work, a stalled worker and the final wait of a pipe-closed
+live child. Cancellation before publication prevented output; after publication
+it preserved a Complete result. A simulated incomplete supervisor cleanup stayed
+explicitly unconfirmed despite completed network cleanup. Subscription-lifetime,
+pre-cancelled operations, type validation and subsequent recovery checks passed.
+Resource/oracle gates retain the scope described above.
+
+The ZIP digests are GitHub-reported metadata. Archived JSON adds source_commit;
+its normalized hashes do not assert byte equality with the original ZIP entries.
+Only documentation/evidence changes follow 7f15c77 in the final publication,
+with CI skipped after checking implementation/build/workflow/assets are unchanged.
+The observed success belongs to that actual run, not to an unrun docs commit.

@@ -10,6 +10,8 @@ Notable project changes will be recorded here. GeneWire has no software release 
   decoder pipes and final child waits; serialized output-link admission and
   recoverable receipts and a separate cleanup status, with 12 additional
   cancellation behavior/failure checks.
+  The follow-up passed Linux/macOS CI: 47 Rust and 65 Python/native tests per
+  runner, including the repeated 31-case recovery/cancellation evidence harness.
 
 - Local M3 SHA-256-pinned complete-source BAM jobs with private locked receipts,
   recoverable no-overwrite publication, actual process-crash and storage-failure

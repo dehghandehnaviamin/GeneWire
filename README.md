@@ -122,6 +122,9 @@ ledger defines what has actually been exercised.
 - **M3 job subset:** SHA-256-pinned complete BAM spools and locked job
   receipts recover processing/publication after a process crash. Partial input
   starts a fresh query; see [scope and evidence](docs/project/M3-LOCAL.md).
+- **M3 job subset:** cooperative cancellation interrupts blocked input and
+  supervised analysis; publication admission preserves accepted output and
+  cleanup completion is reported separately. Verified on the observed CI runners.
 - **Later / under research:** byte-offset resume, object manifests, multi-object
   recovery and broader storage/durability qualification.
 - **Under research:** authenticated transport and authorization integration.
