@@ -129,6 +129,9 @@ ledger defines what has actually been exercised.
   cleanup preserve the accepted output, receipt and lock. The
   [storage ledger](docs/project/M3-LOCAL.md#workspace-and-storage-follow-up)
   records successful Linux/macOS CI and its exact fault-test scope.
+- **Qualified BAM job scope:** expanded span/flag/multiplicity/field checks and
+  accepted-output recovery passed CI. The concrete current backlog is complete;
+  [further milestone scope needs replanning](docs/project/CONTRACT-REVIEW.md).
 - **Later / under research:** byte-offset resume, object manifests, multi-object
   recovery and broader storage/durability qualification.
 - **Under research:** authenticated transport and authorization integration.

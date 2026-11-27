@@ -547,3 +547,20 @@ Decisions record rationale and limits, not implementation claims.
   reference index validates 30 candidate IDs and executes zero behavior tests.
   [Review and remaining definition boundary](CONTRACT-REVIEW.md) are explicit;
   fresh Linux/macOS qualification of this source is still pending.
+- **Observed CI:** d27beca49b31f1b82deeb9c34e3c338a87ab39f7 passed
+  run 46072529338 on Ubuntu x86_64 and macOS arm64. Each passed 47 Rust and
+  88 Python/native tests without skips, then repeated 54 job cases. All nine
+  workspace, 108 storage and 16 semantic observations, independent-server and
+  resource gates passed. C01–C30 references were structurally checked; zero
+  behavior tests were executed by that checker. Eight downloaded reports matched
+  35 source inputs; both ZIP digests matched GitHub metadata. No warnings remain;
+  macOS retains only its capacity notice. [Permanent evidence](evidence/ci-46072529338/summary.json)
+  anchors these results to the tested source/workflow and actual job/artifact IDs.
+- **Stopping boundary reached:** The current concrete RFC 0002 implementation/
+  failure backlog is complete. Full M3 and M4–M6 remain open for the explicitly
+  listed new contracts/targets in the review. Do not invent missing scope or
+  declare broad roadmap completion; the owner's requested next step is milestone
+  replanning. Preserve the cosmetic unverified side task separately.
+- **Final evidence publication:** Publish documentation/evidence only with a
+  docs-only CI skip after checking implementation/build/workflow/vectors/assets
+  remain byte-identical to d27beca; successful CI belongs to that actual run.

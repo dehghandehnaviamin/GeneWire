@@ -54,8 +54,8 @@ an explanation of new evidence and a decision record.
 
 D025 authorizes autonomous execution of defined work until milestone replanning
 is required. The [implemented-contract review](docs/project/CONTRACT-REVIEW.md)
-identifies that boundary: after the final RFC 0002 qualification, full-M3
-acknowledgement/storage/source-identity contracts and the M4–M6 product/release
+identifies that boundary: D025 passed the final concrete RFC 0002 qualification.
+Full-M3 acknowledgement, storage and source identity contracts and the M4–M6 product/release
 scope need executable acceptance criteria. The broad headings above remain open;
 no new binary protocol, extra format or release is implied by finishing the
 current BAM-job backlog.

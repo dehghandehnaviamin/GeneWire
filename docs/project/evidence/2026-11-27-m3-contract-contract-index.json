@@ -456,5 +456,6 @@
     "tools/check_recovery.py": "0659c0887804703e31b4044d0633024aff5395c96f9b2a8190354655826b6dff",
     "tools/check_resources.py": "820923ee0fdbca3620210a0246184e102c127586167adc3e216f49f9ad22ab28",
     "uv.lock": "074b916b880b80af240d199837139fe8d8737d229df903eabf083cc75d0417e5"
-  }
+  },
+  "source_commit": "d27beca49b31f1b82deeb9c34e3c338a87ab39f7"
 }

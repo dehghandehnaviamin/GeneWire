@@ -243,7 +243,8 @@ The full unittest discovery command above also includes the recovery tests.
 The harness also records B01–B16 span/flag/multiplicity/header/field controls and
 a 6,000-record multiblock replay against explicit truth and indexed samtools.
 The local D025 run passed 88 Python/native tests and the repeated 54-case job
-harness without skips; the preceding CI counts remain historical. Verify draft
+harness without skips. The fresh D025 Linux/macOS CI run also passed those counts;
+each runner passed 47 Rust tests. Preceding CI counts remain historical. Verify draft
 test references separately with this exercised command:
 
 ```bash

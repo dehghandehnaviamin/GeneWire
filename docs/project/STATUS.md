@@ -1,6 +1,6 @@
 # Project status
 
-**Experimental — Pre-alpha — Narrow M2 complete; first M3 subset passed CI**
+**Experimental — Pre-alpha — BAM job subset qualified; milestone replanning needed**
 
 Snapshot: 2026-11-27. Status must be updated when verified evidence changes.
 
@@ -17,9 +17,10 @@ Snapshot: 2026-11-27. Status must be updated when verified evidence changes.
 | M1 design | Direction adopted for local prototype | [RFC 0001](../rfcs/0001-regional-streaming-profile.md); complete contract remains provisional |
 | M2 reference implementation | Narrow engineering gate complete | Rust/Python byte reader and supervised BAM adapter; [exit evidence and limits](CI-VALIDATION.md) |
 | M3 recovery | First verified-BAM-job subset published and CI-checked | [RFC 0002](../rfcs/0002-recoverable-bam-jobs.md) and [evidence](M3-LOCAL.md); complete-source reuse and publication receipts, full M3 exit open |
-| M3 workspace/storage follow-up | Published and checked on observed Linux/macOS runners | Existing-job inspection, recoverable source release, 81 Python/native and 47 Rust tests; [48-boundary fault matrix](M3-LOCAL.md#workspace-and-storage-follow-up) |
-| Testing and CI | Verified on the observed Linux/macOS runners with Node.js 24 actions | Each passed 47 Rust and 81 Python/native tests without skips, plus a repeated 47-case job harness; [workflow 46068024173](https://github.com/dehghandehnaviamin/GeneWire/actions/runs/46068024173); no warning annotations, one macOS capacity notice |
-| Correctness evaluation | Tiny controlled oracle and negative controls exercised | Q1–Q5, independent HTSlib paths and source-bound failure evidence; expanded cases need their own executable expectations |
+| M3 workspace/storage follow-up | Published and checked on observed Linux/macOS runners | Existing-job inspection, accepted-output recovery, recoverable source release and expanded BAM truth; [contract evidence](M3-LOCAL.md#admission-accepted-result-and-contract-qualification) |
+| Testing and CI | Verified on the observed Linux/macOS runners with Node.js 24 actions | Each passed 47 Rust and 88 Python/native tests without skips, plus a repeated 54-case job harness; [workflow 46072529338](https://github.com/dehghandehnaviamin/GeneWire/actions/runs/46072529338); no warning annotations, one macOS capacity notice |
+| Correctness evaluation | Controlled oracles and negative controls exercised | Q1–Q5 and B01–B16 span/flag/multiplicity/field cases, independent indexed HTSlib paths and source-bound failure evidence; broader formats/query shapes remain undefined |
+| Next engineering boundary | Current concrete RFC 0002 backlog complete; full M3 and M4–M6 still open | [Contract review and milestone-definition inputs](CONTRACT-REVIEW.md#where-autonomous-execution-stops-for-replanning); no automatic release or new protocol claim |
 | Performance and interoperability | Narrow local evidence | Pinned real htsget-rs and two HTSlib paths matched Q1–Q5; one 64 MiB opaque resource probe per retention mode; no ranking or full resource certification |
 | Release and security support | No release | No supported version or production readiness |
 
@@ -146,3 +147,15 @@ B01–B16 BAM controls and the structural C01–C30 reference index are complete
 independent-server/resource checks passed. Fresh CI qualification remains pending.
 The [contract review and planning boundary](CONTRACT-REVIEW.md) separates the
 completed concrete RFC 0002 backlog from undefined full-M3 and later scope.
+
+**D025 verified boundary:** d27beca passed run 46072529338 on both observed
+runners with the counts above, all 108 storage and 16 semantic observations,
+nine workspace observations, independent-server/resource gates and the 30-case
+structural reference index (zero behavior tests executed by that index). All
+eight downloaded reports matched 35 source inputs and both ZIP digests matched
+GitHub metadata. [Permanent evidence](CI-VALIDATION.md#m3-accepted-output-and-contract-qualification)
+is archived. The current defined BAM-job implementation/failure tasks are done;
+the owner's requested stopping point for milestone replanning is reached. Full
+M3 and M4–M6 are not declared complete; the cosmetic social-preview side task
+remains unverified. The final evidence update preserves tested code/build/
+workflow/vector/assets and attributes success to the actual d27beca run.

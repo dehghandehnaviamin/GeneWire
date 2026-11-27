@@ -236,3 +236,56 @@ runners; full M3, broader filesystems/platforms and release remain outside it.
 The final update changes only documentation/evidence after checking code/build/
 workflow/assets are unchanged from e599df7, with CI skipped. No success is claimed
 for an unrun documentation revision.
+
+## M3 accepted-output and contract qualification
+
+Evaluation date: 2026-11-27. Source
+[d27beca](https://github.com/dehghandehnaviamin/GeneWire/commit/d27beca49b31f1b82deeb9c34e3c338a87ab39f7)
+passed [run 46072529338](https://github.com/dehghandehnaviamin/GeneWire/actions/runs/46072529338).
+
+| Observed job | Rust | Python/native | Repeated job harness | Skips |
+| --- | --- | --- | --- | --- |
+| [Ubuntu x86_64](https://github.com/dehghandehnaviamin/GeneWire/actions/runs/46072529338/job/140752597629) | 47 passed | 88 passed | 54 passed | 0 |
+| [macOS arm64](https://github.com/dehghandehnaviamin/GeneWire/actions/runs/46072529338/job/140752597880) | 47 passed | 88 passed | 54 passed | 0 |
+
+The 54-case harness repeats 19 recovery, 12 cancellation, 16 workspace, three
+storage and four BAM-semantics methods already in the 88-case Python suite.
+Each runner passed all nine workspace, 108 storage and 16 B01–B16 semantic
+observations. The final committed-result retry needs no redundant source content,
+rejects unsafe source artifacts and preserves output identity; dot-only IDs fail
+before disk/network work. The expanded BAM truth checks include flags, exact
+multiplicity, CIGAR/reference-span boundaries, fields/header preservation,
+6,000-record multiblock replay, valid duplicate omission, truncation and unknown
+reference. Twelve cases match indexed samtools; existing independent-server
+Q1–Q5 and both 64 MiB resource modes also passed.
+
+The C01–C30 index checked named test references and coverage limits structurally.
+It executed zero behavior tests and does not certify exhaustive conformance.
+Only the actual full suites above supply execution evidence for this revision.
+
+The [permanent summary](evidence/ci-46072529338/summary.json) records actual log
+counts, source/workflow hashes, runner/job/artifact identities, annotations,
+downloaded ZIP digests and hashes of the eight normalized reports:
+
+- Ubuntu: [job/semantics](evidence/ci-46072529338/ubuntu-recovery.json),
+  [interoperability](evidence/ci-46072529338/ubuntu-interop.json),
+  [resources](evidence/ci-46072529338/ubuntu-resources.json),
+  [contract references](evidence/ci-46072529338/ubuntu-contract-index.json).
+- macOS: [job/semantics](evidence/ci-46072529338/macos-recovery.json),
+  [interoperability](evidence/ci-46072529338/macos-interop.json),
+  [resources](evidence/ci-46072529338/macos-resources.json),
+  [contract references](evidence/ci-46072529338/macos-contract-index.json).
+
+All eight reports matched 35 implementation/build/test/tool/vector inputs;
+downloaded ZIP SHA-256 values matched GitHub metadata. Normalized JSON adds
+source_commit and is not byte-identical to the ZIP entries. Existing toolchain,
+interpreter line, action and dependency pins were preserved. Ubuntu had no
+annotations; macOS retained only its hosted-capacity notice. Neither runner has
+warning annotations or a Node.js 20 deprecation warning.
+
+This closes the concrete RFC 0002 backlog under D025 and reaches the
+[requested milestone-replanning boundary](CONTRACT-REVIEW.md#where-autonomous-execution-stops-for-replanning).
+The full-M3/new-format/release headings are not declared complete. The final
+documentation/evidence update skips CI only after verifying code/build/workflow/
+vectors/assets remain byte-identical to d27beca. Success belongs to the observed
+run above, not an unrun documentation revision.

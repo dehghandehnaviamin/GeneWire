@@ -8,6 +8,11 @@ job-lifecycle revision 7f15c77 passed
 [Linux/macOS cancellation CI](CI-VALIDATION.md#m3-cooperative-cancellation).
 No software release or deployment is claimed.
 
+The final D025 BAM-job qualification passed both observed runners at d27beca;
+see [accepted-output/contract evidence](#admission-accepted-result-and-contract-qualification).
+The concrete RFC 0002 backlog is complete and further scope needs milestone
+replanning; this does not close the broad full-M3 roadmap heading.
+
 ## Behavior and storage boundary
 
 `genewire.recovery.recover_bam` wraps the existing Rust/Python network reader and
@@ -218,8 +223,18 @@ reports match 35 implementation/build/test/tool/vector inputs:
 [independent server](evidence/2026-11-27-m3-contract-interop.json),
 [resources](evidence/2026-11-27-m3-contract-resources.json),
 [contract reference index](evidence/2026-11-27-m3-contract-contract-index.json).
-This increment still awaits its own remote CI qualification; previous runs do
-not qualify new source. Existing Q1–Q5 and both resource modes passed locally.
+Existing Q1–Q5 and both resource modes passed locally. Published d27beca passed
+[run 46072529338](https://github.com/dehghandehnaviamin/GeneWire/actions/runs/46072529338)
+on Ubuntu x86_64 and macOS arm64. Each passed 47 Rust and 88 Python/native tests,
+zero skips, then repeated the 54-case job harness. All nine workspace, 108 storage
+and 16 semantic observations, existing Q1–Q5 and resource gates passed. The
+structural index validated C01–C30 references and executed zero behavior tests.
+[Eight permanent runner reports and metadata](CI-VALIDATION.md#m3-accepted-output-and-contract-qualification)
+matched 35 source inputs and downloaded ZIP digests. There are no warning
+annotations; macOS retains only the capacity notice. The final evidence-only
+update preserves the tested code/build/workflow/vectors/assets. Under D025 this
+finishes the concrete defined backlog and reaches the documented replanning
+boundary; no complete full-M3, extra format or release claim follows.
 
 ## Remaining gates
 

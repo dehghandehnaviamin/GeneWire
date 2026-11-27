@@ -148,10 +148,10 @@ explicitly outside this exit claim and part of later qualification work.
   samtools comparison, a 6,000-record replay and omission/truncation controls.
 - [x] Map C01–C30 to real named checks with subset limits; validate the index
   structurally without counting it as behavioral conformance execution.
-- [ ] Qualify D025 on fresh Linux/macOS CI and archive the four reports per runner.
+- [x] Qualify D025 on fresh Linux/macOS CI and archive the four reports per runner.
 
-After that qualification, the current RFC 0002 implementation/failure backlog is
-exhausted. Full M3 remains open for contract-changing scope, followed by M4–M6;
+With D025 qualified at d27beca, the current RFC 0002 implementation/failure
+backlog is exhausted. Full M3 remains open for contract-changing scope, followed by M4–M6;
 continue through [milestone replanning](CONTRACT-REVIEW.md#where-autonomous-execution-stops-for-replanning),
 not by silently relabeling the broad roadmap as complete. Production adoption,
 controlled benchmarks and expanded query/format semantics above remain inputs to

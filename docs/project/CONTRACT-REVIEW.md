@@ -57,7 +57,11 @@ they add no CRAM/VCF/FASTQ/FASTA support or source-completeness proof.
 
 ## Where autonomous execution stops for replanning
 
-After the D025 increment passes its local and observed cross-platform gates, the
+The D025 increment passed local and observed Linux/macOS gates at d27beca in
+[run 46072529338](https://github.com/dehghandehnaviamin/GeneWire/actions/runs/46072529338):
+each runner passed 47 Rust and 88 Python/native tests, plus the repeated 54-case
+job harness, without skips. [Source-checked permanent evidence](CI-VALIDATION.md#m3-accepted-output-and-contract-qualification)
+records all eight reports. With that qualification complete, the
 concrete implementation/failure tasks of the current RFC 0002 subset are done.
 The roadmap's broad full-M3 heading is deliberately still open. Its remaining
 items change contracts or require an external target, rather than another
