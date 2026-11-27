@@ -59,3 +59,21 @@ Hard-killed supervisor crash recovery, arbitrary descendants, full allocator
 accounting, broader APIs/platform qualification, security audits, comparative
 benchmarks and production/release approval are not supplied by this CI run.
 Scientific review remains deferred to the owner's university process.
+
+## Action runtime maintenance
+
+The first successful run above reported Node.js 20 deprecation warnings for the
+four pinned actions. D019 upgrades them to immutable official releases whose
+`action.yml` explicitly selects Node.js 24:
+
+| Action | Release | Verified metadata |
+| --- | --- | --- |
+| actions/checkout | v7.0.1 | [action.yml](https://github.com/actions/checkout/blob/3d3c42e5aac5ba805825da76410c181273ba90b1/action.yml) |
+| actions/setup-python | v7.1.0 | [action.yml](https://github.com/actions/setup-python/blob/6d4fd22b20465ccc0f7354476588e8df7c9ca0e0/action.yml) |
+| astral-sh/setup-uv | v10.4.0 | [action.yml](https://github.com/astral-sh/setup-uv/blob/1db35dd8eee11c5894872e0b383ae6c406cf738d/action.yml) |
+| actions/upload-artifact | v7.0.2 | [action.yml](https://github.com/actions/upload-artifact/blob/cf430e030ddbb5b0abf93d22962f4752f3646cd9/action.yml) |
+
+The hosted runner's separate macOS arm64 capacity notice concerns queue time.
+The matrix retains arm64 coverage; it does not substitute an Intel runner or hide
+annotations. The runtime change requires a new observed CI run, recorded after
+completion; the earlier run is retained as historical evidence.

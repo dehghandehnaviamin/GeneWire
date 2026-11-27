@@ -325,3 +325,28 @@ Decisions record rationale and limits, not implementation claims.
   implementation/build/workflow inputs byte-identical to da92bc9. Use a CI-skip
   marker only for that documentation update; its evidence points to the actual
   successful run rather than inventing a new successful check for the final SHA.
+
+## D019 — Migrate CI actions to their declared Node.js 24 runtime
+
+- **Date:** 2026-11-27, under the owner's explicit continuation and CI-fix approval.
+- **Trigger:** The owner supplied two Node.js 20 deprecation warnings from run
+  45995255517 and one hosted macOS arm64 capacity notice.
+- **Decision:** Upgrade checkout v7.0.1, setup-python v7.1.0, upload-artifact
+  v7.0.2 and setup-uv v10.4.0. Resolve official release tags to commit SHAs and
+  verify `runs.using: node24` at each pinned commit. Preserve the existing
+  toolchain/interpreter/uv versions, permissions and arm64 coverage. Explicitly
+  keep ZIP archival enabled for the two synthetic report files.
+- **Sources:** [Verified action metadata](CI-VALIDATION.md#action-runtime-maintenance)
+  and [GitHub migration guidance](https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/).
+- **Capacity notice:** Queue scheduling belongs to hosted infrastructure; keeping
+  the observed arm64 target is preferable to changing the qualification matrix
+  merely to suppress a notice. No runner-capacity or queue-time guarantee is made.
+- **Publication chronology:** The previous final documentation commit did not
+  execute because automatic approval review hit a usage limit, not because its
+  action was classified unsafe. After the owner requested continuation, that
+  reviewed evidence was preserved at 6e433d3. Publish it with this CI fix and
+  observe a fresh complete run; D018's proposed docs-only CI skip is superseded
+  because this update changes the workflow.
+- **Verification:** YAML/input/runtime metadata checked before push. Record actual
+  run results and annotation counts after execution; do not infer their absence
+  from a local configuration change.
