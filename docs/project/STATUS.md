@@ -44,7 +44,10 @@ are now integrated on main at merge commit e9be690. Original commits and branche
 are retained. The integrated source tree matches the tested prototype; the
 remaining changes record publication authorization and integration status.
 
-This records the observed local integration and the owner's publication scope;
-the current remote head is checked separately with Git/GitHub. No issue closure,
-release or deployment is included. M2 remains incomplete, unaudited and without
+The main publication was verified at bb6eba53e832ce030e8b9911fe02670a58f8cfb8:
+all 70 file hashes matched the local tree, and no Actions workflow/run existed.
+On 2026-11-27, the owner raised issue maintenance; #1–#3 were reconciled and closed
+as published documentation deliverables. #4 remains open for independent domain
+feedback. See D013 and the task register for the scope of those closures.
+No release or deployment is included. M2 remains incomplete, unaudited and without
 real-server interoperability or comparative performance evidence.

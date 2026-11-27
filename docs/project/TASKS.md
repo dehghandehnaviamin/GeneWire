@@ -23,10 +23,10 @@ The owner authorized M0 on 2026-11-26. Social-preview upload remains unverified.
 
 | Task | Output | State |
 | --- | --- | --- |
-| [#1: use cases and boundaries](https://github.com/dehghandehnaviamin/GeneWire/issues/1) | [Regional scenarios and requirements](../research/use-cases.md) | Prepared; domain/deployment assumptions need review |
-| [#2: standards comparison](https://github.com/dehghandehnaviamin/GeneWire/issues/2) | [Comparison](../research/standards-comparison.md) and [source register](../research/sources.md) | Desk review prepared; no conformance test |
-| [#3: evaluation plan](https://github.com/dehghandehnaviamin/GeneWire/issues/3) | [Synthetic workloads, truth table, faults and metrics](../research/evaluation-plan.md) | Tiny oracle exercised locally in M2; broader experiments unrun |
-| [#4: feasibility decision](https://github.com/dehghandehnaviamin/GeneWire/issues/4) | [Conditional reuse-first recommendation](../research/feasibility-decision.md) | Owner authorized advancing the direction into M1; no domain/experimental sign-off |
+| [#1: use cases and boundaries](https://github.com/dehghandehnaviamin/GeneWire/issues/1) | [Regional scenarios and requirements](../research/use-cases.md) | Closed: document delivered and published; domain/deployment assumptions remain provisional |
+| [#2: standards comparison](https://github.com/dehghandehnaviamin/GeneWire/issues/2) | [Comparison](../research/standards-comparison.md) and [source register](../research/sources.md) | Closed: desk comparison delivered; no runtime-conformance claim |
+| [#3: evaluation plan](https://github.com/dehghandehnaviamin/GeneWire/issues/3) | [Synthetic workloads, truth table, faults and metrics](../research/evaluation-plan.md) | Closed: plan delivered; tiny oracle later exercised, broader experiments unrun |
+| [#4: feasibility decision](https://github.com/dehghandehnaviamin/GeneWire/issues/4) | [Conditional reuse-first recommendation](../research/feasibility-decision.md) | Open: decision published and engineering direction accepted; independent domain feedback outstanding |
 | Owner technology constraint | [Rust core and Python integration options](../research/technology-direction.md) | Language direction accepted; initial Tokio/PyO3 choices now recorded in local M2 |
 
 The owner selected regional retrieval/streaming and a Rust core with possible
@@ -42,8 +42,11 @@ The initial review does not establish a need for a new binary wire protocol.
 - [ ] Select actual baseline implementations and a controlled future runner.
 - [x] Approve and verify M0 publication at 5e28a6283fed0445b89c09df17c3ec3087a6c5ec.
 
-GitHub issues remain open until published, reviewed evidence meets their acceptance
-criteria. M1 is the local prototype's design basis; the full contract is not verified.
+On 2026-11-27, issues #1–#3 were updated with published evidence and closed as
+documentation deliverables; #3 explicitly planned experiments rather than requiring
+benchmark execution. Issue #4 remains open for actual domain-review feedback.
+The M0 milestone is therefore not marked complete. M1 is the prototype's design
+basis; the full contract is not verified. See D013 in the decision register.
 
 ## M1 — Design draft
 

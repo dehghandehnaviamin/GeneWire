@@ -167,3 +167,21 @@ Decisions record rationale and limits, not implementation claims.
 - **Scope:** Push main, verify its exact GitHub head and inspect Actions state.
   Preserve all source commits, existing branches and remotes. No release,
   deployment, issue closure or claim of M2 completion is included.
+
+## D013 — Reconcile M0 issue states with published deliverables
+
+- **Date:** 2026-11-27
+- **Trigger:** The owner asked whether issues needed updating after publication;
+  routine project decisions had already been delegated.
+- **Decision:** Close #1–#3 as completed document-delivery tasks, retaining their
+  original acceptance criteria and linking immutable published evidence at
+  bb6eba53e832ce030e8b9911fe02670a58f8cfb8. #3 required an evaluation plan, not
+  execution of the full benchmark matrix.
+- **Outstanding:** Keep #4 open because actual independent domain-review feedback
+  and resulting changes/dissent have not been recorded. The owner-authorized
+  conditional engineering direction does not supply that review.
+- **Verification:** GitHub returned closed/completed for #1–#3 and open for #4;
+  issue bodies now distinguish completed documents, later tiny-fixture checks
+  and unqualified M2 work. Labels, assignees and milestones were preserved.
+- **Limits:** This updates the publication/project record; it does not complete
+  M0's remaining review, M2, a real-server evaluation, security audit or release.
