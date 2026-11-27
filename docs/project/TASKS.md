@@ -26,7 +26,7 @@ The owner authorized M0 on 2026-11-26. Social-preview upload remains unverified.
 | [#1: use cases and boundaries](https://github.com/dehghandehnaviamin/GeneWire/issues/1) | [Regional scenarios and requirements](../research/use-cases.md) | Closed: document delivered and published; domain/deployment assumptions remain provisional |
 | [#2: standards comparison](https://github.com/dehghandehnaviamin/GeneWire/issues/2) | [Comparison](../research/standards-comparison.md) and [source register](../research/sources.md) | Closed: desk comparison delivered; no runtime-conformance claim |
 | [#3: evaluation plan](https://github.com/dehghandehnaviamin/GeneWire/issues/3) | [Synthetic workloads, truth table, faults and metrics](../research/evaluation-plan.md) | Closed: plan delivered; tiny oracle later exercised, broader experiments unrun |
-| [#4: feasibility decision](https://github.com/dehghandehnaviamin/GeneWire/issues/4) | [Conditional reuse-first recommendation](../research/feasibility-decision.md) | Open: decision published and engineering direction accepted; independent domain feedback outstanding |
+| [#4: feasibility decision](https://github.com/dehghandehnaviamin/GeneWire/issues/4) | [Conditional reuse-first recommendation](../research/feasibility-decision.md) | Open feedback channel; decision published and engineering direction accepted; optional external feedback is not a development gate (D022) |
 | Owner technology constraint | [Rust core and Python integration options](../research/technology-direction.md) | Language direction accepted; initial Tokio/PyO3 choices now recorded in local M2 |
 
 The owner selected regional retrieval/streaming and a Rust core with possible
@@ -38,15 +38,15 @@ The initial review does not establish a need for a new binary wire protocol.
 - [x] Owner authorizes advancing the proposed scope and reuse-first direction into M1.
 - [x] Choose a Python/HTSlib evaluation consumer with provisional-output policy.
 - [ ] Identify a production consumer beyond the tiny evaluation harness.
-- [ ] Obtain a domain review of the tiny truth fixture and intended query semantics.
 - [ ] Select actual baseline implementations and a controlled future runner.
 - [x] Approve and verify M0 publication at 5e28a6283fed0445b89c09df17c3ec3087a6c5ec.
 
 On 2026-11-27, issues #1–#3 were updated with published evidence and closed as
 documentation deliverables; #3 explicitly planned experiments rather than requiring
 benchmark execution. Issue #4 remains open for actual domain-review feedback.
-The M0 milestone is therefore not marked complete. M1 is the prototype's design
-basis; the full contract is not verified. See D013 in the decision register.
+That open feedback channel no longer blocks engineering progression under D022.
+M1 is the prototype's design basis; the full contract is not verified. See D013
+for the historical issue state and D022 for the current review policy.
 
 ## M1 — Design draft
 
@@ -61,7 +61,8 @@ basis; the full contract is not verified. See D013 in the decision register.
 
 - [x] Select evaluation consumer and require transport/decode success before the test oracle gate.
 - [ ] Review retry, cleanup, outbound policy, budgets and native lifetime choices.
-- [ ] Obtain domain review before expanding beyond the narrow synthetic oracle.
+- [ ] Specify expanded query semantics and independent expected outputs before
+  qualifying broader behavior with executable tests and baselines.
 - [ ] Qualify real baseline implementations and actual dependency/build versions.
 - [x] Owner authorizes integration and publication of the prepared M1 history on main.
 - [x] Owner instructs local continuation and delegates product/business decisions.
@@ -101,8 +102,8 @@ See [M2 evidence/gaps](M2-LOCAL.md) and [working local commands](../development.
 On 2026-11-27 the owner authorized integrating the prepared history into main and
 pushing main. This publication does not complete the remaining M2 evidence gates.
 
-The owner will arrange the final university review and instructed continued
-development. External scientific review is deferred, not recorded as completed.
+The owner instructed continued engineering; optional post-stable review is
+tracked separately below and does not block this work (D022).
 
 Under D018, [the narrow M2 reference gates passed](CI-VALIDATION.md): both hosted
 runners completed 47 Rust and 34 Python/native tests without skips, independent
@@ -124,6 +125,10 @@ explicitly outside this exit claim and part of later qualification work.
   existing M2 independent-server and resource checks locally.
 - [x] Obtain authorization for M3 remote publication and observe successful
   Linux/macOS CI for 87732e7; source-check and archive each runner's reports.
+- [x] Add cooperative cancellation for blocked native reads, bounded hash work
+  and supervised workers, with serialized publication admission and resume checks.
+- [ ] Qualify the cancellation follow-up on the existing CI matrix and retain
+  source-bound evidence for its 31-case recovery/cancellation harness.
 - [ ] Qualify broader durable acceptance/storage behavior before full M3 exit;
   byte-offset resume, multi-object recovery and generic analysis effects remain outside this increment.
 
@@ -133,6 +138,13 @@ See [M3 source-bound evidence and exclusions](M3-LOCAL.md).
 
 M1 requires a reviewed client contract, state model, resource limits and security
 analysis. M2–M3 require implementation and fault evidence. M4 requires format and
-domain review. M5 requires working contributor and user workflows. M6 requires
+independently specified expected results and executable comparisons. M5 requires
+working contributor and user workflows. M6 requires
 release validation. Decompose these into actionable issues when earlier evidence
 establishes scope; do not create speculative placeholder issue activity.
+
+## Optional side tasks after a complete stable version
+
+- [ ] If the owner chooses, take the stable version for external scientific
+  review using the [optional handoff](UNIVERSITY-REVIEW.md). This is not a
+  development, milestone or release prerequisite; do not repeat it in routine reports.

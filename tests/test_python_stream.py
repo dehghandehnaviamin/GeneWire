@@ -23,7 +23,7 @@ import pysam
 
 
 @contextmanager
-def service(payload: bytes = b"ABCD", *, delay: float = 0, custom_ticket=None, tls=None, transient_tickets=0, ipv6=False):
+def service(payload: bytes = b"ABCD", *, delay: float = 0, custom_ticket=None, tls=None, transient_tickets=0, ipv6=False, block_gate=None):
     seen = []
     received = threading.Event()
     host = "[::1]" if ipv6 else "127.0.0.1"
@@ -35,6 +35,11 @@ def service(payload: bytes = b"ABCD", *, delay: float = 0, custom_ticket=None, t
         def do_GET(self):
             seen.append((self.path, dict(self.headers)))
             received.set()
+            if block_gate is not None and not self.path.startswith("/reads/"):
+                entered, release = block_gate
+                entered.set()
+                if not release.wait(timeout=15):
+                    return
             time.sleep(delay)
             origin = f"{'https' if tls else 'http'}://{host}:{self.server.server_port}"
             if self.path.startswith("/reads/"):
@@ -73,6 +78,8 @@ def service(payload: bytes = b"ABCD", *, delay: float = 0, custom_ticket=None, t
     try:
         yield origin, seen, received
     finally:
+        if block_gate is not None:
+            block_gate[1].set()
         server.shutdown()
         server.server_close()
         thread.join()

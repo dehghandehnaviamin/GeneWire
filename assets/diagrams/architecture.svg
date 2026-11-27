@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1280" height="780" viewBox="0 0 1280 780" role="img" aria-labelledby="title desc">
 <title id="title">GeneWire regional architecture and local M3 recovery layer</title>
-<desc id="desc">Existing htsget services feed a policy-checked Rust stream engine and Python bridge. A supervised analysis consumer has a separate completion gate. The optional local M3 job layer retains a SHA-256-pinned complete source and synced publication receipt. It restarts incomplete downloads and does not resume byte offsets.</desc>
+<desc id="desc">Existing htsget services feed a policy-checked Rust stream engine and Python bridge. A supervised analysis consumer has a separate completion gate. The optional M3 job layer retains a SHA-256-pinned complete source, supports cooperative cancellation and serializes cancellation with output-link admission. A synced receipt recognizes publication after a crash; incomplete downloads restart without byte-offset resume.</desc>
 <style>text { font-family: Arial, Helvetica, sans-serif; } path { stroke-linecap: round; stroke-linejoin: round; }</style>
 <rect width="1280" height="780" fill="#f3f7f0"/>
 <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#527262"/></marker></defs>
@@ -46,7 +46,7 @@
 <path d="M410 460 L350 460" fill="none" stroke="#527262" stroke-width="2.5" marker-end="url(#arrow)"/>
 <path d="M1070 155 V108 H195 V155" fill="none" stroke="#527262" stroke-width="2.5" marker-end="url(#arrow)"/>
 <text x="640" y="102" font-size="14" fill="#52665b" font-weight="400" text-anchor="middle">Configured query using existing htsget</text>
-<text x="40" y="584" font-size="17" fill="#3d6329" font-weight="700">Optional M3 job: pinned complete spool → supervised analysis → synced publication receipt (RFC 0002)</text>
+<text x="40" y="584" font-size="17" fill="#3d6329" font-weight="700">Optional M3 job: pinned spool → cancellable analysis → publication fence → synced receipt (RFC 0002)</text>
 <rect x="40" y="610" width="1200" height="100" rx="12" fill="#e5f3d7" stroke="#c6d2c9"/>
 <text x="65" y="644" font-size="21" fill="#3d6329" font-weight="700" text-anchor="start">Transport complete</text>
 <text x="65" y="676" font-size="16" fill="#3d6329" font-weight="400" text-anchor="start">Ordered bytes + HTTP checks</text>

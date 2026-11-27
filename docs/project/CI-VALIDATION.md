@@ -73,7 +73,7 @@ M2's narrow engineering gate is complete under D018. M3–M6 remain planned.
 Hard-killed supervisor crash recovery, arbitrary descendants, full allocator
 accounting, broader APIs/platform qualification, security audits, comparative
 benchmarks and production/release approval are not supplied by this CI run.
-Scientific review remains deferred to the owner's university process.
+Optional external review is tracked separately under the current D022 policy.
 
 ## Action runtime maintenance
 

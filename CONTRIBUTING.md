@@ -117,7 +117,8 @@ from the development guide when changing the regional BAM path.
 - **Security:** bound resource use, identify trust assumptions, and report exploitable
   weaknesses privately. Never include secrets or identifiable genomic data.
 - **Genomic correctness:** specify coordinate conventions, reference identity,
-  compression assumptions, and index relationships. Get domain review where needed.
+  compression assumptions, and index relationships. Qualify expected behavior
+  with independent fixtures and baselines; external review is an optional later task.
 - **Performance:** supply a reproducible method and raw measurements. Include
   hardware, OS, dependency versions, workload, network conditions, repetitions,
   variability, and correctness checks. Label estimates and simulations clearly.

@@ -10,7 +10,7 @@ from pathlib import Path
 import re
 import stat
 
-from . import Client, GeneWireError, MemoryReport, Report, Stream
+from . import Cancellation, Client, GeneWireError, MemoryReport, Report, Stream
 from .analysis import filter_bam
 
 
@@ -26,6 +26,7 @@ class RecoveryReport:
     sync_confirmed: bool
     # Only a network attempt observed in this invocation; never reconstructed.
     transport: Report | None
+    cleanup_complete: bool = True
 
 
 def _fail(category: str) -> None:
@@ -124,19 +125,24 @@ def _digest(value) -> bool:
     return isinstance(value, str) and re.fullmatch(r"[0-9a-f]{64}", value) is not None
 
 
-def _hash_file(path: Path, limit: int, *, links=(1,), sync=False) -> tuple[int, str]:
+def _hash_file(path: Path, limit: int, *, links=(1,), sync=False,
+               cancellation: Cancellation | None = None) -> tuple[int, str]:
+    token = cancellation if cancellation is not None else Cancellation()
+    token._check()
     total = 0
     digest = hashlib.sha256()
     with _private_open(path, links=links) as source:
         if os.fstat(source.fileno()).st_size > limit:
             _fail("ResourceLimit")
         while data := source.read(65536):
+            token._check()
             total += len(data)
             if total > limit:
                 _fail("ResourceLimit")
             digest.update(data)
         if sync:
             os.fsync(source.fileno())
+    token._check()
     return total, digest.hexdigest()
 
 
@@ -147,9 +153,12 @@ class _VerifiedFileStream(Stream):
         self._file = _private_open(path)
         self._region = region
         self._done = self._closed = False
+        self._cancelled = False
         self._delivered = 0
 
     def read_chunk(self, max_bytes=65536):
+        if self._cancelled:
+            _fail("Cancelled")
         data = self._file.read(max_bytes)
         self._delivered += len(data)
         self._done = not data
@@ -163,14 +172,15 @@ class _VerifiedFileStream(Stream):
     def result(self):
         return Report(
             "TransportComplete" if self._done else "Cancelled" if self._closed else "Fetching",
-            self._delivered, 0, self._closed, None, "LocalSpool", False,
+            self._delivered, 0, self._closed, "Cancelled" if self._cancelled and not self._done else None,
+            "LocalSpool", self._cancelled and not self._done and self._delivered > 0,
             "Complete" if self._closed else "NotStarted", None,
             "VerifiedLocalBam", "ExpectedSha256", MemoryReport(0, 0, 0, 0, 0),
             "VerifiedLocalBam", "ExpectedSha256", "ExpectedSha256",
         )
 
     def cancel(self):
-        pass  # Local regular-file reads; no native worker to cancel.
+        self._cancelled = True
 
     def close(self):
         self._file.close()
@@ -191,6 +201,7 @@ def recover_bam(
     max_output_bytes: int = 1024**3,
     timeout_s: float = 600,
     cleanup_timeout_s: float = 5,
+    cancellation: Cancellation | None = None,
 ) -> RecoveryReport:
     """Recover one explicitly pinned BAM job; retain a private source/result receipt.
 
@@ -209,18 +220,22 @@ def recover_bam(
             or start >= end
             or any(type(n) is not int or not 0 < n <= 2**63 - 1
                    for n in (max_source_bytes, max_output_bytes))
+            or (cancellation is not None and not isinstance(cancellation, Cancellation))
             or any(type(n) not in (int, float) or not 0 < n <= 86400 or not math.isfinite(n)
                    for n in (timeout_s, cleanup_timeout_s))):
         _fail("InvalidQuery")
 
     import fcntl
 
+    token = cancellation if cancellation is not None else Cancellation()
     lock = None
     transport = None
     state = None
     reused = committed = synced = False
+    cleanup_ok = True
     error = None
     try:
+        token._check()
         target = Path(destination).absolute()
         job = Path(workspace).absolute()
         parent = target.parent.resolve(strict=True)
@@ -276,29 +291,37 @@ def recover_bam(
             if name == "state.tmp" or name.startswith(".genewire-"):
                 _discard(job / name)
         if state["phase"] == "Downloading":
+            token._check()
             for name in ("source.partial", "source.bam", "result.bam"):
                 _discard(job / name)
             stream = client.open(object_id, reference, start, end)
+            unsubscribe = token._subscribe(stream.cancel)
             try:
                 fd = os.open(job / "source.partial", os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600)
                 digest, total = hashlib.sha256(), 0
                 with os.fdopen(fd, "wb") as output:
                     while data := stream.read_chunk(65536):
+                        token._check()
                         total += len(data)
                         if total > max_source_bytes:
                             _fail("ResourceLimit")
                         output.write(data)
                         digest.update(data)
                     stream.finish()
+                    token._check()
                     output.flush()
                     os.fsync(output.fileno())
                 if digest.hexdigest() != expected_sha256:
                     _fail("IntegrityFailed")
             finally:
                 try:
-                    stream.close()
+                    try:
+                        stream.close()
+                    finally:
+                        transport = stream.result()
+                        cleanup_ok = transport.cleanup_complete
                 finally:
-                    transport = stream.result()
+                    unsubscribe()
             if transport.state != "TransportComplete" or not transport.cleanup_complete:
                 _fail("CleanupTimeout")
             os.replace(job / "source.partial", job / "source.bam")
@@ -306,7 +329,7 @@ def recover_bam(
             state = _advance(job, state, phase="Verified", source_bytes=total)
         else:
             reused = True
-        size, digest = _hash_file(job / "source.bam", max_source_bytes)
+        size, digest = _hash_file(job / "source.bam", max_source_bytes, cancellation=token)
         if size != state["source_bytes"] or digest != expected_sha256:
             _fail("IntegrityFailed")
         if state["phase"] == "Verified":
@@ -317,21 +340,23 @@ def recover_bam(
                     local, job / "result.bam", reference, start, end,
                     timeout_s=timeout_s, cleanup_timeout_s=cleanup_timeout_s,
                     max_output_bytes=max_output_bytes,
+                    cancellation=token,
                 )
             finally:
                 local.close()
+            cleanup_ok = analysis.cleanup_complete
             if analysis.state != "AnalysisComplete" or not analysis.cleanup_complete:
                 _fail(analysis.error or "ConsumerFailed")
-            size, digest = _hash_file(job / "result.bam", max_output_bytes, sync=True)
+            size, digest = _hash_file(job / "result.bam", max_output_bytes, sync=True, cancellation=token)
             _sync_dir(job)
             state = _advance(job, state, phase="Ready", output_bytes=size, output_sha256=digest)
-        size, digest = _hash_file(job / "result.bam", max_output_bytes, links=(1, 2))
+        size, digest = _hash_file(job / "result.bam", max_output_bytes, links=(1, 2), cancellation=token)
         if size != state["output_bytes"] or digest != state["output_sha256"]:
             _fail("IntegrityFailed")
         if state["phase"] == "Committed" and not os.path.lexists(target):
             _fail("CheckpointInvalid")
         try:
-            os.link(job / "result.bam", target, follow_symlinks=False)
+            token._commit(lambda: os.link(job / "result.bam", target, follow_symlinks=False))
             committed = True
         except FileExistsError:
             original = (job / "result.bam").lstat()
@@ -347,12 +372,19 @@ def recover_bam(
         error = str(failure)
     except (OSError, ValueError):
         error = "StorageFailure"
+        # A failed file operation may include an unsuccessful close. Do not
+        # confirm complete cleanup when the storage path could not be confirmed.
+        cleanup_ok = False
     finally:
         if lock is not None:
-            lock.close()
+            try:
+                lock.close()
+            except OSError:
+                cleanup_ok = False
+                error = error or "StorageFailure"
     return RecoveryReport(
         "Complete" if error is None and synced else "Failed", error,
         state["phase"] if state else "New", reused,
         state["source_bytes"] if state else 0, state["output_bytes"] if state else 0,
-        committed, synced, transport,
+        committed, synced, transport, cleanup_ok,
     )

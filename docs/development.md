@@ -163,6 +163,23 @@ categories including CheckpointInvalid, CheckpointMismatch, IntegrityFailed,
 DestinationExists, RecoveryBusy, StorageFailure and the existing stream/consumer
 categories. KeyboardInterrupt propagates; the next invocation can recover.
 
+Import `Cancellation` from `genewire` to request a cooperative stop from another
+thread. Both `filter_bam` and `recover_bam` accept `cancellation=token`; call
+`token.cancel()` and inspect `token.is_cancelled`. A runtime cancellation returns
+a Failed report with error Cancelled and preserves a valid job receipt. An
+already-cancelled recovery token performs no new disk/network work; the direct
+filter still closes its supplied stream. A token cannot be reset; use a fresh
+one for the next attempt. RecoveryReport.cleanup_complete separately records
+owned cleanup; Cancelled alone does not establish that cleanup finished.
+
+Cancellation interrupts a blocked native read, checks bounded spool/hash reads
+and stops/reaps the supervised worker. The final child wait remains cancellable
+even if the child closed its pipes first. Cancelling before output-link admission
+prevents publication; cancelling after admission preserves the accepted output
+and finishes its sync/receipt path. cancel() is a request, not confirmation that
+cleanup finished. Blocking filesystem/kernel calls do not have a hard termination
+guarantee. Completed operations release their native cancellation subscriptions.
+
 Defaults are 1 GiB each for `max_source_bytes` and `max_output_bytes`, plus the
 same decoder deadline/cleanup defaults as `filter_bam`. Network deadlines still
 come from Client. File payload is bounded separately from filesystem metadata,
@@ -173,8 +190,9 @@ loss. The local recovery harness and its source-bound report were exercised:
 .venv/bin/python tools/check_recovery.py --report /tmp/genewire-recovery.json
 ```
 
-It uses synthetic loopback data, fresh child clients and actual SIGKILL plus
-injected storage errors. See [M3 evidence and remaining gates](project/M3-LOCAL.md).
+It uses synthetic loopback data, fresh child clients, actual SIGKILL, controlled
+cancellation races and injected storage errors. It includes the 19 recovery and
+12 cancellation cases. See [M3 evidence and remaining gates](project/M3-LOCAL.md).
 The full unittest discovery command above also includes the recovery tests.
 
 ## Independent server and resource checks

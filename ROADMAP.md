@@ -14,7 +14,7 @@ may lead to a scope reduction, an extension of an existing standard, or a no-go.
 | M1 — Protocol Specification | [RFC 0001](docs/rfcs/0001-regional-streaming-profile.md), client profile, lifecycle, boundaries, security and 30 candidate scenarios | Draft prepared; review subset/retry/consumer policy and budgets; no new binary wire format justified |
 | M2 — Core Protocol | Rust/Python transport, supervised BAM adapter, real-server/HTSlib comparison, failure/race checks and payload/copy/RSS probes; [scope](docs/project/M2-LOCAL.md) | Complete for the narrow single-region BAM reference path: [observed Linux/macOS CI and exit gates](docs/project/CI-VALIDATION.md); full M1 conformance, broader qualification and scientific sign-off unclaimed |
 | M3 — Reliable Transfer Engine | Streaming, acknowledgements, object verification, checkpoints, recovery | Fault tests covering interruption, truncation, corruption, stale state, cancellation and resource exhaustion; documented durable acceptance semantics. [Verified-source BAM jobs](docs/project/M3-LOCAL.md) passed CI as a first subset; full exit and wider platform qualification remain open |
-| M4 — Genomic Extensions | Incremental FASTA/FASTQ, SAM/BAM, CRAM, VCF/BCF investigation | Per-format scope and versions; synthetic licensed fixtures; reference/index dependency tests; domain review; explicit opaque-transfer versus semantic-support matrix |
+| M4 — Genomic Extensions | Incremental FASTA/FASTQ, SAM/BAM, CRAM, VCF/BCF investigation | Per-format scope and versions; synthetic licensed fixtures; reference/index dependency tests; independently specified expected records and baseline comparisons; explicit opaque-transfer versus semantic-support matrix |
 | M5 — Developer Experience | CLI, Rust/Python integration, packaging, examples, operational guidance | Installation from a real artifact; executable examples; supported toolchain/interpreter and wheel policy; diagnostics that avoid sensitive data; interoperability guide |
 | M6 — Alpha Release | Conformance, reproducible performance evaluation, release preparation | Published methods and limitations; security review findings tracked; interoperability evidence; changelog, versioning and support policy; explicit release approval |
 
@@ -28,9 +28,10 @@ specification review precedes application or protocol implementation. Testing an
 security review accompany implementation, while comparative benchmarking and
 release preparation require a functioning, correctness-checked system.
 
-The owner will arrange the final university review and has instructed continued
-local development. This defers external scientific review without claiming that
-the fixture or broader genomic semantics have already been independently approved.
+External scientific review is an optional side task after a complete stable
+version (D022), not a development, milestone or release prerequisite. Engineering
+continues through executable correctness, failure, interoperability and stability
+gates. Keep the optional handoff separate from routine progress reports.
 
 There is no stable wire protocol or compatibility commitment yet. No release is
 scheduled. Acceptance of an RFC does not make its feature implemented.

@@ -18,7 +18,7 @@ Snapshot: 2026-11-27. Status must be updated when verified evidence changes.
 | M2 reference implementation | Narrow engineering gate complete | Rust/Python byte reader and supervised BAM adapter; [exit evidence and limits](CI-VALIDATION.md) |
 | M3 recovery | First verified-BAM-job subset published and CI-checked | [RFC 0002](../rfcs/0002-recoverable-bam-jobs.md) and [evidence](M3-LOCAL.md); complete-source reuse and publication receipts, full M3 exit open |
 | Testing and CI | Verified on the observed Linux/macOS runners with Node.js 24 actions | Each passed 47 Rust and 53 Python/native tests without skips, plus a repeated 19-case recovery harness; [workflow 46035043779](https://github.com/dehghandehnaviamin/GeneWire/actions/runs/46035043779); no warning annotations, one macOS capacity notice |
-| Scientific evaluation | Tiny controlled oracle exercised; university review deferred | Q1–Q5 and negative controls; owner will arrange final review, no independent sign-off yet |
+| Correctness evaluation | Tiny controlled oracle and negative controls exercised | Q1–Q5, independent HTSlib paths and source-bound failure evidence; expanded cases need their own executable expectations |
 | Performance and interoperability | Narrow local evidence | Pinned real htsget-rs and two HTSlib paths matched Q1–Q5; one 64 MiB opaque resource probe per retention mode; no ranking or full resource certification |
 | Release and security support | No release | No supported version or production readiness |
 
@@ -102,3 +102,15 @@ source hashes and are [archived](CI-VALIDATION.md#m3-verified-source-bam-jobs).
 The first failed macOS run is preserved as a separate observation. This closes
 publication/CI qualification of the first job subset, not full M3, broader
 platform qualification, scientific review or release approval.
+
+**D022 current workflow:** The owner moved external scientific review to an
+optional post-stable side task. It is not a milestone, development or release
+prerequisite. Earlier references above are historical snapshots; the current
+engineering gates are executable correctness, failure handling, interoperability
+and stability. Routine reports should focus on those gates.
+
+**D023 continuation:** The current M3 job-lifecycle increment adds explicit
+Cancellation tokens, native-read interruption, cancellable hashing/supervision
+and a serialized output-publication boundary. Local evidence and subsequent CI
+qualification are tracked in the M3 ledger; the 87732e7 run remains historical
+evidence for the preceding version.

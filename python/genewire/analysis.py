@@ -15,7 +15,7 @@ import threading
 import time
 from typing import Sequence
 
-from . import GeneWireError, Report, Stream
+from . import Cancellation, GeneWireError, Report, Stream
 
 
 @dataclass(frozen=True)
@@ -40,6 +40,7 @@ def filter_bam(
     timeout_s: float = 600,
     cleanup_timeout_s: float = 5,
     max_output_bytes: int = 1024**3,
+    cancellation: Cancellation | None = None,
 ) -> AnalysisReport:
     """Consume and close stream; commit filtered BAM only after both success gates.
 
@@ -57,6 +58,7 @@ def filter_bam(
         stream, [sys.executable, "-m", "genewire._bam_consumer", reference, str(start), str(end)],
         destination, timeout_s=timeout_s, cleanup_timeout_s=cleanup_timeout_s,
         max_output_bytes=max_output_bytes,
+        cancellation=cancellation,
     )
 
 
@@ -68,14 +70,17 @@ def _supervise(
     timeout_s: float = 600,
     cleanup_timeout_s: float = 5,
     max_output_bytes: int = 1024**3,
+    cancellation: Cancellation | None = None,
 ) -> AnalysisReport:
     # subprocess pipe selectors and process-group termination are POSIX-only.
     if os.name != "posix":
         raise GeneWireError("Unsupported")
     if (any(type(n) not in (int, float) or not 0 < n <= 86400 or not math.isfinite(n)
             for n in (timeout_s, cleanup_timeout_s))
-            or type(max_output_bytes) is not int or not 0 < max_output_bytes <= 2**63 - 1):
+            or type(max_output_bytes) is not int or not 0 < max_output_bytes <= 2**63 - 1
+            or (cancellation is not None and not isinstance(cancellation, Cancellation))):
         raise GeneWireError("InvalidQuery")
+    token = cancellation if cancellation is not None else Cancellation()
     target = Path(destination)
     messages: queue.Queue[bytes | BaseException | None] = queue.Queue(maxsize=1)
     stopped = threading.Event()
@@ -88,6 +93,7 @@ def _supervise(
     committed = False
     cleanup_ok = True
     deadline = time.monotonic() + timeout_s
+    unsubscribe = token._subscribe(stream.cancel)
 
     def send(value: bytes | BaseException | None) -> None:
         while not stopped.is_set():
@@ -110,6 +116,7 @@ def _supervise(
             send(failure)
 
     try:
+        token._check()
         if target.exists():
             raise GeneWireError("ConsumerFailed")
         fd, stage = tempfile.mkstemp(prefix=".genewire-", suffix=".partial", dir=target.parent)
@@ -132,6 +139,7 @@ def _supervise(
                 os.set_blocking(pipe.fileno(), False)
                 selector.register(pipe, event, label)
             while selector.get_map():
+                token._check()
                 if time.monotonic() >= deadline:
                     raise GeneWireError("DeadlineExceeded")
                 if process.poll() is not None and not input_closed:
@@ -175,7 +183,17 @@ def _supervise(
                             diagnostics += len(data)
                             if diagnostics > 65536:
                                 raise GeneWireError("ResourceLimit")
-            process.wait(timeout=max(.001, deadline-time.monotonic()))
+            # A child can close every pipe yet stay alive. Keep cancellation
+            # responsive during that final wait as well as during pipe traffic.
+            while process.poll() is None:
+                token._check()
+                remaining = deadline - time.monotonic()
+                if remaining <= 0:
+                    raise GeneWireError("DeadlineExceeded")
+                try:
+                    process.wait(timeout=min(.02, remaining))
+                except subprocess.TimeoutExpired:
+                    pass
             if process.returncode != 0 or not input_closed:
                 raise GeneWireError("ConsumerFailed")
     except GeneWireError as failure:
@@ -233,8 +251,10 @@ def _supervise(
             if error is None and cleanup_ok:
                 try:
                     # Close/flush must succeed before the no-overwrite commit.
-                    os.link(stage, target)
+                    token._commit(lambda: os.link(stage, target))
                     committed = True
+                except GeneWireError as failure:
+                    error = str(failure)
                 except OSError:
                     error = "ConsumerFailed"
         if stage is not None:
@@ -242,6 +262,7 @@ def _supervise(
                 os.unlink(stage)
             except OSError:
                 cleanup_ok = False
+        unsubscribe()
     if not cleanup_ok:
         error = error or "CleanupTimeout"
     return AnalysisReport(

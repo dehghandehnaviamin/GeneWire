@@ -5,8 +5,9 @@ from dataclasses import dataclass
 from typing import Iterator, Mapping, Sequence
 
 from ._native import GeneWireError, NativeClient, NativeStream
+from ._cancellation import Cancellation
 
-__all__ = ["Client", "Destination", "GeneWireError", "MemoryReport", "Report", "Stream"]
+__all__ = ["Cancellation", "Client", "Destination", "GeneWireError", "MemoryReport", "Report", "Stream"]
 MAX_CHUNK = 256 * 1024
 
 

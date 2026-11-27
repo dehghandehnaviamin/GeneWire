@@ -94,6 +94,29 @@ successful-retry negative control. The fresh successful run includes that fix.
 Only documentation/evidence changes follow this tested revision in the final
 publication; no new workflow success is invented for that docs-only commit.
 
+## Cancellation follow-up
+
+The D023 cancellation follow-up adds `Cancellation` to both BAM APIs and is
+tracked separately from the historical 87732e7 CI evidence. It interrupts blocked
+native reads, checks spool hashing and supervises cancellation through child
+shutdown, including the final wait after pipes close. Token cancellation is
+serialized with output-link admission; a valid published result is preserved.
+The expanded harness covers 19 recovery plus 12 cancellation cases. Its local
+source-bound [recovery/cancellation report](evidence/2026-11-27-m3-cancellation.json)
+and [independent-server regression](evidence/2026-11-27-m3-cancellation-interop.json)
+identify the exact tested source. Remote qualification for this follow-up is
+recorded only after its own completed run.
+
+Observed locally for D023: 65 Python/native tests and the repeated 31-case
+recovery/cancellation harness passed without skips; independent htsget-rs and
+both HTSlib paths still matched Q1–Q5. The two linked local reports bind these
+results to source-file hashes and preserve the preceding CI evidence unchanged.
+
+RecoveryReport now exposes cleanup_complete separately from its error and
+publication/sync flags. A cancelled operation with incomplete supervisor cleanup
+cannot be mistaken for a fully stopped job even when network cleanup completed.
+Storage failures conservatively leave cleanup unconfirmed as well.
+
 ## Remaining gates
 
 Full M3 acceptance remains open. This increment does not supply byte-offset

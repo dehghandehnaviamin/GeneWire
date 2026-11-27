@@ -20,6 +20,7 @@ class EvidenceResult(unittest.TextTestResult):
             "test": test.id(), "outcome": "passed",
             "crashes": getattr(test, "crash_observations", []),
             "truth": getattr(test, "truth_observations", []),
+            "cancellation": getattr(test, "cancellation_observations", []),
         })
 
 
@@ -29,12 +30,15 @@ def main():
     args = parser.parse_args()
     root = Path(__file__).resolve().parents[1]
     sys.path.insert(0, str(root / "tests"))
-    suite = unittest.defaultTestLoader.discover(str(root / "tests"), pattern="test_recovery.py")
+    suite = unittest.TestSuite(
+        unittest.defaultTestLoader.discover(str(root / "tests"), pattern=pattern)
+        for pattern in ("test_recovery.py", "test_cancellation.py")
+    )
     result = unittest.TextTestRunner(verbosity=2, resultclass=EvidenceResult).run(suite)
     report = {
         "platform": platform.platform(), "python": platform.python_version(),
         "implementation_file_sha256": source_hashes(),
-        "method": "synthetic loopback BAM; actual SIGKILL boundaries; injected filesystem errors; one local run",
+        "method": "synthetic loopback BAM; actual SIGKILL and explicit cancellation boundaries; injected filesystem errors; one local run",
         "limits": "process-crash recovery only; no byte-offset resume, power-loss or broad platform qualification; expected digest supplied by fixture",
         "tests_run": result.testsRun, "failures": len(result.failures),
         "errors": len(result.errors), "skips": len(result.skipped),

@@ -1,8 +1,9 @@
-# University review handoff — local M2 snapshot
+# Optional post-stable review handoff — historical M2 snapshot
 
-The owner will arrange the final university review. This document prepares the
-current narrow implementation for reproducible inspection. Its M2 engineering
-gate passed; the full project and scientific review are not claimed complete.
+**Optional side task (D022).** The owner may arrange this review after a complete
+stable version. It is not a development, milestone or release prerequisite.
+The material below preserves the earlier M2 inspection snapshot; update it to the
+chosen stable revision only if the owner elects to use the handoff.
 
 ## What can be demonstrated now
 

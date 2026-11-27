@@ -138,7 +138,7 @@ specified separately.
 | --- | --- | --- |
 | SAM / BAM | Synthetic indexed BAM is the proposed first regional-evaluation fixture; SAM provides decoded context | Tiny BAM oracle exercised locally; broader extensions at M4 |
 | CRAM | Reference arrangements and index relationships need separate review | P1 evaluation · Under research |
-| VCF / BCF | Variant overlap, indexes and coordinate semantics need domain review | P1 evaluation · Under research |
+| VCF / BCF | Variant overlap, indexes and coordinate semantics need explicit fixtures and baseline checks | P1 evaluation · Under research |
 | FASTA / FASTQ | Reference lookup or secondary opaque-object exchange; no assumed reference-coordinate FASTQ API | Later / secondary · Under research |
 | BED | Feature intervals and coordinate conventions | Later extension · Under research |
 

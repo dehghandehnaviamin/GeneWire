@@ -423,3 +423,47 @@ Decisions record rationale and limits, not implementation claims.
   and evidence with a docs-only CI skip after verifying implementation/build/
   workflow inputs are unchanged from 87732e7. Attribute success to that actual
   run, not an unrun documentation revision. No release/deployment is included.
+
+## D022 — Continue stability engineering; make external review optional
+
+- **Date:** 2026-11-27. The owner clarified that external scientific review belongs
+  to an optional side task after a complete stable version. It is not required
+  for development, milestone progression or release, and should not be repeated
+  in routine progress/final reports. This supersedes earlier review-gate wording.
+- **Engineering policy:** Keep correctness expectations, negative controls and
+  independent executable comparisons. Removing an institutional review gate does
+  not supply evidence for an untested format, guarantee or performance claim.
+- **Next M3 increment:** Add explicit cancellation through download, spool
+  verification and supervised decoding, with a serialized output-publication
+  boundary. Preserve valid receipts for a later fresh invocation; never delete a
+  published result merely because a later cancellation arrives. Exercise actual
+  native I/O interruption, stalled decoder cleanup and both sides of publication.
+
+## D023 — Add cooperative BAM job cancellation with publication admission
+
+- **Date:** 2026-11-27; continued M3 job-lifecycle engineering under the owner's
+  latest continuation instruction, following the existing M3 validation workflow.
+- **API:** Export a one-way thread-safe Cancellation token; accept it optionally
+  in filter_bam/recover_bam. Signal a subscribed native stream to interrupt blocked
+  I/O, check bounded file hashing and poll both supervisor pipe traffic and the
+  final child wait. Unsubscribe completed operations so a token does not retain
+  native streams. Invalid token types fail before changing a stream/workspace.
+- **Publication:** Serialize token cancellation with no-overwrite link admission.
+  Cancellation before admission prevents output; after admission, finish the
+  accepted result's sync/receipt path. A late signal cannot retract published
+  bytes. Filesystem/kernel blocking still has no hard termination guarantee.
+- **Recovery:** Cancelled attempts retain their last valid receipt. A fresh token
+  restarts incomplete input or reuses verified source/result, preserving existing
+  budgets and preventing cross-query byte-offset splicing.
+- **Evidence:** Exercise real blocked native I/O, hashing and stalled/reaped
+  workers, a pipe-closed/live child, both sides of publication, subscription
+  lifetime and subsequent recovery. Record local/CI results separately in the
+  M3 ledger. No new format, release or deployment is included.
+- **Cleanup result:** Expose RecoveryReport.cleanup_complete separately from
+  Cancelled and publication/sync state. A network stream can already be clean
+  while supervisor cleanup is incomplete; preserve that distinction in the job
+  result instead of implying cancellation synchronously stopped all resources.
+- **Observed locally:** 65 Python/native tests and the repeated 31-case
+  recovery/cancellation harness passed without skips. Independent htsget-rs and
+  HTSlib Q1–Q5 still matched. Follow this M3 lifecycle increment through the
+  established publication/CI workflow and archive the actual runner results.

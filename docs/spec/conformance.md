@@ -55,8 +55,9 @@ Test code must challenge implementation behavior, not merely repeat this table.
 ## Scientific and baseline setup
 
 Use [M0 W1 and Q1–Q5](../research/evaluation-plan.md#tiny-independent-truth-fixture)
-as the first narrow oracle, with independent domain review still required for
-expanded semantics. Test exact filtered records separately from the raw upstream
+as the first narrow oracle. Expanded semantics require explicitly specified
+expected records and independent executable comparisons. Test exact filtered
+records separately from the raw upstream
 superset. Recompression need not preserve file bytes; do not use a compressed-file
 hash as the sole record-equivalence oracle.
 
@@ -84,7 +85,9 @@ endpoint, public dataset, external credential or paid service is needed.
 M1 review must resolve the consumer assumption, subset, preferred native binding,
 resource budgets and conservative recovery policy. Security/network review must
 decide how the actual connection is bound to destination policy. Expanded query
-semantics need domain review. Owner approval of implementation remains separate.
+semantics need their own expected-output/failure tests and baseline checks.
+Optional external review is a post-stable side task under D022. Owner approval
+of implementation remains separate.
 
 A future M2 result ledger should record case ID, implementation/source revision,
 environment, exact fixture/configuration, observed output/status, pass/fail,

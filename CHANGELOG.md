@@ -6,6 +6,11 @@ Notable project changes will be recorded here. GeneWire has no software release 
 
 ### Added
 
+- Cooperative BAM job cancellation through blocked native reads, spool hashing,
+  decoder pipes and final child waits; serialized output-link admission and
+  recoverable receipts and a separate cleanup status, with 12 additional
+  cancellation behavior/failure checks.
+
 - Local M3 SHA-256-pinned complete-source BAM jobs with private locked receipts,
   recoverable no-overwrite publication, actual process-crash and storage-failure
   checks; 19 recovery tests, Q1–Q5 reuse and source-bound evaluation harness.

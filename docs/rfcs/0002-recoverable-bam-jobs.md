@@ -53,6 +53,32 @@ metadata and filesystem overhead. There is no automatic retry loop or job daemon
 
 ## Scope and failure evidence
 
+### Cooperative cancellation follow-up
+
+`Cancellation` is a one-way token shared across `recover_bam` and `filter_bam`.
+Cancellation before a job starts performs no filesystem or network work. During
+a download it signals the native stream, including a read blocked on a remote
+response. Hash verification checks the token between bounded reads. The
+supervisor polls it during pipe traffic and while waiting for a child that has
+closed its pipes but is still alive; owned cleanup still runs under its existing
+policy. A Cancelled failure leaves the last valid receipt available for a later
+invocation with a fresh token.
+
+Cancellation and no-overwrite link admission share a lock. If cancellation wins
+before admission, no public output is created. Once the link is admitted, late
+cancellation cannot retract it or turn the completed publication into a cancelled
+receipt; finish the sync/receipt path, or report its actual storage failure.
+This serialization is an admission boundary, not a hard real-time guarantee for
+a blocked filesystem call. `cancel()` requests stopping; the operation's final
+report confirms cleanup, and completed subscriptions release native handles.
+
+Tokens are not persisted, reset or reused after cancellation. A resumed job may
+reuse a valid complete source/result, but it must use a fresh uncancelled token.
+Network timeouts, decoder limits, process-crash recovery and sync semantics stay
+unchanged. No arbitrary rollback or forced kernel-I/O termination is promised.
+
+### Existing recovery/failure checks
+
 Reuse the supervised M2 decoder/filter and its bounded cancellation, diagnostics
 and output behavior. A local verified-file adapter is explicitly distinct from
 the Rust network stream. A recovery receipt does not reconstruct an unobserved

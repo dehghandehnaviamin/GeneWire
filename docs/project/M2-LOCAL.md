@@ -14,9 +14,9 @@ Linux/macOS CI succeeded for da92bc9. D019's Node.js 24 action migration at
 dc46c2b passed a fresh run on both targets without the Node.js 20 warnings;
 the hosted macOS capacity notice remains. See [CI exit evidence](CI-VALIDATION.md).
 
-The owner instructed continued development and will arrange the final university
-review. This defers external scientific review; it does not establish scientific
-sign-off, production readiness or release approval. D016 authorized this M2
+The owner instructed continued development. D022 subsequently moved external
+review to an optional post-stable side task, outside the engineering gates.
+This ledger records tested behavior, not production readiness. D016 authorized this M2
 publication; [the decision register](DECISIONS.md) retains the scope and chronology.
 
 Initial implementation b741872 was integrated with the prepared M1/M2 history
@@ -193,8 +193,8 @@ The [M2 minimum reference gates passed](CI-VALIDATION.md#m2-exit-scope) on both
 observed runners. The named accounting/process policies have actual CI evidence;
 their explicit exclusions remain. Do not reinterpret counters as allocator/TLS/
 HTTP/JSON/decoder RSS limits, or infer hard-killed-supervisor cleanup, arbitrary
-descendant control or interpreter-teardown guarantees. Scientific review remains
-deferred to the owner's university process; record findings before wider claims.
+descendant control or interpreter-teardown guarantees. Wider behavior needs its
+own expected outputs, failure tests and independent executable comparisons.
 
 No comparative performance advantage, full conformance, security audit, durable
 resume, production approval or release is claimed. M3–M6 remain planned.

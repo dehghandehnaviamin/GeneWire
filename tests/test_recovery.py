@@ -408,6 +408,7 @@ class RecoveryTests(unittest.TestCase):
                 self.assertEqual(result.error, "StorageFailure")
                 self.assertFalse(result.output_committed)
                 self.assertFalse(result.sync_confirmed)
+                self.assertFalse(result.cleanup_complete)
                 self.assertNotIn("sensitive", repr(result))
                 self.assertFalse((root / "output.bam").exists())
 

@@ -40,6 +40,12 @@ The owner then explicitly approved pushing the prepared M3 increment and running
 Linux/macOS CI. This includes necessary CI fixes and accompanying evidence/status
 updates. Follow the runs to completion; no release or deployment is authorized.
 
+The owner subsequently clarified that university/scientific review is an optional
+side task after a complete stable version, not a development, milestone or
+release prerequisite. Do not repeat it in routine progress/final messages.
+Continue engineering with explicit automated correctness evidence and honest
+scope; this instruction does not turn untested behavior into verified behavior.
+
 Read `docs/project/STATUS.md`, `docs/project/TASKS.md`,
 `docs/project/DECISIONS.md`, `CONTRIBUTING.md`, and `SECURITY.md` before work.
 Keep status, roadmap, architecture diagrams, and contributor instructions aligned
