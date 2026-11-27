@@ -8,6 +8,13 @@ the complete draft is not claimed conformant or scientifically reviewed.
 
 Implementation revision: b741872933b746c04e184ae4f76ad3c4b66721a3 (local commit).
 
+Publication update, 2026-11-27: the owner subsequently authorized merging the
+prepared branches into main and pushing main. Their history is integrated at
+e9be690; the checked implementation is unchanged. The restriction above records
+the earlier local-work instruction, superseded for this publication by D012 in
+[the decision register](DECISIONS.md). Tests remain local-run evidence rather
+than GitHub CI or production qualification.
+
 ## Implemented path and engineering choices
 
 A two-crate Cargo workspace separates the Python-independent Rust core from its

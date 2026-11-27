@@ -37,9 +37,14 @@ Keep immutable initial-publication evidence outside its own commit to avoid
 self-referential commit hashes. The bootstrap SHA above is now known and can be
 recorded in this later research update.
 
-M0 was pushed and verified on docs/m0-feasibility. M1 was committed locally at
-b684087fb3da50b69dd8fdd209858068eab350a2. Current work continues locally on
-feat/local-regional-stream. The owner requested local work and delegated
-product/business decisions; no new push, merge or issue closure was performed.
-Public main was last verified at the bootstrap, not refreshed during this local
-increment. M2 is not complete, independently audited or production-qualified.
+M0 was published and then merged into GitHub main through PR #5 at 4f765fc.
+On 2026-11-27 the owner explicitly requested integrating all prepared branches
+into main and pushing main. M1 b684087 and the local M2 history through 8c8b132
+are now integrated on main at merge commit e9be690. Original commits and branches
+are retained. The integrated source tree matches the tested prototype; the
+remaining changes record publication authorization and integration status.
+
+This records the observed local integration and the owner's publication scope;
+the current remote head is checked separately with Git/GitHub. No issue closure,
+release or deployment is included. M2 remains incomplete, unaudited and without
+real-server interoperability or comparative performance evidence.

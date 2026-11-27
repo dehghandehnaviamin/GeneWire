@@ -60,7 +60,7 @@ criteria. M1 is the local prototype's design basis; the full contract is not ver
 - [ ] Review retry, cleanup, outbound policy, budgets and native lifetime choices.
 - [ ] Obtain domain review before expanding beyond the narrow synthetic oracle.
 - [ ] Qualify real baseline implementations and actual dependency/build versions.
-- [ ] Approve and verify later M1 publication.
+- [x] Owner authorizes integration and publication of the prepared M1 history on main.
 - [x] Owner instructs local continuation and delegates product/business decisions.
 
 ## M2 — First local implementation (in progress)
@@ -78,7 +78,8 @@ criteria. M1 is the local prototype's design basis; the full contract is not ver
 - [ ] Configure and exercise CI before claiming M2 exit.
 
 See [M2 evidence/gaps](M2-LOCAL.md) and [working local commands](../development.md).
-All current work remains local; no new remote action is authorized or performed.
+On 2026-11-27 the owner authorized integrating the prepared history into main and
+pushing main. This publication does not complete the remaining M2 evidence gates.
 
 ## Later milestones
 

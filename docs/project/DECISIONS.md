@@ -149,3 +149,21 @@ Decisions record rationale and limits, not implementation claims.
   fragment above 256 KiB. No performance or complete resource-bound claim.
 - **Evidence:** [M2 ledger](M2-LOCAL.md), Rust HTTP/fault tests, Python/native and
   synthetic BAM checks. This does not establish real-server interoperability.
+
+## D012 — Integrate and publish the prepared history on main
+
+- **Date:** 2026-11-27
+- **State:** Accepted owner instruction; history integrated locally
+- **Evidence:** The owner explicitly requested merging all prepared branches into
+  main and pushing. Before integration, origin/main was refreshed and found to
+  include M0 through PR #5, merge 4f765fc.
+- **Action:** Fast-forward local main to origin/main, then merge
+  feat/local-regional-stream through 8c8b132 with a merge commit e9be690. The M0
+  and M1 branches are ancestors of the integrated history; no rewrite or branch
+  deletion is needed.
+- **Checks:** All 28 Rust and 12 Python/native tests passed before integration.
+  The merged source tree exactly matches the tested prototype. Publication
+  metadata updates do not change runtime behavior.
+- **Scope:** Push main, verify its exact GitHub head and inspect Actions state.
+  Preserve all source commits, existing branches and remotes. No release,
+  deployment, issue closure or claim of M2 completion is included.

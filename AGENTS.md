@@ -15,6 +15,11 @@ instructed local continuation and delegated product/business decisions. Proceed
 with local implementation and checks; do not push, publish or deploy until later
 authorization. Record choices and evidence in the decision register and M2 ledger.
 
+On 2026-11-27 the owner explicitly authorized merging all prepared branches into
+main and pushing main. That authorization covers the existing research, design,
+prototype and accompanying publication-status updates; later unrelated pushes,
+releases and deployments still require authorization.
+
 Read `docs/project/STATUS.md`, `docs/project/TASKS.md`,
 `docs/project/DECISIONS.md`, `CONTRIBUTING.md`, and `SECURITY.md` before work.
 Keep status, roadmap, architecture diagrams, and contributor instructions aligned
