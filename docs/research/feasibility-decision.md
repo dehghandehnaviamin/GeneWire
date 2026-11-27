@@ -2,7 +2,8 @@
 
 **Date:** 2026-11-26
 
-**State:** Proposed for owner review; no independent domain review yet.
+**State:** Owner authorized proceeding with this direction into M1 design after
+M0 publication. No independent domain review or experimental validation yet.
 
 **Scope:** Regional retrieval and streaming, as selected by the owner.
 
@@ -18,8 +19,11 @@ engineering inference from the comparison, not a claim of market demand, novel
 research, runtime feasibility or measured advantage.
 
 The owner authorized M0 and selected Rust for the core direction, with Python
-as a possible high-level layer. Approval of this reuse recommendation, remote
-publication, M1 execution and implementation is still outstanding.
+as a possible high-level layer. M0 publication was approved and verified; the
+subsequent continuation authorizes the [M1 draft](../spec/README.md).
+The owner subsequently authorized local M2 work and delegated product/business
+decisions. Full contract qualification and later publication remain separate;
+see [current local evidence](../project/M2-LOCAL.md).
 The original goal remains an open interoperable
 ecosystem; whether it needs its own wire protocol remains an open evidence question.
 
@@ -66,9 +70,10 @@ a new parser. See [technology direction](technology-direction.md).
 
 ## Entry criteria and outstanding review
 
-Before treating M0 as accepted and starting M1:
+M0 identified the following review needs. The owner authorized M1 to refine the
+design while unresolved domain/deployment assumptions remain explicit:
 
-1. The owner accepts or revises the regional-access scope and recommendation.
+1. The owner accepted advancing the regional-access/reuse-first direction into M1.
 2. Name an initial analysis consumer and confirm whether a caller can discard
    provisional output after failure.
 3. Review the one-interval truth fixture and intended result semantics with an

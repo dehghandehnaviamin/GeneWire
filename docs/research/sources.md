@@ -23,9 +23,9 @@ standard family. No external specification is relicensed by linking it here.
 | S15 | [SAM/BAM specification](https://samtools.github.io/hts-specs/SAMv1.pdf), 1.6, printing b5341fb, 2025-08-12 | Format and coordinate context for future fixtures; not comprehensive format certification |
 | S16 | [CRAM specification](https://samtools.github.io/hts-specs/CRAMv3.pdf), 3.1, printing 07a4382, 2025-06-04 | Reference arrangements and indexing context; not every CRAM object needs an external reference |
 | S17 | [VCF/BCF specification](https://samtools.github.io/hts-specs/VCFv4.5.pdf), VCF 4.5 / BCF 2.2, printing e821e4f, 2026-02-25 | Variant-format context; complex interval semantics remain a domain-review task |
-| S18 | [PyO3 crate documentation](https://docs.rs/pyo3/0.30.1/pyo3/), 0.30.1, and [parallelism guide](https://pyo3.rs/main/parallelism.html), rolling guide | Native Python/Rust integration and interpreter detachment; no GeneWire binding or supported interpreter matrix exists |
-| S19 | [maturin user guide](https://www.maturin.rs/), rolling guide | Packaging option for Rust extensions/mixed projects; not an installed or selected GeneWire build tool |
-| S20 | [Tokio crate documentation](https://docs.rs/tokio/1.54.1/tokio/), 1.54.1 | Candidate runtime and blocking-work boundaries; not a dependency selection or throughput result |
+| S18 | [PyO3 crate documentation](https://docs.rs/pyo3/0.30.1/pyo3/), 0.30.1, and [parallelism guide](https://pyo3.rs/main/parallelism.html), rolling guide | Native Python/Rust integration and interpreter detachment; local M2 now has a binding; a supported interpreter matrix remains unqualified |
+| S19 | [maturin user guide](https://www.maturin.rs/), rolling guide | Packaging option for Rust extensions/mixed projects; reviewed as an M0 option; local M2 subsequently selected it |
+| S20 | [Tokio crate documentation](https://docs.rs/tokio/1.54.1/tokio/), 1.54.1 | Candidate runtime and blocking-work boundaries; subsequently selected for local M2; not a throughput result |
 
 ## Version and interpretation cautions
 

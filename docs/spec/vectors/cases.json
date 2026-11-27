@@ -1,0 +1,175 @@
+{
+  "document_id": "GW-M1-DRAFT-01",
+  "artifact_kind": "candidate_scenario_expectations",
+  "implemented": false,
+  "payload_semantics": "Symbolic transport fragments, not valid BAM fixtures or real genomic data.",
+  "states": ["NEW", "TICKETING", "FETCHING", "RETRY_WAIT", "DRAINING", "TRANSPORT_COMPLETE", "FAILED", "CANCELLED"],
+  "terminal_states": ["TRANSPORT_COMPLETE", "FAILED", "CANCELLED"],
+  "allowed_transitions": {
+    "NEW": ["TICKETING", "FAILED", "CANCELLED"],
+    "TICKETING": ["FETCHING", "RETRY_WAIT", "FAILED", "CANCELLED"],
+    "FETCHING": ["FETCHING", "RETRY_WAIT", "DRAINING", "FAILED", "CANCELLED"],
+    "RETRY_WAIT": ["TICKETING", "FETCHING", "FAILED", "CANCELLED"],
+    "DRAINING": ["TRANSPORT_COMPLETE", "FAILED", "CANCELLED"],
+    "TRANSPORT_COMPLETE": [],
+    "FAILED": [],
+    "CANCELLED": []
+  },
+  "cases": [
+    {
+      "id": "C01", "requirements": ["P05", "P09"],
+      "scenario": "Inline AB followed by HTTPS CD; complete bodies, drain delivery in order.",
+      "trace": ["NEW", "TICKETING", "FETCHING", "FETCHING", "DRAINING", "TRANSPORT_COMPLETE"],
+      "expected": {"transport": "TRANSPORT_COMPLETE", "output": "ABCD", "category": null, "analysis": "NOT_EVALUATED"}
+    },
+    {
+      "id": "C02", "requirements": ["P04", "P13"],
+      "scenario": "Oversized ticket, excessive depth/blocks, duplicate keys or ill-typed required fields; expand into separate concrete cases.",
+      "trace": ["NEW", "TICKETING", "FAILED"],
+      "expected": {"transport": "FAILED", "category_one_of": ["ResourceLimit", "TicketInvalid"], "data_fetches": 0}
+    },
+    {
+      "id": "C03", "requirements": ["P12", "P16"],
+      "scenario": "Transient first-block failure before exposure, discard undelivered attempt bytes, then succeed.",
+      "trace": ["NEW", "TICKETING", "FETCHING", "RETRY_WAIT", "FETCHING", "DRAINING", "TRANSPORT_COMPLETE"],
+      "expected": {"transport": "TRANSPORT_COMPLETE", "duplicate_output": false, "attempts": 2}
+    },
+    {
+      "id": "C04", "requirements": ["P12"],
+      "scenario": "Block one AB was exposed; block two fails before exposure and succeeds on retry with CD.",
+      "expected": {"transport": "TRANSPORT_COMPLETE", "output": "ABCD", "replay_of_block_one": false}
+    },
+    {
+      "id": "C05", "requirements": ["P12", "P16"],
+      "scenario": "Current block exposed AB, then disconnected.",
+      "trace": ["NEW", "TICKETING", "FETCHING", "FAILED"],
+      "expected": {"transport": "FAILED", "category": "TransportFailed", "may_have_partial_output": true, "retry_current_block": false}
+    },
+    {
+      "id": "C06", "requirements": ["P12"],
+      "scenario": "After exposed-prefix failure the caller starts a fresh query with a new ticket.",
+      "expected": {"transport": "FAILED", "old_attempt_terminal_immutable": true, "reuse_old_prefix": false}
+    },
+    {
+      "id": "C07", "requirements": ["P12", "P16"],
+      "scenario": "Representation validator changes during an otherwise eligible block retry.",
+      "expected": {"transport": "FAILED", "category": "ResponseInvalid", "splice_old_prefix": false}
+    },
+    {
+      "id": "C08", "requirements": ["P06", "P16"],
+      "scenario": "An explicit closed byte-range request receives a full 200 response.",
+      "expected": {"transport": "FAILED", "category": "ResponseInvalid", "append_full_response": false}
+    },
+    {
+      "id": "C09", "requirements": ["P06", "P16"],
+      "scenario": "206 range endpoints or received length differ from the request; include truncation as a concrete variant.",
+      "expected": {"transport": "FAILED", "category": "ResponseInvalid", "analysis": "FAILED"}
+    },
+    {
+      "id": "C10", "requirements": ["P07", "P16"],
+      "scenario": "Data response has HTTP Content-Encoding gzip under the identity-only subset.",
+      "expected": {"transport": "FAILED", "category": "ResponseInvalid", "automatic_decompression": false}
+    },
+    {
+      "id": "C11", "requirements": ["P13"],
+      "scenario": "Encoded output would exceed the configured result-byte limit after partial delivery.",
+      "expected": {"transport": "FAILED", "category": "ResourceLimit", "may_have_partial_output": true, "truncated_success": false}
+    },
+    {
+      "id": "C12", "requirements": ["P13", "P14"],
+      "scenario": "Consumer stalls until payload credit is exhausted, then closes before draining.",
+      "trace": ["NEW", "TICKETING", "FETCHING", "CANCELLED"],
+      "expected": {"transport": "CANCELLED", "category": "Cancelled", "payload_within_configured_window": true}
+    },
+    {
+      "id": "C13", "requirements": ["P08"],
+      "scenario": "Data origin differs from control origin; only the policy-approved ticket credentials may be sent.",
+      "expected": {"transport": "TRANSPORT_COMPLETE", "control_token_sent_to_data_origin": false}
+    },
+    {
+      "id": "C14", "requirements": ["P08"],
+      "scenario": "A redirect targets an origin without an explicit destination/credential policy.",
+      "expected": {"transport": "FAILED", "category": "NetworkPolicy", "credentials_forwarded": false}
+    },
+    {
+      "id": "C15", "requirements": ["P08"],
+      "scenario": "An allowed name resolves or reconnects to a disallowed address, including IPv6.",
+      "expected": {"transport": "FAILED", "category": "NetworkPolicy", "disallowed_connection": false}
+    },
+    {
+      "id": "C16", "requirements": ["P15"],
+      "scenario": "Failure occurs with synthetic secrets in URL/header and sensitive query labels.",
+      "expected": {"transport": "FAILED", "diagnostic_secret_values": [], "diagnostic_query_identifiers": []}
+    },
+    {
+      "id": "C17", "requirements": ["P10", "P11"],
+      "scenario": "All transport checks succeed but the symbolic payload is not valid BAM; the decoder rejects it.",
+      "expected": {"transport": "TRANSPORT_COMPLETE", "analysis": "FAILED", "supervisor_category": "ConsumerFailed", "transport_success_implies_analysis_success": false}
+    },
+    {
+      "id": "C18", "requirements": ["P10", "P17"],
+      "scenario": "A valid decodable result omits record D from a controlled query whose independent oracle requires B and D.",
+      "expected": {"transport": "TRANSPORT_COMPLETE", "analysis": "COMPLETE", "oracle": "MISMATCH", "scientifically_verified_claim": false}
+    },
+    {
+      "id": "C19", "requirements": ["P13"],
+      "scenario": "Overall query deadline expires while the caller is applying backpressure.",
+      "expected": {"transport": "FAILED", "category": "DeadlineExceeded", "unlimited_pause": false}
+    },
+    {
+      "id": "C20", "requirements": ["P14"],
+      "scenario": "Read handoff commits before cancellation; that read can finish, but no subsequent handoff commits.",
+      "expected": {"transport": "CANCELLED", "category": "Cancelled", "may_have_partial_output": true, "new_handoffs_after_terminal": 0}
+    },
+    {
+      "id": "C21", "requirements": ["P14", "P15"],
+      "scenario": "Concurrent second read or finish-before-exhaustion violates a local API precondition.",
+      "expected": {"api_category": "InvalidState", "overwrite_existing_outcome": false}
+    },
+    {
+      "id": "C22", "requirements": ["P14"],
+      "scenario": "Close cancels an unfinished stream, but owned tasks do not join within the cleanup wait budget.",
+      "expected": {"transport": "CANCELLED", "cleanup": "InProgress", "close_category": "CleanupTimeout", "release_query_slot": false}
+    },
+    {
+      "id": "C23", "requirements": ["P14"],
+      "scenario": "All checks and draining finished; cancellation arrives after terminal success.",
+      "expected": {"transport": "TRANSPORT_COMPLETE", "overwrite_existing_outcome": false}
+    },
+    {
+      "id": "C24", "requirements": ["P09"],
+      "scenario": "Python retains a returned bytes object while native buffers are reused and the stream closes.",
+      "expected": {"retained_bytes_unchanged": true, "borrowed_reusable_buffer_exposed": false}
+    },
+    {
+      "id": "C25", "requirements": ["P15"],
+      "scenario": "Native worker panics/fails during an active query; explicit joins observe it.",
+      "expected": {"transport": "FAILED", "category": "InternalFailure", "foreign_unwind": false}
+    },
+    {
+      "id": "C26", "requirements": ["P11"],
+      "scenario": "Supervised decoder exits early/nonzero before all transport work is consumed.",
+      "expected": {"analysis": "FAILED", "supervisor_category": "ConsumerFailed", "cancel_active_transport": true}
+    },
+    {
+      "id": "C27", "requirements": ["P01"],
+      "scenario": "Invalid coordinate types/overflow/empty intervals fail locally; valid one-base intervals retain explicit zero-based meaning.",
+      "expected": {"invalid_input_category": "InvalidQuery", "invalid_input_network_requests": 0, "implicit_coordinate_conversion": false}
+    },
+    {
+      "id": "C28", "requirements": ["P02"],
+      "scenario": "Caller asks for variants, multiple intervals, CRAM or projection under this subset.",
+      "expected": {"transport": "FAILED", "category": "Unsupported", "whole_file_fallback": false}
+    },
+    {
+      "id": "C29", "requirements": ["P03"],
+      "scenario": "Opaque ID contains slash/dot/percent/Unicode syntax that could otherwise alter URI construction.",
+      "expected": {"authority_changed_by_object_id": false, "unintended_path_traversal": false}
+    },
+    {
+      "id": "C30", "requirements": ["P16"],
+      "scenario": "Authorization is denied or expires with 401/403.",
+      "expected": {"transport": "FAILED", "category": "AccessDenied", "automatic_reauthorization": false, "automatic_retry": false}
+    }
+  ]
+}
