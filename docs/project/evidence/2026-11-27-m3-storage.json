@@ -1,0 +1,1687 @@
+{
+  "platform": "macOS-27.0-arm64-arm-64bit-Mach-O",
+  "python": "3.14.6",
+  "implementation_file_sha256": {
+    "Cargo.lock": "9234d1600e45afcb4ddd1c28f722ca1eddc9e9425212c2c1ce4f2b02e0e18554",
+    "Cargo.toml": "026670dc1d647e0a7f0c7873144db075ba107fe8849ad010a045cc7f7d1390aa",
+    "crates/genewire-core/Cargo.toml": "f5599b71db59b5838a4cc91b8b3051f7e7b112adaab4a73868d057dbbaa8f308",
+    "crates/genewire-core/src/error.rs": "97663d71a93caee3884469bce0c92566e7ff4b6cb5c12342b25b2c539d6eeb3a",
+    "crates/genewire-core/src/lib.rs": "3e3db4badd586ebad801da94d62fbbcd848107c14f9c7dc47d97d67ae5a1836c",
+    "crates/genewire-core/src/model.rs": "11410892db931f6dfb58f3e9ab6459819b73d108a3f779e8ac5fc0d93572880b",
+    "crates/genewire-core/src/network.rs": "bafeb1ab2635a0a18483dcb58af2379f606077b4a0df58cb2f41e046cc470d85",
+    "crates/genewire-core/src/stream.rs": "065632185a8357b99144b74ff3597d005e829dfd964f6e240a3313265148b157",
+    "crates/genewire-core/src/ticket.rs": "bab65f2b5fd1035ca95f5115c7f2fa0cb5e412f46da56a3af77efb57ef72690f",
+    "crates/genewire-core/tests/streaming.rs": "dcae04c77d5053fe907007e7bf23ee9421d7d9c143a173795891b04f1bc8503a",
+    "crates/genewire-python/Cargo.toml": "ff4d51ec9cbb2ed3d7f66e53c0b43a96b559dc914dedce8783f768f41d410683",
+    "crates/genewire-python/src/lib.rs": "51575b3a61f0b207b0a90a2a6a9c45642952a06ebbfb11fb9fe70d9ae0b8805a",
+    "pyproject.toml": "bcc8d22cb29e9ed6cd1cc899371375550333e1661f7936559634b159486f6e8a",
+    "python/genewire/__init__.py": "be46f9c14b2dd2c23035eb2881a0ea882741e7d588af55a23e6754a5ff848cd1",
+    "python/genewire/_bam_consumer.py": "5f5f39912652996a6f132d36ed11ae012d755973c2cd5a91e91f1bf30362b1a8",
+    "python/genewire/_cancellation.py": "fbaef8e9d20d8511b63c42d418f9eea94292d9d1dc3500589408bc172b5391dd",
+    "python/genewire/analysis.py": "2a549f4240ab945baebe33032cbb821ba2614a8833e614ba91bcbe3b4c3b2f51",
+    "python/genewire/jobs.py": "95da7246d8503acc42816566ad0ba6c7ee7c5d9221faf81a15f14a064f8b12af",
+    "python/genewire/recovery.py": "99121dc91e1a7394e55c1789a9ddc7db24c155f426b10244720d993f35346d62",
+    "tests/_storage_worker.py": "e2142e30c1cbd19c0e46e44c53338ccc582e0cba32927920690a3df82c5c381c",
+    "tests/test_analysis.py": "0c20632788c69184b5683632b28d8eee229529e5c9a2c7e398e34f9201320a48",
+    "tests/test_cancellation.py": "e060fa90d37105e0defc9273ecafaebeceb0bbabb89f9f300159535c6579154a",
+    "tests/test_jobs.py": "3a4f0799367d689fe4d7bc2a3ee9681a76c7bc12fa7326d5b34e46b0b2d09dfe",
+    "tests/test_python_stream.py": "cc3f3102c45053eeeee6314d24654fc2f3f4b5951582a595b6d54b93e06b1dd3",
+    "tests/test_recovery.py": "058f1a382bb36f5a9d1989e72aab74fa30d93413a7fc661c0e13edab2162d0c0",
+    "tests/test_storage.py": "c584dcf438c479f1e9cf14ba1ddddcfab5988d59f150bb36e874152c31ed2a8c",
+    "tools/_evidence.py": "303159ca657f3e5f81ef87e647a33b87c0044fed30e2e34541dca5d945e2facb",
+    "tools/check_interop.py": "261e081732ee5ac8733a15d6715e167bbdd3d37c1271d4ad61fb5ff3659145e5",
+    "tools/check_recovery.py": "13ab340c3b0e8ca466995ff1c7ea0de94be61697015258dd787d54c771cb2e85",
+    "tools/check_resources.py": "820923ee0fdbca3620210a0246184e102c127586167adc3e216f49f9ad22ab28",
+    "uv.lock": "074b916b880b80af240d199837139fe8d8737d229df903eabf083cc75d0417e5"
+  },
+  "method": "synthetic loopback BAM; actual SIGKILL and explicit cancellation boundaries; injected filesystem errors; one local run",
+  "limits": "process-crash recovery only; no byte-offset resume, power-loss or broad platform qualification; expected digest supplied by fixture",
+  "tests_run": 47,
+  "failures": 0,
+  "errors": 0,
+  "skips": 0,
+  "successful": true,
+  "observations": [
+    {
+      "test": "test_recovery.RecoveryTests.test_changed_or_truncated_verified_source_is_rejected_without_network",
+      "outcome": "passed",
+      "crashes": [
+        {
+          "boundary": "Verified",
+          "exit_code": -9
+        },
+        {
+          "boundary": "Verified",
+          "exit_code": -9
+        }
+      ],
+      "truth": [],
+      "cancellation": [],
+      "workspace": [],
+      "storage": []
+    },
+    {
+      "test": "test_recovery.RecoveryTests.test_decodable_source_pin_is_not_a_decode_success_claim",
+      "outcome": "passed",
+      "crashes": [],
+      "truth": [],
+      "cancellation": [],
+      "workspace": [],
+      "storage": []
+    },
+    {
+      "test": "test_recovery.RecoveryTests.test_disk_full_and_prepublication_sync_failure_do_not_publish",
+      "outcome": "passed",
+      "crashes": [],
+      "truth": [],
+      "cancellation": [],
+      "workspace": [],
+      "storage": []
+    },
+    {
+      "test": "test_recovery.RecoveryTests.test_input_and_output_budgets_leave_no_published_output",
+      "outcome": "passed",
+      "crashes": [],
+      "truth": [],
+      "cancellation": [],
+      "workspace": [],
+      "storage": []
+    },
+    {
+      "test": "test_recovery.RecoveryTests.test_interrupted_or_failed_download_is_discarded_on_next_attempt",
+      "outcome": "passed",
+      "crashes": [],
+      "truth": [],
+      "cancellation": [],
+      "workspace": [],
+      "storage": []
+    },
+    {
+      "test": "test_recovery.RecoveryTests.test_invalid_parameters_do_not_touch_disk_or_network",
+      "outcome": "passed",
+      "crashes": [],
+      "truth": [],
+      "cancellation": [],
+      "workspace": [],
+      "storage": []
+    },
+    {
+      "test": "test_recovery.RecoveryTests.test_killed_supervisor_during_decode_restarts_from_verified_source",
+      "outcome": "passed",
+      "crashes": [
+        {
+          "boundary": "Decoding",
+          "exit_code": -9
+        }
+      ],
+      "truth": [],
+      "cancellation": [],
+      "workspace": [],
+      "storage": []
+    },
+    {
+      "test": "test_recovery.RecoveryTests.test_lock_contention_between_processes_is_nonblocking_and_network_free",
+      "outcome": "passed",
+      "crashes": [
+        {
+          "boundary": "Verified",
+          "exit_code": -9
+        }
+      ],
+      "truth": [],
+      "cancellation": [],
+      "workspace": [],
+      "storage": []
+    },
+    {
+      "test": "test_recovery.RecoveryTests.test_malformed_oversized_duplicate_and_unknown_version_receipts_fail_closed",
+      "outcome": "passed",
+      "crashes": [
+        {
+          "boundary": "Verified",
+          "exit_code": -9
+        },
+        {
+          "boundary": "Verified",
+          "exit_code": -9
+        },
+        {
+          "boundary": "Verified",
+          "exit_code": -9
+        },
+        {
+          "boundary": "Verified",
+          "exit_code": -9
+        },
+        {
+          "boundary": "Verified",
+          "exit_code": -9
+        },
+        {
+          "boundary": "Verified",
+          "exit_code": -9
+        }
+      ],
+      "truth": [],
+      "cancellation": [],
+      "workspace": [],
+      "storage": []
+    },
+    {
+      "test": "test_recovery.RecoveryTests.test_postlink_sync_failure_reports_visible_output_and_recovers_receipt",
+      "outcome": "passed",
+      "crashes": [
+        {
+          "boundary": "Ready",
+          "exit_code": -9
+        }
+      ],
+      "truth": [],
+      "cancellation": [],
+      "workspace": [],
+      "storage": []
+    },
+    {
+      "test": "test_recovery.RecoveryTests.test_ready_result_corruption_and_unrelated_output_are_rejected",
+      "outcome": "passed",
+      "crashes": [
+        {
+          "boundary": "Ready",
+          "exit_code": -9
+        },
+        {
+          "boundary": "Ready",
+          "exit_code": -9
+        },
+        {
+          "boundary": "Ready",
+          "exit_code": -9
+        },
+        {
+          "boundary": "Ready",
+          "exit_code": -9
+        }
+      ],
+      "truth": [],
+      "cancellation": [],
+      "workspace": [],
+      "storage": []
+    },
+    {
+      "test": "test_recovery.RecoveryTests.test_receipt_write_failure_after_decode_keeps_verified_source_recoverable",
+      "outcome": "passed",
+      "crashes": [],
+      "truth": [],
+      "cancellation": [],
+      "workspace": [],
+      "storage": []
+    },
+    {
+      "test": "test_recovery.RecoveryTests.test_sigkill_boundaries_recover_without_splicing_or_double_publication",
+      "outcome": "passed",
+      "crashes": [
+        {
+          "boundary": "Downloading",
+          "exit_code": -9
+        },
+        {
+          "boundary": "Partial",
+          "exit_code": -9
+        },
+        {
+          "boundary": "Verified",
+          "exit_code": -9
+        },
+        {
+          "boundary": "Decoded",
+          "exit_code": -9
+        },
+        {
+          "boundary": "Ready",
+          "exit_code": -9
+        },
+        {
+          "boundary": "Linked",
+          "exit_code": -9
+        },
+        {
+          "boundary": "Committed",
+          "exit_code": -9
+        }
+      ],
+      "truth": [],
+      "cancellation": [],
+      "workspace": [],
+      "storage": []
+    },
+    {
+      "test": "test_recovery.RecoveryTests.test_stale_query_digest_target_or_limits_preserve_original_receipt",
+      "outcome": "passed",
+      "crashes": [
+        {
+          "boundary": "Verified",
+          "exit_code": -9
+        }
+      ],
+      "truth": [],
+      "cancellation": [],
+      "workspace": [],
+      "storage": []
+    },
+    {
+      "test": "test_recovery.RecoveryTests.test_success_receipt_retry_is_network_free_and_preserves_output_inode",
+      "outcome": "passed",
+      "crashes": [],
+      "truth": [],
+      "cancellation": [],
+      "workspace": [],
+      "storage": []
+    },
+    {
+      "test": "test_recovery.RecoveryTests.test_symlink_workspace_and_source_never_follow_or_modify_target",
+      "outcome": "passed",
+      "crashes": [
+        {
+          "boundary": "Verified",
+          "exit_code": -9
+        }
+      ],
+      "truth": [],
+      "cancellation": [],
+      "workspace": [],
+      "storage": []
+    },
+    {
+      "test": "test_recovery.RecoveryTests.test_unknown_workspace_content_and_removed_committed_output_fail_closed",
+      "outcome": "passed",
+      "crashes": [],
+      "truth": [],
+      "cancellation": [],
+      "workspace": [],
+      "storage": []
+    },
+    {
+      "test": "test_recovery.RecoveryTests.test_verified_source_recovery_matches_all_five_tiny_truth_cases",
+      "outcome": "passed",
+      "crashes": [
+        {
+          "boundary": "Verified",
+          "exit_code": -9
+        },
+        {
+          "boundary": "Verified",
+          "exit_code": -9
+        },
+        {
+          "boundary": "Verified",
+          "exit_code": -9
+        },
+        {
+          "boundary": "Verified",
+          "exit_code": -9
+        },
+        {
+          "boundary": "Verified",
+          "exit_code": -9
+        }
+      ],
+      "truth": [
+        {
+          "case": "Q1",
+          "expected": [
+            "A"
+          ],
+          "observed": [
+            "A"
+          ],
+          "new_network_requests": 0
+        },
+        {
+          "case": "Q2",
+          "expected": [
+            "B",
+            "D"
+          ],
+          "observed": [
+            "B",
+            "D"
+          ],
+          "new_network_requests": 0
+        },
+        {
+          "case": "Q3",
+          "expected": [
+            "C",
+            "D"
+          ],
+          "observed": [
+            "C",
+            "D"
+          ],
+          "new_network_requests": 0
+        },
+        {
+          "case": "Q4",
+          "expected": [],
+          "observed": [],
+          "new_network_requests": 0
+        },
+        {
+          "case": "Q5",
+          "expected": [
+            "B",
+            "C",
+            "D"
+          ],
+          "observed": [
+            "B",
+            "C",
+            "D"
+          ],
+          "new_network_requests": 0
+        }
+      ],
+      "cancellation": [],
+      "workspace": [],
+      "storage": []
+    },
+    {
+      "test": "test_recovery.RecoveryTests.test_wrong_expected_digest_never_reaches_decode_or_output",
+      "outcome": "passed",
+      "crashes": [],
+      "truth": [],
+      "cancellation": [],
+      "workspace": [],
+      "storage": []
+    },
+    {
+      "test": "test_cancellation.CancellationTests.test_cancellation_after_publication_does_not_retract_valid_output",
+      "outcome": "passed",
+      "crashes": [],
+      "truth": [],
+      "cancellation": [
+        {
+          "point": "AfterPublicationAdmission",
+          "state": "Complete",
+          "error": null,
+          "phase": "Committed",
+          "output_committed": true,
+          "cleanup_complete": true
+        }
+      ],
+      "workspace": [],
+      "storage": []
+    },
+    {
+      "test": "test_cancellation.CancellationTests.test_cancellation_after_verified_receipt_reuses_source_on_next_call",
+      "outcome": "passed",
+      "crashes": [],
+      "truth": [],
+      "cancellation": [
+        {
+          "point": "VerifiedReceipt",
+          "state": "Failed",
+          "error": "Cancelled",
+          "phase": "Verified",
+          "output_committed": false,
+          "cleanup_complete": true
+        }
+      ],
+      "workspace": [],
+      "storage": []
+    },
+    {
+      "test": "test_cancellation.CancellationTests.test_cancellation_before_publication_admission_preserves_ready_receipt",
+      "outcome": "passed",
+      "crashes": [],
+      "truth": [],
+      "cancellation": [
+        {
+          "point": "BeforePublicationAdmission",
+          "state": "Failed",
+          "error": "Cancelled",
+          "phase": "Ready",
+          "output_committed": false,
+          "cleanup_complete": true
+        }
+      ],
+      "workspace": [],
+      "storage": []
+    },
+    {
+      "test": "test_cancellation.CancellationTests.test_cancellation_during_rehash_stops_before_decoder",
+      "outcome": "passed",
+      "crashes": [],
+      "truth": [],
+      "cancellation": [
+        {
+          "point": "SourceHashRead",
+          "state": "Failed",
+          "error": "Cancelled",
+          "phase": "Verified",
+          "output_committed": false,
+          "cleanup_complete": true
+        }
+      ],
+      "workspace": [],
+      "storage": []
+    },
+    {
+      "test": "test_cancellation.CancellationTests.test_cancellation_interrupts_blocked_native_data_read_then_restarts_cleanly",
+      "outcome": "passed",
+      "crashes": [],
+      "truth": [],
+      "cancellation": [
+        {
+          "point": "BlockedNativeRead",
+          "state": "Failed",
+          "error": "Cancelled",
+          "phase": "Downloading",
+          "output_committed": false,
+          "cleanup_complete": true
+        }
+      ],
+      "workspace": [],
+      "storage": []
+    },
+    {
+      "test": "test_cancellation.CancellationTests.test_cancelled_job_preserves_incomplete_supervisor_cleanup_status",
+      "outcome": "passed",
+      "crashes": [],
+      "truth": [],
+      "cancellation": [
+        {
+          "point": "IncompleteSupervisorCleanup",
+          "state": "Failed",
+          "error": "Cancelled",
+          "phase": "Verified",
+          "output_committed": false,
+          "cleanup_complete": false
+        }
+      ],
+      "workspace": [],
+      "storage": []
+    },
+    {
+      "test": "test_cancellation.CancellationTests.test_cancelled_stalled_decoder_is_reaped_and_verified_input_is_retained",
+      "outcome": "passed",
+      "crashes": [],
+      "truth": [],
+      "cancellation": [
+        {
+          "point": "StalledDecoder",
+          "state": "Failed",
+          "error": "Cancelled",
+          "phase": "Verified",
+          "output_committed": false,
+          "cleanup_complete": true
+        }
+      ],
+      "workspace": [],
+      "storage": []
+    },
+    {
+      "test": "test_cancellation.CancellationTests.test_child_that_closes_pipes_but_stays_alive_can_still_be_cancelled",
+      "outcome": "passed",
+      "crashes": [],
+      "truth": [],
+      "cancellation": [
+        {
+          "point": "ChildWaitAfterPipesClosed",
+          "state": "Failed",
+          "error": "Cancelled",
+          "phase": "Analysis",
+          "output_committed": false,
+          "cleanup_complete": true
+        }
+      ],
+      "workspace": [],
+      "storage": []
+    },
+    {
+      "test": "test_cancellation.CancellationTests.test_completed_operations_release_native_cancellation_subscriptions",
+      "outcome": "passed",
+      "crashes": [],
+      "truth": [],
+      "cancellation": [],
+      "workspace": [],
+      "storage": []
+    },
+    {
+      "test": "test_cancellation.CancellationTests.test_invalid_cancellation_does_not_alter_stream_or_workspace",
+      "outcome": "passed",
+      "crashes": [],
+      "truth": [],
+      "cancellation": [],
+      "workspace": [],
+      "storage": []
+    },
+    {
+      "test": "test_cancellation.CancellationTests.test_precancelled_direct_filter_closes_native_stream_without_output",
+      "outcome": "passed",
+      "crashes": [],
+      "truth": [],
+      "cancellation": [
+        {
+          "point": "BeforeDirectFilterStart",
+          "state": "Failed",
+          "error": "Cancelled",
+          "phase": "Analysis",
+          "output_committed": false,
+          "cleanup_complete": true
+        }
+      ],
+      "workspace": [],
+      "storage": []
+    },
+    {
+      "test": "test_cancellation.CancellationTests.test_precancelled_job_does_not_touch_disk_or_network",
+      "outcome": "passed",
+      "crashes": [],
+      "truth": [],
+      "cancellation": [
+        {
+          "point": "BeforeStart",
+          "state": "Failed",
+          "error": "Cancelled",
+          "phase": "New",
+          "output_committed": false,
+          "cleanup_complete": true
+        }
+      ],
+      "workspace": [],
+      "storage": []
+    },
+    {
+      "test": "test_jobs.WorkspaceTests.test_active_download_blocks_inspection_and_cleanup",
+      "outcome": "passed",
+      "crashes": [],
+      "truth": [],
+      "cancellation": [],
+      "workspace": [],
+      "storage": []
+    },
+    {
+      "test": "test_jobs.WorkspaceTests.test_cleanup_preflight_rejects_foreign_or_unsafe_entries_without_deletion",
+      "outcome": "passed",
+      "crashes": [],
+      "truth": [],
+      "cancellation": [],
+      "workspace": [],
+      "storage": []
+    },
+    {
+      "test": "test_jobs.WorkspaceTests.test_cleanup_preserves_verified_source_and_ready_result",
+      "outcome": "passed",
+      "crashes": [],
+      "truth": [],
+      "cancellation": [],
+      "workspace": [
+        {
+          "point": "PreservedDownloading",
+          "state": "Cleaned",
+          "error": null,
+          "phase": "Downloading",
+          "retained_source_bytes": 0,
+          "output_verified": false,
+          "removed_files": [
+            ".genewire-abandoned.partial",
+            "result.bam",
+            "source.partial"
+          ]
+        },
+        {
+          "point": "PreservedVerified",
+          "state": "Cleaned",
+          "error": null,
+          "phase": "Verified",
+          "retained_source_bytes": 215,
+          "output_verified": false,
+          "removed_files": [
+            ".genewire-abandoned.partial",
+            "result.bam",
+            "source.partial"
+          ]
+        },
+        {
+          "point": "PreservedReady",
+          "state": "Cleaned",
+          "error": null,
+          "phase": "Ready",
+          "retained_source_bytes": 215,
+          "output_verified": false,
+          "removed_files": [
+            ".genewire-abandoned.partial",
+            "source.partial"
+          ]
+        }
+      ],
+      "storage": []
+    },
+    {
+      "test": "test_jobs.WorkspaceTests.test_cleanup_releases_source_but_keeps_output_lock_and_idempotent_receipt",
+      "outcome": "passed",
+      "crashes": [],
+      "truth": [],
+      "cancellation": [],
+      "workspace": [
+        {
+          "point": "ReleasedOutputPreserved",
+          "state": "Cleaned",
+          "error": null,
+          "phase": "Released",
+          "retained_source_bytes": 0,
+          "output_verified": true,
+          "removed_files": [
+            "source.bam"
+          ]
+        }
+      ],
+      "storage": []
+    },
+    {
+      "test": "test_jobs.WorkspaceTests.test_committed_cleanup_does_not_require_redundant_source_content",
+      "outcome": "passed",
+      "crashes": [],
+      "truth": [],
+      "cancellation": [],
+      "workspace": [],
+      "storage": []
+    },
+    {
+      "test": "test_jobs.WorkspaceTests.test_initialized_job_never_recreates_a_deleted_lock_inode",
+      "outcome": "passed",
+      "crashes": [],
+      "truth": [],
+      "cancellation": [],
+      "workspace": [],
+      "storage": []
+    },
+    {
+      "test": "test_jobs.WorkspaceTests.test_inspection_is_read_only_and_network_free",
+      "outcome": "passed",
+      "crashes": [],
+      "truth": [],
+      "cancellation": [],
+      "workspace": [
+        {
+          "point": "ReadOnlyInspection",
+          "state": "Inspected",
+          "error": null,
+          "phase": "Committed",
+          "retained_source_bytes": 215,
+          "output_verified": true,
+          "removed_files": []
+        }
+      ],
+      "storage": []
+    },
+    {
+      "test": "test_jobs.WorkspaceTests.test_interrupted_or_failed_release_is_completed_by_recovery",
+      "outcome": "passed",
+      "crashes": [],
+      "truth": [],
+      "cancellation": [],
+      "workspace": [
+        {
+          "point": "RetriedCancelRelease",
+          "state": "Inspected",
+          "error": null,
+          "phase": "Released",
+          "retained_source_bytes": 0,
+          "output_verified": true,
+          "removed_files": []
+        },
+        {
+          "point": "RetriedSyncRelease",
+          "state": "Inspected",
+          "error": null,
+          "phase": "Released",
+          "retained_source_bytes": 0,
+          "output_verified": true,
+          "removed_files": []
+        }
+      ],
+      "storage": []
+    },
+    {
+      "test": "test_jobs.WorkspaceTests.test_mismatched_or_invalid_receipt_and_conflicting_output_never_clean",
+      "outcome": "passed",
+      "crashes": [],
+      "truth": [],
+      "cancellation": [],
+      "workspace": [],
+      "storage": []
+    },
+    {
+      "test": "test_jobs.WorkspaceTests.test_missing_or_empty_workspace_is_not_created_by_management",
+      "outcome": "passed",
+      "crashes": [],
+      "truth": [],
+      "cancellation": [],
+      "workspace": [],
+      "storage": []
+    },
+    {
+      "test": "test_jobs.WorkspaceTests.test_precancelled_management_and_invalid_configuration_do_no_work",
+      "outcome": "passed",
+      "crashes": [],
+      "truth": [],
+      "cancellation": [],
+      "workspace": [],
+      "storage": []
+    },
+    {
+      "test": "test_jobs.WorkspaceTests.test_ready_published_alias_is_preserved_without_advancing_the_receipt",
+      "outcome": "passed",
+      "crashes": [],
+      "truth": [],
+      "cancellation": [],
+      "workspace": [],
+      "storage": []
+    },
+    {
+      "test": "test_jobs.WorkspaceTests.test_two_cleanup_owners_share_the_original_lock",
+      "outcome": "passed",
+      "crashes": [],
+      "truth": [],
+      "cancellation": [],
+      "workspace": [],
+      "storage": []
+    },
+    {
+      "test": "test_storage.StorageTests.test_eio_storage_boundaries_recover_in_a_fresh_process",
+      "outcome": "passed",
+      "crashes": [],
+      "truth": [],
+      "cancellation": [],
+      "workspace": [],
+      "storage": [
+        {
+          "boundary": "source.file_sync.before",
+          "mode": "error",
+          "exit_code": 2,
+          "recovered_from": "Downloading",
+          "recovered_to": "Committed",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "source.file_sync.after",
+          "mode": "error",
+          "exit_code": 2,
+          "recovered_from": "Downloading",
+          "recovered_to": "Committed",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "source.rename.before",
+          "mode": "error",
+          "exit_code": 2,
+          "recovered_from": "Downloading",
+          "recovered_to": "Committed",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "source.rename.after",
+          "mode": "error",
+          "exit_code": 2,
+          "recovered_from": "Downloading",
+          "recovered_to": "Committed",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "source.dir_sync.before",
+          "mode": "error",
+          "exit_code": 2,
+          "recovered_from": "Downloading",
+          "recovered_to": "Committed",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "source.dir_sync.after",
+          "mode": "error",
+          "exit_code": 2,
+          "recovered_from": "Downloading",
+          "recovered_to": "Committed",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "result.file_sync.before",
+          "mode": "error",
+          "exit_code": 2,
+          "recovered_from": "Verified",
+          "recovered_to": "Committed",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "result.file_sync.after",
+          "mode": "error",
+          "exit_code": 2,
+          "recovered_from": "Verified",
+          "recovered_to": "Committed",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "result.dir_sync.before",
+          "mode": "error",
+          "exit_code": 2,
+          "recovered_from": "Verified",
+          "recovered_to": "Committed",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "result.dir_sync.after",
+          "mode": "error",
+          "exit_code": 2,
+          "recovered_from": "Verified",
+          "recovered_to": "Committed",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "receipt.Verified.file_sync.before",
+          "mode": "error",
+          "exit_code": 2,
+          "recovered_from": "Downloading",
+          "recovered_to": "Committed",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "receipt.Verified.file_sync.after",
+          "mode": "error",
+          "exit_code": 2,
+          "recovered_from": "Downloading",
+          "recovered_to": "Committed",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "receipt.Verified.replace.before",
+          "mode": "error",
+          "exit_code": 2,
+          "recovered_from": "Downloading",
+          "recovered_to": "Committed",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "receipt.Verified.replace.after",
+          "mode": "error",
+          "exit_code": 2,
+          "recovered_from": "Verified",
+          "recovered_to": "Committed",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "receipt.Verified.dir_sync.before",
+          "mode": "error",
+          "exit_code": 2,
+          "recovered_from": "Verified",
+          "recovered_to": "Committed",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "receipt.Verified.dir_sync.after",
+          "mode": "error",
+          "exit_code": 2,
+          "recovered_from": "Verified",
+          "recovered_to": "Committed",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "receipt.Ready.file_sync.before",
+          "mode": "error",
+          "exit_code": 2,
+          "recovered_from": "Verified",
+          "recovered_to": "Committed",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "receipt.Ready.file_sync.after",
+          "mode": "error",
+          "exit_code": 2,
+          "recovered_from": "Verified",
+          "recovered_to": "Committed",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "receipt.Ready.replace.before",
+          "mode": "error",
+          "exit_code": 2,
+          "recovered_from": "Verified",
+          "recovered_to": "Committed",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "receipt.Ready.replace.after",
+          "mode": "error",
+          "exit_code": 2,
+          "recovered_from": "Ready",
+          "recovered_to": "Committed",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "receipt.Ready.dir_sync.before",
+          "mode": "error",
+          "exit_code": 2,
+          "recovered_from": "Ready",
+          "recovered_to": "Committed",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "receipt.Ready.dir_sync.after",
+          "mode": "error",
+          "exit_code": 2,
+          "recovered_from": "Ready",
+          "recovered_to": "Committed",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "receipt.Committed.file_sync.before",
+          "mode": "error",
+          "exit_code": 2,
+          "recovered_from": "Ready",
+          "recovered_to": "Committed",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "receipt.Committed.file_sync.after",
+          "mode": "error",
+          "exit_code": 2,
+          "recovered_from": "Ready",
+          "recovered_to": "Committed",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "receipt.Committed.replace.before",
+          "mode": "error",
+          "exit_code": 2,
+          "recovered_from": "Ready",
+          "recovered_to": "Committed",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "receipt.Committed.replace.after",
+          "mode": "error",
+          "exit_code": 2,
+          "recovered_from": "Committed",
+          "recovered_to": "Committed",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "receipt.Committed.dir_sync.before",
+          "mode": "error",
+          "exit_code": 2,
+          "recovered_from": "Committed",
+          "recovered_to": "Committed",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "receipt.Committed.dir_sync.after",
+          "mode": "error",
+          "exit_code": 2,
+          "recovered_from": "Committed",
+          "recovered_to": "Committed",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "receipt.Releasing.file_sync.before",
+          "mode": "error",
+          "exit_code": 2,
+          "recovered_from": "Committed",
+          "recovered_to": "Committed",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "receipt.Releasing.file_sync.after",
+          "mode": "error",
+          "exit_code": 2,
+          "recovered_from": "Committed",
+          "recovered_to": "Committed",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "receipt.Releasing.replace.before",
+          "mode": "error",
+          "exit_code": 2,
+          "recovered_from": "Committed",
+          "recovered_to": "Committed",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "receipt.Releasing.replace.after",
+          "mode": "error",
+          "exit_code": 2,
+          "recovered_from": "Releasing",
+          "recovered_to": "Released",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "receipt.Releasing.dir_sync.before",
+          "mode": "error",
+          "exit_code": 2,
+          "recovered_from": "Releasing",
+          "recovered_to": "Released",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "receipt.Releasing.dir_sync.after",
+          "mode": "error",
+          "exit_code": 2,
+          "recovered_from": "Releasing",
+          "recovered_to": "Released",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "receipt.Released.file_sync.before",
+          "mode": "error",
+          "exit_code": 2,
+          "recovered_from": "Releasing",
+          "recovered_to": "Released",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "receipt.Released.file_sync.after",
+          "mode": "error",
+          "exit_code": 2,
+          "recovered_from": "Releasing",
+          "recovered_to": "Released",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "receipt.Released.replace.before",
+          "mode": "error",
+          "exit_code": 2,
+          "recovered_from": "Releasing",
+          "recovered_to": "Released",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "receipt.Released.replace.after",
+          "mode": "error",
+          "exit_code": 2,
+          "recovered_from": "Released",
+          "recovered_to": "Released",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "receipt.Released.dir_sync.before",
+          "mode": "error",
+          "exit_code": 2,
+          "recovered_from": "Released",
+          "recovered_to": "Released",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "receipt.Released.dir_sync.after",
+          "mode": "error",
+          "exit_code": 2,
+          "recovered_from": "Released",
+          "recovered_to": "Released",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "publication.link.before",
+          "mode": "error",
+          "exit_code": 2,
+          "recovered_from": "Ready",
+          "recovered_to": "Committed",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "publication.link.after",
+          "mode": "error",
+          "exit_code": 2,
+          "recovered_from": "Ready",
+          "recovered_to": "Committed",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "publication.parent_sync.before",
+          "mode": "error",
+          "exit_code": 2,
+          "recovered_from": "Ready",
+          "recovered_to": "Committed",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "publication.parent_sync.after",
+          "mode": "error",
+          "exit_code": 2,
+          "recovered_from": "Ready",
+          "recovered_to": "Committed",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "release.unlink.before",
+          "mode": "error",
+          "exit_code": 2,
+          "recovered_from": "Releasing",
+          "recovered_to": "Released",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "release.unlink.after",
+          "mode": "error",
+          "exit_code": 2,
+          "recovered_from": "Releasing",
+          "recovered_to": "Released",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "release.dir_sync.before",
+          "mode": "error",
+          "exit_code": 2,
+          "recovered_from": "Releasing",
+          "recovered_to": "Released",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "release.dir_sync.after",
+          "mode": "error",
+          "exit_code": 2,
+          "recovered_from": "Releasing",
+          "recovered_to": "Released",
+          "output_identity_preserved": true
+        }
+      ]
+    },
+    {
+      "test": "test_storage.StorageTests.test_short_write_enospc_flush_and_close_never_publish_partial_output",
+      "outcome": "passed",
+      "crashes": [],
+      "truth": [],
+      "cancellation": [],
+      "workspace": [],
+      "storage": [
+        {
+          "boundary": "receipt.write",
+          "mode": "short",
+          "exit_code": 2,
+          "recovered_from": "New",
+          "recovered_to": "Committed",
+          "incomplete_output_rejected": true
+        },
+        {
+          "boundary": "receipt.write",
+          "mode": "enospc",
+          "exit_code": 2,
+          "recovered_from": "New",
+          "recovered_to": "Committed",
+          "incomplete_output_rejected": true
+        },
+        {
+          "boundary": "receipt.flush",
+          "mode": "error",
+          "exit_code": 2,
+          "recovered_from": "New",
+          "recovered_to": "Committed",
+          "incomplete_output_rejected": true
+        },
+        {
+          "boundary": "receipt.close",
+          "mode": "error",
+          "exit_code": 2,
+          "recovered_from": "New",
+          "recovered_to": "Committed",
+          "incomplete_output_rejected": true
+        },
+        {
+          "boundary": "source.write",
+          "mode": "short",
+          "exit_code": 2,
+          "recovered_from": "Downloading",
+          "recovered_to": "Committed",
+          "incomplete_output_rejected": true
+        },
+        {
+          "boundary": "source.write",
+          "mode": "enospc",
+          "exit_code": 2,
+          "recovered_from": "Downloading",
+          "recovered_to": "Committed",
+          "incomplete_output_rejected": true
+        },
+        {
+          "boundary": "source.flush",
+          "mode": "error",
+          "exit_code": 2,
+          "recovered_from": "Downloading",
+          "recovered_to": "Committed",
+          "incomplete_output_rejected": true
+        },
+        {
+          "boundary": "source.close",
+          "mode": "error",
+          "exit_code": 2,
+          "recovered_from": "Downloading",
+          "recovered_to": "Committed",
+          "incomplete_output_rejected": true
+        },
+        {
+          "boundary": "decoder.write",
+          "mode": "short",
+          "exit_code": 2,
+          "recovered_from": "Verified",
+          "recovered_to": "Committed",
+          "incomplete_output_rejected": true
+        },
+        {
+          "boundary": "decoder.write",
+          "mode": "enospc",
+          "exit_code": 2,
+          "recovered_from": "Verified",
+          "recovered_to": "Committed",
+          "incomplete_output_rejected": true
+        },
+        {
+          "boundary": "decoder.flush",
+          "mode": "error",
+          "exit_code": 2,
+          "recovered_from": "Verified",
+          "recovered_to": "Committed",
+          "incomplete_output_rejected": true
+        },
+        {
+          "boundary": "decoder.close",
+          "mode": "error",
+          "exit_code": 2,
+          "recovered_from": "Verified",
+          "recovered_to": "Committed",
+          "incomplete_output_rejected": true
+        }
+      ]
+    },
+    {
+      "test": "test_storage.StorageTests.test_sigkill_storage_boundaries_recover_in_a_fresh_process",
+      "outcome": "passed",
+      "crashes": [],
+      "truth": [],
+      "cancellation": [],
+      "workspace": [],
+      "storage": [
+        {
+          "boundary": "source.file_sync.before",
+          "mode": "kill",
+          "exit_code": -9,
+          "recovered_from": "Downloading",
+          "recovered_to": "Committed",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "source.file_sync.after",
+          "mode": "kill",
+          "exit_code": -9,
+          "recovered_from": "Downloading",
+          "recovered_to": "Committed",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "source.rename.before",
+          "mode": "kill",
+          "exit_code": -9,
+          "recovered_from": "Downloading",
+          "recovered_to": "Committed",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "source.rename.after",
+          "mode": "kill",
+          "exit_code": -9,
+          "recovered_from": "Downloading",
+          "recovered_to": "Committed",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "source.dir_sync.before",
+          "mode": "kill",
+          "exit_code": -9,
+          "recovered_from": "Downloading",
+          "recovered_to": "Committed",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "source.dir_sync.after",
+          "mode": "kill",
+          "exit_code": -9,
+          "recovered_from": "Downloading",
+          "recovered_to": "Committed",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "result.file_sync.before",
+          "mode": "kill",
+          "exit_code": -9,
+          "recovered_from": "Verified",
+          "recovered_to": "Committed",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "result.file_sync.after",
+          "mode": "kill",
+          "exit_code": -9,
+          "recovered_from": "Verified",
+          "recovered_to": "Committed",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "result.dir_sync.before",
+          "mode": "kill",
+          "exit_code": -9,
+          "recovered_from": "Verified",
+          "recovered_to": "Committed",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "result.dir_sync.after",
+          "mode": "kill",
+          "exit_code": -9,
+          "recovered_from": "Verified",
+          "recovered_to": "Committed",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "receipt.Verified.file_sync.before",
+          "mode": "kill",
+          "exit_code": -9,
+          "recovered_from": "Downloading",
+          "recovered_to": "Committed",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "receipt.Verified.file_sync.after",
+          "mode": "kill",
+          "exit_code": -9,
+          "recovered_from": "Downloading",
+          "recovered_to": "Committed",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "receipt.Verified.replace.before",
+          "mode": "kill",
+          "exit_code": -9,
+          "recovered_from": "Downloading",
+          "recovered_to": "Committed",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "receipt.Verified.replace.after",
+          "mode": "kill",
+          "exit_code": -9,
+          "recovered_from": "Verified",
+          "recovered_to": "Committed",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "receipt.Verified.dir_sync.before",
+          "mode": "kill",
+          "exit_code": -9,
+          "recovered_from": "Verified",
+          "recovered_to": "Committed",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "receipt.Verified.dir_sync.after",
+          "mode": "kill",
+          "exit_code": -9,
+          "recovered_from": "Verified",
+          "recovered_to": "Committed",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "receipt.Ready.file_sync.before",
+          "mode": "kill",
+          "exit_code": -9,
+          "recovered_from": "Verified",
+          "recovered_to": "Committed",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "receipt.Ready.file_sync.after",
+          "mode": "kill",
+          "exit_code": -9,
+          "recovered_from": "Verified",
+          "recovered_to": "Committed",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "receipt.Ready.replace.before",
+          "mode": "kill",
+          "exit_code": -9,
+          "recovered_from": "Verified",
+          "recovered_to": "Committed",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "receipt.Ready.replace.after",
+          "mode": "kill",
+          "exit_code": -9,
+          "recovered_from": "Ready",
+          "recovered_to": "Committed",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "receipt.Ready.dir_sync.before",
+          "mode": "kill",
+          "exit_code": -9,
+          "recovered_from": "Ready",
+          "recovered_to": "Committed",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "receipt.Ready.dir_sync.after",
+          "mode": "kill",
+          "exit_code": -9,
+          "recovered_from": "Ready",
+          "recovered_to": "Committed",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "receipt.Committed.file_sync.before",
+          "mode": "kill",
+          "exit_code": -9,
+          "recovered_from": "Ready",
+          "recovered_to": "Committed",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "receipt.Committed.file_sync.after",
+          "mode": "kill",
+          "exit_code": -9,
+          "recovered_from": "Ready",
+          "recovered_to": "Committed",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "receipt.Committed.replace.before",
+          "mode": "kill",
+          "exit_code": -9,
+          "recovered_from": "Ready",
+          "recovered_to": "Committed",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "receipt.Committed.replace.after",
+          "mode": "kill",
+          "exit_code": -9,
+          "recovered_from": "Committed",
+          "recovered_to": "Committed",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "receipt.Committed.dir_sync.before",
+          "mode": "kill",
+          "exit_code": -9,
+          "recovered_from": "Committed",
+          "recovered_to": "Committed",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "receipt.Committed.dir_sync.after",
+          "mode": "kill",
+          "exit_code": -9,
+          "recovered_from": "Committed",
+          "recovered_to": "Committed",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "receipt.Releasing.file_sync.before",
+          "mode": "kill",
+          "exit_code": -9,
+          "recovered_from": "Committed",
+          "recovered_to": "Committed",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "receipt.Releasing.file_sync.after",
+          "mode": "kill",
+          "exit_code": -9,
+          "recovered_from": "Committed",
+          "recovered_to": "Committed",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "receipt.Releasing.replace.before",
+          "mode": "kill",
+          "exit_code": -9,
+          "recovered_from": "Committed",
+          "recovered_to": "Committed",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "receipt.Releasing.replace.after",
+          "mode": "kill",
+          "exit_code": -9,
+          "recovered_from": "Releasing",
+          "recovered_to": "Released",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "receipt.Releasing.dir_sync.before",
+          "mode": "kill",
+          "exit_code": -9,
+          "recovered_from": "Releasing",
+          "recovered_to": "Released",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "receipt.Releasing.dir_sync.after",
+          "mode": "kill",
+          "exit_code": -9,
+          "recovered_from": "Releasing",
+          "recovered_to": "Released",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "receipt.Released.file_sync.before",
+          "mode": "kill",
+          "exit_code": -9,
+          "recovered_from": "Releasing",
+          "recovered_to": "Released",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "receipt.Released.file_sync.after",
+          "mode": "kill",
+          "exit_code": -9,
+          "recovered_from": "Releasing",
+          "recovered_to": "Released",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "receipt.Released.replace.before",
+          "mode": "kill",
+          "exit_code": -9,
+          "recovered_from": "Releasing",
+          "recovered_to": "Released",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "receipt.Released.replace.after",
+          "mode": "kill",
+          "exit_code": -9,
+          "recovered_from": "Released",
+          "recovered_to": "Released",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "receipt.Released.dir_sync.before",
+          "mode": "kill",
+          "exit_code": -9,
+          "recovered_from": "Released",
+          "recovered_to": "Released",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "receipt.Released.dir_sync.after",
+          "mode": "kill",
+          "exit_code": -9,
+          "recovered_from": "Released",
+          "recovered_to": "Released",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "publication.link.before",
+          "mode": "kill",
+          "exit_code": -9,
+          "recovered_from": "Ready",
+          "recovered_to": "Committed",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "publication.link.after",
+          "mode": "kill",
+          "exit_code": -9,
+          "recovered_from": "Ready",
+          "recovered_to": "Committed",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "publication.parent_sync.before",
+          "mode": "kill",
+          "exit_code": -9,
+          "recovered_from": "Ready",
+          "recovered_to": "Committed",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "publication.parent_sync.after",
+          "mode": "kill",
+          "exit_code": -9,
+          "recovered_from": "Ready",
+          "recovered_to": "Committed",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "release.unlink.before",
+          "mode": "kill",
+          "exit_code": -9,
+          "recovered_from": "Releasing",
+          "recovered_to": "Released",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "release.unlink.after",
+          "mode": "kill",
+          "exit_code": -9,
+          "recovered_from": "Releasing",
+          "recovered_to": "Released",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "release.dir_sync.before",
+          "mode": "kill",
+          "exit_code": -9,
+          "recovered_from": "Releasing",
+          "recovered_to": "Released",
+          "output_identity_preserved": true
+        },
+        {
+          "boundary": "release.dir_sync.after",
+          "mode": "kill",
+          "exit_code": -9,
+          "recovered_from": "Releasing",
+          "recovered_to": "Released",
+          "output_identity_preserved": true
+        }
+      ]
+    }
+  ]
+}

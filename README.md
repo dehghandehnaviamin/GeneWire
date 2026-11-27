@@ -125,6 +125,10 @@ ledger defines what has actually been exercised.
 - **M3 job subset:** cooperative cancellation interrupts blocked input and
   supervised analysis; publication admission preserves accepted output and
   cleanup completion is reported separately. Verified on the observed CI runners.
+- **M3 storage follow-up:** read-only job inspection and recoverable source
+  cleanup preserve the accepted output, receipt and lock. The
+  [storage ledger](docs/project/M3-LOCAL.md#workspace-and-storage-follow-up)
+  distinguishes local checks from the preceding CI revision.
 - **Later / under research:** byte-offset resume, object manifests, multi-object
   recovery and broader storage/durability qualification.
 - **Under research:** authenticated transport and authorization integration.

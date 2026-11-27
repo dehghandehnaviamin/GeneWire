@@ -51,6 +51,10 @@ external provenance; it is not a server-authentication or scientific-completenes
 proof. Local receipts assume an owner-controlled stable directory on a local
 POSIX filesystem. They do not protect against a malicious same-user process or
 establish power-loss durability. Keep private workspaces outside this repository.
+The explicit cleanup API retains the receipt, lock inode and accepted result
+alias; it releases owned inputs without deleting the final destination. This is
+not secure erasure, a retention policy or deletion of all genomic copies. Preserve
+the stable owner-controlled parent directory and never replace an active lock.
 
 Access control, legal permission, consent, data minimization, retention, and
 deployment policy cannot be inferred from successful data transmission. GeneWire

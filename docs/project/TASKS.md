@@ -132,6 +132,12 @@ explicitly outside this exit claim and part of later qualification work.
   runner also passed the complete 65-case Python/native suite without skips.
 - [ ] Qualify broader durable acceptance/storage behavior before full M3 exit;
   byte-offset resume, multi-object recovery and generic analysis effects remain outside this increment.
+- [x] Add read-only existing-workspace inspection and safe source release through
+  Releasing/Released; preserve accepted output and the original lock inode.
+- [x] Exercise 48 storage boundaries with SIGKILL and EIO, plus 12 file-I/O fault
+  cases, fresh-process retry and phase-preserving cleanup locally; archive hashes.
+- [ ] Follow the D024 storage increment through Linux/macOS CI and archive each
+  runner's source-checked reports before claiming cross-platform qualification.
 
 See [M3 source-bound evidence and exclusions](M3-LOCAL.md).
 

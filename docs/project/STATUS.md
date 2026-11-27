@@ -17,6 +17,7 @@ Snapshot: 2026-11-27. Status must be updated when verified evidence changes.
 | M1 design | Direction adopted for local prototype | [RFC 0001](../rfcs/0001-regional-streaming-profile.md); complete contract remains provisional |
 | M2 reference implementation | Narrow engineering gate complete | Rust/Python byte reader and supervised BAM adapter; [exit evidence and limits](CI-VALIDATION.md) |
 | M3 recovery | First verified-BAM-job subset published and CI-checked | [RFC 0002](../rfcs/0002-recoverable-bam-jobs.md) and [evidence](M3-LOCAL.md); complete-source reuse and publication receipts, full M3 exit open |
+| M3 workspace/storage follow-up | Locally checked; remote CI pending | Existing-job inspection, recoverable source release, 81 Python/native and 47 Rust tests; [48-boundary fault matrix](M3-LOCAL.md#workspace-and-storage-follow-up) |
 | Testing and CI | Verified on the observed Linux/macOS runners with Node.js 24 actions | Each passed 47 Rust and 65 Python/native tests without skips, plus a repeated 31-case recovery/cancellation harness; [workflow 46039605642](https://github.com/dehghandehnaviamin/GeneWire/actions/runs/46039605642); no warning annotations, one macOS capacity notice |
 | Correctness evaluation | Tiny controlled oracle and negative controls exercised | Q1–Q5, independent HTSlib paths and source-bound failure evidence; expanded cases need their own executable expectations |
 | Performance and interoperability | Narrow local evidence | Pinned real htsget-rs and two HTSlib paths matched Q1–Q5; one 64 MiB opaque resource probe per retention mode; no ranking or full resource certification |
@@ -121,3 +122,12 @@ existing recovery, independent-server and resource gates passed. Source-bound
 reports are [archived](CI-VALIDATION.md#m3-cooperative-cancellation). The final
 evidence update preserves the tested implementation and workflow; full M3 remains
 open for its separately listed engineering gates.
+
+**D024 local follow-up:** Existing-workspace inspection and explicit safe source
+release are implemented with Releasing/Released receipts and the stable job lock.
+The complete 81-case Python/native suite, 47 Rust tests and repeated 47-case job
+harness passed locally without skips; 48 storage points each passed SIGKILL and
+EIO retry, plus 12 file-I/O faults. Independent-server/resource regressions passed.
+Source-bound reports are in the [M3 ledger](M3-LOCAL.md#workspace-and-storage-follow-up).
+Publication/CI qualification for this increment remains pending; older CI reports
+do not qualify these new changes. Full M3 remains open.

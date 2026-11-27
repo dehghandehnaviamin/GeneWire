@@ -178,7 +178,8 @@ def _supervise(
                             written += len(data)
                             if written > max_output_bytes:
                                 raise GeneWireError("ResourceLimit")
-                            output.write(data)
+                            if output.write(data) != len(data):
+                                raise OSError("Incomplete analysis write")
                         else:
                             diagnostics += len(data)
                             if diagnostics > 65536:

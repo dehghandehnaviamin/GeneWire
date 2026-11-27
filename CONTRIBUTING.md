@@ -17,6 +17,9 @@ The subsequent [M3 job wrapper](docs/project/M3-LOCAL.md) has an observed
 Linux/macOS CI run for its first subset. Changes to it require the recovery fault
 harness in addition to the normal Python/native suite. Keep CI evidence tied to
 its tested revision; full M3 qualification remains open.
+The harness also discovers workspace inspection/cleanup and storage fault tests.
+Use fresh subprocess clients for crash tests; do not inherit a Rust runtime
+through fork. Keep fault hooks in tests and generated BAM outside the repository.
 
 The owner selected regional retrieval and streaming for analysis tools, a Rust
 core and a possible Python high-level integration. See the

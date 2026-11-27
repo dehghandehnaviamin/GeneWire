@@ -54,13 +54,14 @@ def _sync_dir(path: Path) -> None:
         os.close(fd)
 
 
-def _discard(path: Path) -> None:
+def _discard(path: Path) -> bool:
     try:
         with _private_open(path, links=(1, 2)):
             pass
     except FileNotFoundError:
-        return
+        return False
     path.unlink()
+    return True
 
 
 def _write_state(workspace: Path, state: dict) -> None:
@@ -68,7 +69,9 @@ def _write_state(workspace: Path, state: dict) -> None:
     _discard(temporary)
     fd = os.open(temporary, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600)
     with os.fdopen(fd, "wb") as output:
-        output.write((json.dumps(state, sort_keys=True) + "\n").encode())
+        payload = (json.dumps(state, sort_keys=True) + "\n").encode()
+        if output.write(payload) != len(payload):
+            raise OSError("Incomplete receipt write")
         output.flush()
         os.fsync(output.fileno())
     os.replace(temporary, workspace / "state.json")
@@ -103,12 +106,12 @@ def _read_state(workspace: Path, fingerprint: str) -> dict | None:
         if (type(state) is not dict or set(state) != {
                 "version", "request", "phase", "source_bytes", "output_bytes", "output_sha256"}
                 or type(state["version"]) is not int or state["version"] != 1
-                or state["phase"] not in ("Downloading", "Verified", "Ready", "Committed")
+                or state["phase"] not in ("Downloading", "Verified", "Ready", "Committed", "Releasing", "Released")
                 or not _digest(state["request"])
                 or any(type(state[k]) is not int or not 0 <= state[k] <= 2**63 - 1
                        for k in ("source_bytes", "output_bytes"))):
             raise ValueError("invalid")
-        ready = state["phase"] in ("Ready", "Committed")
+        ready = state["phase"] in ("Ready", "Committed", "Releasing", "Released")
         if (ready and not _digest(state["output_sha256"])) or (
                 not ready and (state["output_sha256"] is not None or state["output_bytes"] != 0)):
             raise ValueError("invalid")
@@ -123,6 +126,155 @@ def _read_state(workspace: Path, fingerprint: str) -> dict | None:
 
 def _digest(value) -> bool:
     return isinstance(value, str) and re.fullmatch(r"[0-9a-f]{64}", value) is not None
+
+
+def _valid_text(value) -> bool:
+    if not isinstance(value, str) or not value:
+        return False
+    try:
+        return len(value.encode()) <= 4096 and not any(
+            ord(c) < 32 or 127 <= ord(c) <= 159 for c in value)
+    except UnicodeError:
+        return False
+
+
+def _request_token(client, object_id, reference, start, end, expected_sha256,
+                   max_source_bytes, max_output_bytes, cancellation):
+    if os.name != "posix":
+        _fail("Unsupported")
+    if (not isinstance(client, Client) or not _digest(expected_sha256)
+            or not _valid_text(object_id) or not _valid_text(reference) or reference == "*"
+            or any(type(n) is not int or not 0 <= n <= 2**32 - 1 for n in (start, end))
+            or start >= end
+            or any(type(n) is not int or not 0 < n <= 2**63 - 1
+                   for n in (max_source_bytes, max_output_bytes))
+            or (cancellation is not None and not isinstance(cancellation, Cancellation))):
+        _fail("InvalidQuery")
+    return cancellation if cancellation is not None else Cancellation()
+
+
+def _job_paths(destination, workspace):
+    target, job = Path(destination).absolute(), Path(workspace).absolute()
+    parent = target.parent.resolve(strict=True)
+    if job.parent.resolve(strict=True) != parent or target.name == job.name:
+        _fail("InvalidQuery")
+    return parent / target.name, parent / job.name
+
+
+def _job_fingerprint(client, object_id, reference, start, end, target,
+                     expected_sha256, max_source_bytes, max_output_bytes):
+    return hashlib.sha256(json.dumps([
+        "GeneWireBamJob1", client._service, object_id, reference, start, end,
+        str(target), expected_sha256, max_source_bytes, max_output_bytes,
+        "MappedReadOverlapBam",
+    ], ensure_ascii=True, separators=(",", ":")).encode()).hexdigest()
+
+
+def _open_job_lock(job: Path, *, create: bool):
+    import fcntl
+
+    if create:
+        try:
+            job.mkdir(mode=0o700)
+        except FileExistsError:
+            pass
+    info = job.lstat()
+    if (not stat.S_ISDIR(info.st_mode) or info.st_uid != os.geteuid()
+            or stat.S_IMODE(info.st_mode) != 0o700):
+        _fail("CheckpointInvalid")
+    flags = os.O_RDWR | os.O_NOFOLLOW | os.O_NONBLOCK
+    try:
+        fd = os.open(job / "lock", flags)
+    except FileNotFoundError:
+        if not create:
+            _fail("CheckpointInvalid")
+        if any(job.iterdir()):
+            # A peer may have created the lock after our first open. Reopen
+            # that inode, but never replace a missing initialized job lock.
+            try:
+                fd = os.open(job / "lock", flags)
+            except FileNotFoundError:
+                _fail("CheckpointInvalid")
+        else:
+            # Only an empty pre-receipt bootstrap may create its missing lock.
+            try:
+                fd = os.open(job / "lock", flags | os.O_CREAT | os.O_EXCL, 0o600)
+            except FileExistsError:
+                fd = os.open(job / "lock", flags)
+    try:
+        lock = os.fdopen(fd, "r+b")
+    except BaseException:
+        os.close(fd)
+        raise
+    try:
+        info = os.fstat(lock.fileno())
+        if (not stat.S_ISREG(info.st_mode) or info.st_uid != os.geteuid()
+                or info.st_mode & 0o077 or info.st_nlink != 1):
+            _fail("CheckpointInvalid")
+        try:
+            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        except BlockingIOError:
+            _fail("RecoveryBusy")
+        return lock
+    except BaseException:
+        lock.close()
+        raise
+
+
+def _scan_workspace(job: Path) -> list[str]:
+    entries = []
+    with os.scandir(job) as iterator:
+        for entry in iterator:
+            if len(entries) >= 16 or not (
+                entry.name in {"lock", "state.json", "state.tmp", "source.partial", "source.bam", "result.bam"}
+                or re.fullmatch(r"\.genewire-[a-z0-9_]+\.partial", entry.name)
+            ):
+                _fail("CheckpointInvalid")
+            entries.append(entry.name)
+    return entries
+
+
+def _deletion_candidates(entries, phase):
+    names = {name for name in entries if name == "state.tmp" or name.startswith(".genewire-")}
+    names.add("source.partial")
+    if phase == "Downloading":
+        names.update(("source.bam", "result.bam"))
+    elif phase == "Verified":
+        names.add("result.bam")
+    elif phase in ("Releasing", "Released"):
+        names.add("source.bam")
+    return sorted(names)
+
+
+def _preflight_removals(job, names):
+    for name in names:
+        try:
+            with _private_open(job / name, links=(1, 2) if name.startswith(".genewire-") or name == "result.bam" else (1,)):
+                pass
+        except FileNotFoundError:
+            pass
+
+
+def _remove_artifacts(job, names, token, removed):
+    _preflight_removals(job, names)
+    for name in names:
+        token._check()
+        if _discard(job / name):
+            removed.append(name)
+
+
+def _finish_release(job, state, token, removed):
+    names = _deletion_candidates(_scan_workspace(job), state["phase"])
+    _remove_artifacts(job, names, token, removed)
+    _sync_dir(job)
+    if state["phase"] != "Released":
+        state = _advance(job, state, phase="Released")
+    return state
+
+
+def _output_matches(target, result):
+    original, visible = result.lstat(), target.lstat()
+    return stat.S_ISREG(visible.st_mode) and (original.st_dev, original.st_ino) == (visible.st_dev, visible.st_ino)
 
 
 def _hash_file(path: Path, limit: int, *, links=(1,), sync=False,
@@ -210,24 +362,11 @@ def recover_bam(
     only hash-verified complete input is reused. No remote digest is inferred.
     Sync confirmation covers successful fsync calls, not proven power-loss safety.
     """
-    if os.name != "posix":
-        _fail("Unsupported")
-    if (not isinstance(client, Client) or not _digest(expected_sha256)
-            or any(not isinstance(s, str) or not s or len(s.encode()) > 4096
-                   or any(ord(c) < 32 or 127 <= ord(c) <= 159 for c in s)
-                   for s in (object_id, reference)) or reference == "*"
-            or any(type(n) is not int or not 0 <= n <= 2**32 - 1 for n in (start, end))
-            or start >= end
-            or any(type(n) is not int or not 0 < n <= 2**63 - 1
-                   for n in (max_source_bytes, max_output_bytes))
-            or (cancellation is not None and not isinstance(cancellation, Cancellation))
-            or any(type(n) not in (int, float) or not 0 < n <= 86400 or not math.isfinite(n)
-                   for n in (timeout_s, cleanup_timeout_s))):
+    token = _request_token(client, object_id, reference, start, end, expected_sha256,
+                           max_source_bytes, max_output_bytes, cancellation)
+    if any(type(n) not in (int, float) or not 0 < n <= 86400 or not math.isfinite(n)
+           for n in (timeout_s, cleanup_timeout_s)):
         _fail("InvalidQuery")
-
-    import fcntl
-
-    token = cancellation if cancellation is not None else Cancellation()
     lock = None
     transport = None
     state = None
@@ -236,46 +375,13 @@ def recover_bam(
     error = None
     try:
         token._check()
-        target = Path(destination).absolute()
-        job = Path(workspace).absolute()
-        parent = target.parent.resolve(strict=True)
-        if job.parent.resolve(strict=True) != parent or target.name == job.name:
-            _fail("InvalidQuery")
-        target, job = parent / target.name, parent / job.name
-        fingerprint = hashlib.sha256(json.dumps([
-            "GeneWireBamJob1", client._service, object_id, reference, start, end,
-            str(target), expected_sha256, max_source_bytes, max_output_bytes,
-            "MappedReadOverlapBam",
-        ], ensure_ascii=True, separators=(",", ":")).encode()).hexdigest()
-        try:
-            job.mkdir(mode=0o700)
-        except FileExistsError:
-            pass
-        info = job.lstat()
-        if (not stat.S_ISDIR(info.st_mode) or info.st_uid != os.geteuid()
-                or stat.S_IMODE(info.st_mode) != 0o700):
-            _fail("CheckpointInvalid")
-        fd = os.open(job / "lock", os.O_RDWR | os.O_CREAT | os.O_NOFOLLOW | os.O_NONBLOCK, 0o600)
-        lock = os.fdopen(fd, "r+b")
-        info = os.fstat(lock.fileno())
-        if (not stat.S_ISREG(info.st_mode) or info.st_uid != os.geteuid()
-                or info.st_mode & 0o077 or info.st_nlink != 1):
-            _fail("CheckpointInvalid")
-        try:
-            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
-        except BlockingIOError:
-            _fail("RecoveryBusy")
+        target, job = _job_paths(destination, workspace)
+        parent = target.parent
+        fingerprint = _job_fingerprint(client, object_id, reference, start, end, target,
+                                       expected_sha256, max_source_bytes, max_output_bytes)
+        lock = _open_job_lock(job, create=True)
         _sync_dir(parent)
-        # Bound scanning and never recursively remove arbitrary workspace contents.
-        entries = []
-        with os.scandir(job) as iterator:
-            for entry in iterator:
-                if len(entries) >= 16 or not (
-                    entry.name in {"lock", "state.json", "state.tmp", "source.partial", "source.bam", "result.bam"}
-                    or re.fullmatch(r"\.genewire-[a-z0-9_]+\.partial", entry.name)
-                ):
-                    _fail("CheckpointInvalid")
-                entries.append(entry.name)
+        entries = _scan_workspace(job)
         state = _read_state(job, fingerprint)
         if state is None:
             if set(entries) - {"lock", "state.tmp"}:
@@ -285,7 +391,7 @@ def recover_bam(
             state = dict(version=1, request=fingerprint, phase="Downloading",
                          source_bytes=0, output_bytes=0, output_sha256=None)
             _write_state(job, state)
-        if state["phase"] not in ("Ready", "Committed") and os.path.lexists(target):
+        if state["phase"] not in ("Ready", "Committed", "Releasing", "Released") and os.path.lexists(target):
             _fail("DestinationExists")
         for name in entries:
             if name == "state.tmp" or name.startswith(".genewire-"):
@@ -305,7 +411,8 @@ def recover_bam(
                         total += len(data)
                         if total > max_source_bytes:
                             _fail("ResourceLimit")
-                        output.write(data)
+                        if output.write(data) != len(data):
+                            raise OSError("Incomplete source write")
                         digest.update(data)
                     stream.finish()
                     token._check()
@@ -327,11 +434,12 @@ def recover_bam(
             os.replace(job / "source.partial", job / "source.bam")
             _sync_dir(job)
             state = _advance(job, state, phase="Verified", source_bytes=total)
-        else:
+        elif state["phase"] not in ("Releasing", "Released"):
             reused = True
-        size, digest = _hash_file(job / "source.bam", max_source_bytes, cancellation=token)
-        if size != state["source_bytes"] or digest != expected_sha256:
-            _fail("IntegrityFailed")
+        if state["phase"] not in ("Releasing", "Released"):
+            size, digest = _hash_file(job / "source.bam", max_source_bytes, cancellation=token)
+            if size != state["source_bytes"] or digest != expected_sha256:
+                _fail("IntegrityFailed")
         if state["phase"] == "Verified":
             _discard(job / "result.bam")
             local = _VerifiedFileStream(job / "source.bam", (reference, start, end))
@@ -353,20 +461,23 @@ def recover_bam(
         size, digest = _hash_file(job / "result.bam", max_output_bytes, links=(1, 2), cancellation=token)
         if size != state["output_bytes"] or digest != state["output_sha256"]:
             _fail("IntegrityFailed")
-        if state["phase"] == "Committed" and not os.path.lexists(target):
+        if state["phase"] in ("Committed", "Releasing", "Released") and not os.path.lexists(target):
             _fail("CheckpointInvalid")
-        try:
-            token._commit(lambda: os.link(job / "result.bam", target, follow_symlinks=False))
-            committed = True
-        except FileExistsError:
-            original = (job / "result.bam").lstat()
-            visible = target.lstat()
-            if (not stat.S_ISREG(visible.st_mode)
-                    or (original.st_dev, original.st_ino) != (visible.st_dev, visible.st_ino)):
+        if state["phase"] in ("Releasing", "Released"):
+            if not _output_matches(target, job / "result.bam"):
                 _fail("DestinationExists")
             committed = True
-        _sync_dir(parent)
-        state = _advance(job, state, phase="Committed")
+            state = _finish_release(job, state, token, [])
+        else:
+            try:
+                token._commit(lambda: os.link(job / "result.bam", target, follow_symlinks=False))
+                committed = True
+            except FileExistsError:
+                if not _output_matches(target, job / "result.bam"):
+                    _fail("DestinationExists")
+                committed = True
+            _sync_dir(parent)
+            state = _advance(job, state, phase="Committed")
         synced = True
     except GeneWireError as failure:
         error = str(failure)

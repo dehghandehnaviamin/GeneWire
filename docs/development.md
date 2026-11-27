@@ -152,7 +152,38 @@ verified result and receipt remain retained after publication to recognize a
 post-link crash or retry without creating a new output inode. Do not remove or
 replace the workspace/lock while another job owns it.
 
-Inspect `state`, `error`, `phase`, `source_reused`, `source_bytes`, `output_bytes`,
+Import `inspect_bam_job`, `clean_bam_job` and `WorkspaceReport` from
+`genewire.jobs`. Both operations take the same client/query/destination/workspace,
+expected digest and byte budgets as recovery, plus optional cancellation; they
+do not take decoder timeouts. They use the existing nonblocking lock, create no
+missing workspace/lock and issue no network request. Inspection verifies the
+phase-appropriate retained files without changing metadata; `sync_confirmed`
+is false because it performs no storage writes. Missing jobs return
+CheckpointMissing; invalid layouts or a removed initialized lock fail closed.
+
+Cleanup validates the receipt, known layout and deletion candidates before any
+deletion. Downloading discards incomplete artifacts; Verified retains the pinned
+source; Ready retains source/result and any original published alias. After
+Committed, cleanup records Releasing, deletes source/temporary artifacts, syncs
+the directory and records Released. It retains the lock, receipt and result.bam
+alias, never removes the public destination or recursively deletes a directory.
+The alias shares the final output inode. Releasing/Released can be recovered
+without the old input, network or decoder. Older pre-alpha readers reject these
+new phases; the receipt schema/fingerprint remain version 1.
+
+Inspect `state` (Inspected, Cleaned or Failed), `error`, `phase`,
+`retained_source_bytes`, `retained_result_bytes`, `source_verified`,
+`result_verified`, `output_verified`, `removed_files`, `sync_confirmed` and
+`cleanup_complete`. Retained counts are logical bytes across known file names,
+not physical disk allocation. Source content is verified for Verified/Ready;
+committed cleanup can discard a corrupt or missing redundant source after
+verifying the accepted result/output. RecoveryReport.source_bytes keeps the
+historical input length after release. A partial/cancelled cleanup is retryable;
+removed_files lists only successfully unlinked basenames, and a failure does not
+confirm sync. RecoveryBusy means another operation owns the lock. Keep the lock
+inode and destination stable even after cleanup.
+
+For `recover_bam`, inspect `state`, `error`, `phase`, `source_reused`, `source_bytes`, `output_bytes`,
 `output_committed`, `sync_confirmed` and `transport`. Complete means the required
 sync calls and original output publication were confirmed. A post-link failure
 can report `output_committed=True`, `sync_confirmed=False`; retry the same job.
@@ -191,8 +222,9 @@ loss. The local recovery harness and its source-bound report were exercised:
 ```
 
 It uses synthetic loopback data, fresh child clients, actual SIGKILL, controlled
-cancellation races and injected storage errors. It includes the 19 recovery and
-12 cancellation cases. See [M3 evidence and remaining gates](project/M3-LOCAL.md).
+cancellation races and injected storage errors. It includes recovery,
+cancellation, workspace management and storage-boundary cases, with structured
+observations for each group. See [M3 evidence and remaining gates](project/M3-LOCAL.md).
 The full unittest discovery command above also includes the recovery tests.
 
 ## Independent server and resource checks

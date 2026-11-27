@@ -478,3 +478,29 @@ Decisions record rationale and limits, not implementation claims.
   verifying implementation/build/workflow/assets match the tested 7f15c77;
   use a docs-only CI skip and attribute success to the actual observed run.
   Keep the local report anchors and earlier CI records intact.
+
+## D024 — Inspect and clean BAM workspaces without losing accepted results
+
+- **Date:** 2026-11-27. The owner approved the proposed next M3 storage step.
+- **Scope:** Continue the existing M3 implementation/check/publication workflow;
+  add read-only job inspection, explicit safe cleanup and storage-boundary fault
+  evidence. No next milestone, new format, release or deployment is included.
+- **Decision:** Reuse query binding and the existing nonblocking workspace lock.
+  Keep validated inputs/results needed by incomplete jobs. After Committed,
+  persist Releasing before deleting source artifacts, then record Released after
+  successful directory sync. Retain the lock inode, receipt and result alias;
+  never delete the final destination or recursively remove a caller's directory.
+- **Recovery:** Releasing/Released do not depend on the old source. Verify the
+  original result inode/content and finish release idempotently. Inspection and
+  cleanup create no missing job or replacement lock and make no network request.
+- **Evidence policy:** Check actual short-write/storage failures and process death
+  around file sync, rename, receipt replacement, publication and release. Keep
+  those observations separate from physical power-loss guarantees and preserve
+  all historical source-bound reports.
+- **Observed locally:** 81 Python/native and 47 Rust tests passed without skips,
+  with formatting/clippy clean. The repeated 47-case job harness records seven
+  workspace points and 108 storage observations: 48 boundaries each with SIGKILL
+  and EIO plus 12 short-write/ENOSPC/flush/close cases. All fresh-process retries,
+  Q1–Q5 independent comparisons and both resource modes passed. Source-bound
+  [reports and method limits](M3-LOCAL.md#workspace-and-storage-follow-up) are
+  retained. Publication/CI qualification of this increment is pending.

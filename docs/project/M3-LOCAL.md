@@ -126,6 +126,58 @@ publication/sync flags. A cancelled operation with incomplete supervisor cleanup
 cannot be mistaken for a fully stopped job even when network cleanup completed.
 Storage failures conservatively leave cleanup unconfirmed as well.
 
+## Workspace and storage follow-up
+
+D024 adds `genewire.jobs.inspect_bam_job` and `clean_bam_job`. They bind the same
+query/destination/digest/budgets and reuse the existing nonblocking lock without
+creating missing jobs or issuing network requests. Inspection is read-only;
+cleanup validates all candidates before deleting owned temporary files. Verified
+source and Ready source/result survive cleanup. A matching Ready output alias
+survives too; recovery completes its receipt. A missing initialized lock is
+rejected rather than recreated as a second ownership domain.
+
+After Committed, cleanup persists Releasing before deleting redundant input,
+syncs the workspace, then persists Released. The stable lock, receipt and result
+alias remain; the alias shares the accepted destination inode. Releasing/Released
+recovery verifies that result/output and finishes without source, network or
+decoding. Committed inspection/cleanup does not require redundant source content
+to remain intact. Retained byte counts describe logical file-name extents, not
+physical allocation; receipt source_bytes remains historical after release.
+These two new phases extend the pre-alpha version-1 vocabulary; old readers fail
+closed on unknown phases. No schema/fingerprint migration is implied.
+
+Observed locally on the recorded macOS runner:
+
+| Check | Result |
+| --- | --- |
+| Full Python/native discovery | 81 passed, zero skips (65 preceding cases, 13 workspace cases, three storage matrix cases) |
+| Rust and static checks | 47 passed; formatting and clippy with denied warnings passed |
+| Expanded job harness | 47 passed, zero skips; repeats 19 recovery, 12 cancellation, 13 workspace and three storage cases, not additional unique tests |
+| Workspace observations | Seven structured points; read-only/no-create/no-network, phase-preserving cleanup, output/lock identity, release retry; unsafe candidates and competing owners also checked |
+| Storage boundaries | 48 distinct before/after points, each exercised with real SIGKILL and injected EIO; 96 observations |
+| File I/O failures | 12 observations: actual short writes, injected ENOSPC, flush and close errors for receipt, source and decoder output; no partial destination accepted |
+| Independent regression | Q1–Q5 still match pinned htsget-rs and both HTSlib paths; both 64 MiB resource modes pass payload/copy/cleanup gates |
+
+The 48 points cover source file sync/rename/directory sync, result file/directory
+sync, file sync/receipt replacement/directory sync for Verified, Ready, Committed,
+Releasing and Released, public link/parent sync, source unlink and release sync.
+Every failed/killed invocation is retried with a fresh subprocess client. The
+checks assert original output identity when already present, exact tiny record
+names, byte equality of the output alias and no re-fetch after a verified receipt.
+Released retries explicitly forbid network and decoder calls. Incomplete inputs
+without a verified receipt still restart from zero, even after their file sync.
+
+The first local matrix run exposed two untriggered parent-sync injections because
+the test helper compared an unresolved temporary path with its resolved alias.
+The helper was fixed; the final full suite and independently repeated harness
+passed. No production failure is inferred from that instrumentation error.
+
+Raw source-bound reports: [job/storage](evidence/2026-11-27-m3-storage.json),
+[independent server](evidence/2026-11-27-m3-storage-interop.json) and
+[resources](evidence/2026-11-27-m3-storage-resources.json). Their hashes identify
+the current local implementation/tests. This follow-up has not yet been remotely
+qualified; preceding CI evidence remains attached to 7f15c77.
+
 ## Remaining gates
 
 Full M3 acceptance remains open. This increment does not supply byte-offset
@@ -134,6 +186,7 @@ rollback/exactly-once side effects, malicious same-user mutation protection,
 network filesystems, power-loss durability or broad OS qualification. A
 hard-killed supervisor cannot guarantee orphan reaping; recovery never uses stale
 PIDs to terminate processes. Retain the job directory and its lock inode, do not
-move its destination, and remove the private spool/receipt manually only when
-future recovery is no longer needed and no job owns the lock. Input/output
-payload files remain retained after success by design.
+move its destination. Use explicit cleanup to release owned input after success;
+retain the receipt, lock inode and result alias for future reconciliation. Cleanup
+does not securely erase payloads or remove all genomic copies. Broader retention
+policy, filesystem/device failure qualification and M3 exit remain separate work.

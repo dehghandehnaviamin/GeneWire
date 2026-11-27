@@ -90,6 +90,45 @@ concurrent owners, limits, ENOSPC and sync failures. Compare recovered decoded
 records with the existing tiny oracle. Test a receipt retry after publication
 without creating a new output inode or issuing another request.
 
+## Workspace inspection and release follow-up
+
+The M3 storage increment exposes inspection and explicit cleanup using the same
+query/destination/digest/limits binding as recovery. Inspection acquires the
+existing job lock without creating any file, changing a receipt or issuing a
+network request. It verifies the retained source/result appropriate to the
+recorded phase and the original output inode if already published. Reports count
+logical retained file bytes, not physical filesystem usage.
+
+Cleanup is nonrecursive and serialized by the same lock. Validate the receipt,
+layout and all deletion candidates before removing anything. Reject foreign
+entries, symlinks, invalid permissions and a conflicting output. For Downloading,
+remove incomplete source/output artifacts. For Verified, retain the verified
+source and remove unaccepted decoder artifacts. For Ready, preserve the verified
+source/result and any matching published link; recovery must complete its receipt.
+
+For Committed, first persist Releasing, then unlink the source and temporary
+artifacts, sync the workspace, and persist Released. Retain lock, receipt and
+result.bam as an alias of the final output. The alias does not duplicate output
+payload allocation and lets retries verify the original inode. Never remove or
+recreate the initialized job's lock inode. A crash during release can be retried
+by cleanup or recovery without needing the deleted source. Released recovery
+verifies the retained result/output, does no download/analysis and preserves the
+release receipt. Old pre-alpha readers reject unknown phases rather than reuse
+released input.
+
+Releasing and Released extend the local version-1 receipt's phase vocabulary;
+its fields and request fingerprint stay unchanged. source_bytes remains the
+original accepted source length in a receipt, whereas inspection reports actual
+retained source bytes. A failed/cancelled cleanup may leave partial deletions and
+a Releasing receipt; report removed basenames and unconfirmed sync/cleanup so a
+fresh call can finish it. Neither operation deletes the public destination.
+
+Storage qualification injects partial writes, ENOSPC/EIO, rename/link/unlink and
+sync failures, plus actual process death before/after receipt replacement,
+publication and source release. Confirm fresh-process recovery, output identity,
+byte correctness and no accidental network/decoder replay. These are process-
+crash/local-filesystem checks, not physical power-loss tests.
+
 This is process-crash recovery on controlled local filesystems, not proven
 power-loss durability, network-filesystem correctness, arbitrary child-process
 reaping, same-user adversarial mutation, generic exactly-once analysis effects,
