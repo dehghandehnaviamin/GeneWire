@@ -386,3 +386,17 @@ Decisions record rationale and limits, not implementation claims.
   checks and regression results. This is a first local M3 increment, not full M3
   exit, power-loss qualification, byte-offset resume, a stable API or scientific
   approval. Sync confirmation means successful fsync calls on the observed host.
+
+## D021 — Publish the prepared M3 increment and observe cross-platform CI
+
+- **Date:** 2026-11-27. After reviewing the local result and commit a32062f,
+  the owner explicitly approved the requested push and Linux/macOS CI run.
+- **Scope:** Publish the prepared M3 job subset, run its recovery fault harness
+  alongside the full Rust/Python and independent-server/resource checks, fix
+  failures exposed by CI and publish accompanying evidence/status updates.
+  Preserve immutable action pins and existing evaluation versions.
+- **Evidence:** Retain source-bound recovery JSON alongside interoperability and
+  resource artifacts. Inspect actual terminal jobs, test outcomes, artifact
+  source hashes and annotations before claiming cross-platform qualification.
+- **Limits:** This approval does not close the full M3 milestone or authorize
+  release/deployment, power-loss claims, broader APIs or scientific sign-off.

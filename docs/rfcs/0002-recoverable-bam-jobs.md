@@ -1,8 +1,8 @@
 # RFC 0002 — Recoverable verified BAM jobs
 
 **Local M3 design, 2026-11-27.** The owner authorized starting M3 after the
-proposed recovery work. This increment remains local; prior M2 publication
-approval does not authorize an unrelated M3 push, release or deployment.
+proposed recovery work. The initial increment was local; D021 subsequently
+records explicit M3 push/CI approval. No release or deployment is authorized.
 
 ## Contract and tradeoff
 

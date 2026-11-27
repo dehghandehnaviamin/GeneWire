@@ -36,6 +36,10 @@ failure checks for the verified BAM job subset in RFC 0002. Record evidence and
 limits in the M3 ledger; do not infer M3 remote publication or release approval
 from the earlier M2 push authorization.
 
+The owner then explicitly approved pushing the prepared M3 increment and running
+Linux/macOS CI. This includes necessary CI fixes and accompanying evidence/status
+updates. Follow the runs to completion; no release or deployment is authorized.
+
 Read `docs/project/STATUS.md`, `docs/project/TASKS.md`,
 `docs/project/DECISIONS.md`, `CONTRIBUTING.md`, and `SECURITY.md` before work.
 Keep status, roadmap, architecture diagrams, and contributor instructions aligned

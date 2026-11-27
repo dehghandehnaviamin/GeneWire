@@ -3,7 +3,9 @@
 Snapshot: 2026-11-27. **First local increment; full M3 exit remains open.**
 The owner instructed starting recovery work after M2. See D020 and
 [RFC 0002](../rfcs/0002-recoverable-bam-jobs.md) for the adopted subset.
-No M3 push, remote CI, software release or deployment is claimed.
+The initial evidence below is local. D021 now authorizes publication and an
+observed Linux/macOS CI run; results will be appended after execution. No software
+release or deployment is claimed.
 
 ## Behavior and storage boundary
 
