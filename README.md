@@ -23,17 +23,18 @@
   <a href="SECURITY.md">Security</a>
 </p>
 
-> **Current status:** documentation, visual identity, M0 research and an M1 design draft. GeneWire has no
-> implementation, installable package, stable specification, or measured performance
-> results. Every capability described below is **proposed**, **planned**, or **under
-> research**. The tagline states the project's goal, not an achieved guarantee.
+> **Current status:** experimental Rust core and synchronous Python binding, built
+> and tested locally. M2 is in progress. There is no released package, full
+> conformance result or measured performance comparison. The tagline states the
+> project's goal, not an achieved guarantee.
 
 **Current focus:** regional retrieval and streaming for analysis tools, with an
 owner-selected **Rust core** and a possible **Python high-level integration**.
 The owner authorized advancing M0's direction into
 [M1 design](docs/spec/README.md). [RFC 0001](docs/rfcs/0001-regional-streaming-profile.md)
 proposes a narrow htsget-oriented BAM stream with explicit failure/completion
-semantics. It remains a draft; implementation has not started.
+semantics. A first local implementation now exercises part of that design. See
+[local development](docs/development.md) and [observed evidence/gaps](docs/project/M2-LOCAL.md).
 
 ## Overview
 
@@ -43,8 +44,9 @@ deliver the intended regional result with explicit completion, bounded resource
 use and recoverable progress.
 
 Rust is the chosen core direction; Python can provide a convenient analysis and
-workflow interface. The M1 draft prefers Tokio and a synchronous PyO3/maturin
-integration, with versions/features and actual support still to be qualified.
+workflow interface. The local prototype uses Tokio and a synchronous
+PyO3/maturin integration. Its current checks cover one macOS/CPython environment;
+broader support remains unqualified.
 The first proposed subset reuses existing HTTP/htsget behavior; no GeneWire binary
 wire format, endpoint or port is assigned.
 
@@ -83,16 +85,16 @@ Transport completion, successful analysis and an independent oracle match are
 different outcomes. Read the [draft contracts](docs/spec/README.md) for their limits.
 
 <p align="center">
-  <img src="assets/diagrams/architecture.svg" alt="Proposed M1 architecture: existing htsget services feed a policy-checked Rust stream engine, a Python bridge and a supervised analysis consumer; all components are unimplemented" width="100%">
+  <img src="assets/diagrams/architecture.svg" alt="Proposed M1 architecture: existing htsget services feed a policy-checked Rust stream engine, a Python bridge and a supervised analysis consumer; Rust and Python have local partial implementations; the complete design remains unqualified" width="100%">
 </p>
 
 | Proposed layer | Responsibility | Status |
 | --- | --- | --- |
-| Upstream adapter | Existing htsget request, ticket and ordered data blocks | Draft |
-| Rust stream engine | Bounded delivery, exposure-based retry, cancellation and terminal reports | Draft |
-| Python integration | Owned byte chunks, typed errors and explicit close | Draft |
-| Analysis boundary | Full decode/filter and separate analysis-completion outcome | Draft |
-| Network/security policy | Credential isolation, destination checks and finite budgets | Draft |
+| Upstream adapter | Existing htsget request, ticket and ordered data blocks | Local prototype |
+| Rust stream engine | Bounded delivery, exposure-based retry, cancellation and terminal reports | Local prototype |
+| Python integration | Owned byte chunks, typed errors and explicit close | Local prototype |
+| Analysis boundary | Full decode/filter and separate analysis-completion outcome | Test harness only; product supervisor planned |
+| Network/security policy | Credential isolation, destination checks and finite budgets | Local controls; further review required |
 
 <details>
 <summary>View the conceptual protocol layers</summary>
@@ -101,14 +103,15 @@ different outcomes. Read the [draft contracts](docs/spec/README.md) for their li
 
 No GeneWire frame, message identifier, port or cryptographic scheme is assigned.
 The client profile reuses upstream behavior and intentionally supports a subset;
-these diagrams remain proposed design aids, not evidence of implementation.
+these diagrams mix the design target with partial local components. The evidence
+ledger defines what has actually been exercised.
 
 </details>
 
 ## Planned capabilities
 
-- **Planned:** bounded streaming with backpressure and cancellation.
-- **Draft P0:** retry a block only before its bytes are exposed; otherwise report
+- **Local prototype:** pull-based byte reads, bounded chunks, cancellation and deadlines.
+- **Local prototype:** retry eligible block failures only before exposure; otherwise report
   incomplete output and require an explicit fresh attempt.
 - **Later / under research:** durable checkpoints, object manifests and multi-object recovery.
 - **Under research:** integrity verification granularity and durable checkpoints.
@@ -118,13 +121,13 @@ these diagrams remain proposed design aids, not evidence of implementation.
 
 ## Genomic formats roadmap
 
-No format is currently supported. Inclusion here expresses a research sequence,
-not a compatibility promise. Opaque transfer and semantic interpretation will be
+Synthetic BAM byte streams have been exercised with an external HTSlib decoder.
+There is no released format-support or real-server compatibility promise. Opaque transfer and semantic interpretation will be
 specified separately.
 
 | Format family | Intended exploration | Earliest target |
 | --- | --- | --- |
-| SAM / BAM | Synthetic indexed BAM is the proposed first regional-evaluation fixture; SAM provides decoded context | Evaluation planned; broader extensions at M4 |
+| SAM / BAM | Synthetic indexed BAM is the proposed first regional-evaluation fixture; SAM provides decoded context | Tiny BAM oracle exercised locally; broader extensions at M4 |
 | CRAM | Reference arrangements and index relationships need separate review | P1 evaluation · Under research |
 | VCF / BCF | Variant overlap, indexes and coordinate semantics need domain review | P1 evaluation · Under research |
 | FASTA / FASTQ | Reference lookup or secondary opaque-object exchange; no assumed reference-coordinate FASTQ API | Later / secondary · Under research |
@@ -165,14 +168,14 @@ reproducible methods before making performance claims.
 | Milestone | Exit evidence |
 | --- | --- |
 | M0 · Research and Feasibility | Published; owner authorized the reuse-first direction for M1 |
-| M1 · Protocol Specification | RFC 0001 and contracts drafted; 30 candidate scenarios, no execution evidence |
-| M2 · Core Protocol | Proposed Rust reference core interoperating with the selected mechanism |
+| M1 · Protocol Specification | Design direction adopted locally; 30 candidate scenarios with partial executable evidence |
+| M2 · Core Protocol | Local Rust/Python path works against controlled fixtures; real-server interoperability pending |
 | M3 · Reliable Transfer Engine | Verified recovery under interruption and corruption |
 | M4 · Genomic Extensions | Reviewed format, reference and index handling |
 | M5 · Developer Experience | Working CLI, package, examples and contributor tooling |
 | M6 · Alpha Release | Reproducible validation, release notes and documented limitations |
 
-M1 remains a draft; M2–M6 are planned. There are no delivery-date commitments. See the
+M1 remains a provisional design; M2 is in progress and M3–M6 are planned. There are no delivery-date commitments. See the
 [full roadmap](ROADMAP.md), [status](docs/project/STATUS.md), and
 [task register](docs/project/TASKS.md).
 
@@ -197,7 +200,8 @@ supported software release. Do not use it for clinical decisions or real patient
 data. Do not submit identifiable genomic data, credentials, or sensitive metadata
 in issues, pull requests, logs, or fixtures.
 
-Encryption and integrity are research requirements, not implemented protections.
+The prototype requires verified HTTPS outside explicit loopback tests. Successful
+transport does not establish genomic completeness or cryptographic source integrity.
 Dataset access decisions, consent, retention policy, and authorization remain
 deployment responsibilities to be addressed explicitly in future design work.
 Report vulnerabilities privately using [SECURITY.md](SECURITY.md).

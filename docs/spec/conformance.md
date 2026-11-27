@@ -1,6 +1,8 @@
 # Conformance and validation plan
 
-**GW-M1-DRAFT-01 — Candidate tests only.** No case below has run against GeneWire.
+**GW-M1-DRAFT-01 — Candidate matrix.** The local M2 suite exercises selected
+behaviors; [the evidence ledger](../project/M2-LOCAL.md) distinguishes those
+observations from unexecuted cases and remaining variants.
 Validating the JSON/Markdown does not validate network behavior or scientific
 correctness. Requirements P01–P18 remain draft client requirements.
 

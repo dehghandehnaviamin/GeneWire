@@ -6,12 +6,14 @@
 chosen direction; Python can provide convenient high-level access and integration.
 
 This replaces the bootstrap's proposed Python/asyncio reference core. It does not
-select a new wire protocol or prove a speed advantage. Implementation, dependency
-versions, bindings and packaging remain future work.
+select a new wire protocol or prove a speed advantage. At M0, implementation, dependency
+versions, bindings and packaging remained future work; current local choices are
+recorded in the M2 evidence ledger.
 
 The subsequent [M1 boundary draft](../spec/rust-python.md) prefers a synchronous
 PyO3 extension over a Tokio core, with the process wrapper retained as a fallback.
-That is a proposed design choice, not implemented or measured integration.
+That began as a proposed design choice. The [local M2 increment](../project/M2-LOCAL.md)
+now exercises Tokio/PyO3; no comparative speedup has been measured.
 
 ## Proposed responsibility split
 

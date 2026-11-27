@@ -10,8 +10,10 @@ An initial push alone is not permission to start the next phase.
 The owner approved M0 on 2026-11-26 and selected regional retrieval/streaming,
 a Rust core and possible Python high-level integration. After M0 publication,
 the owner instructed continuation into reuse-first M1 design. RFC 0001 and the
-M1 contracts remain drafts; implementation has not been approved. Consult
-the decision register before advancing scope or publishing later changes.
+M1 contracts are the design basis for a local M2 prototype. The owner then
+instructed local continuation and delegated product/business decisions. Proceed
+with local implementation and checks; do not push, publish or deploy until later
+authorization. Record choices and evidence in the decision register and M2 ledger.
 
 Read `docs/project/STATUS.md`, `docs/project/TASKS.md`,
 `docs/project/DECISIONS.md`, `CONTRIBUTING.md`, and `SECURITY.md` before work.

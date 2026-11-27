@@ -112,7 +112,7 @@ Decisions record rationale and limits, not implementation claims.
 ## D009 — Narrow htsget client subset and explicit incomplete results
 
 - **Date:** 2026-11-26
-- **State:** Proposed in RFC 0001; unimplemented
+- **State:** Adopted as direction for local evaluation under D010; partial implementation
 - **Proposal:** One mapped-read interval/BAM over existing htsget behavior;
   bounded encoded-byte streaming; separate transport/analysis/oracle outcomes;
   retry a block only before any of its output is exposed.
@@ -122,3 +122,30 @@ Decisions record rationale and limits, not implementation claims.
   transparent replay; no persistent checkpoint or new wire format in P0.
 - **Evidence and tests:** [RFC](../rfcs/0001-regional-streaming-profile.md),
   [lifecycle](../spec/stream-lifecycle.md), [conformance plan](../spec/conformance.md).
+
+## D010 — Local implementation and delegated product decisions
+
+- **Date:** 2026-11-26
+- **State:** Accepted owner instruction
+- **Evidence:** After the M1 report, the owner instructed continuing locally and
+  explicitly delegated business/product decisions to the agent.
+- **Decision:** Start the narrow M2 local prototype from RFC 0001. Retain the
+  regional/BAM focus and Rust/Python stack; record technical tradeoffs and evidence.
+- **Publication:** No subsequent remote push, merge, issue update, release or
+  deployment is included. Keep existing public history and remotes unchanged.
+- **Limits:** The instruction does not supply independent domain/security review
+  or measured performance. M2 exit remains governed by observed evidence.
+
+## D011 — Pull-based prototype with explicit destination pins
+
+- **Date:** 2026-11-26
+- **State:** Implemented locally; broader qualification pending
+- **Decision:** Use a synchronous pull reader over Tokio/reqwest, with an overall
+  watchdog, owned outputs and explicit close. No producer queue/prefetch in the
+  first increment. Use operator-supplied IP pins without ambient DNS so address
+  policy binds to actual connections without an unowned blocking DNS lookup.
+- **Tradeoffs:** HTTP/1 only; per-hop HTTP client; cross-origin redirects rejected;
+  ticket retries and product analysis supervision deferred. Reject an HTTP body
+  fragment above 256 KiB. No performance or complete resource-bound claim.
+- **Evidence:** [M2 ledger](M2-LOCAL.md), Rust HTTP/fault tests, Python/native and
+  synthetic BAM checks. This does not establish real-server interoperability.

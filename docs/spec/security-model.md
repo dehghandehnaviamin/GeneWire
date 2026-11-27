@@ -1,7 +1,8 @@
 # Proposed security and privacy model
 
-**GW-M1-DRAFT-01 — Design model only.** No implementation exists to audit and
-none of the controls below is verified. Private reporting remains in
+**GW-M1-DRAFT-01 — Design model.** A local partial implementation now exists;
+[its evidence ledger](../project/M2-LOCAL.md) records checked controls and gaps.
+The complete model is not a verified security guarantee or audit. Private reporting remains in
 [SECURITY.md](../../SECURITY.md).
 
 ## Assets and assumptions

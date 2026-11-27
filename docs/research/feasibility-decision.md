@@ -21,7 +21,9 @@ research, runtime feasibility or measured advantage.
 The owner authorized M0 and selected Rust for the core direction, with Python
 as a possible high-level layer. M0 publication was approved and verified; the
 subsequent continuation authorizes the [M1 draft](../spec/README.md).
-Acceptance of that detailed draft, implementation and later pushes remain outstanding.
+The owner subsequently authorized local M2 work and delegated product/business
+decisions. Full contract qualification and later publication remain separate;
+see [current local evidence](../project/M2-LOCAL.md).
 The original goal remains an open interoperable
 ecosystem; whether it needs its own wire protocol remains an open evidence question.
 

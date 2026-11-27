@@ -1,11 +1,12 @@
 # M1 — Regional streaming design
 
 **State:** Draft for review. **Design identifier:** GW-M1-DRAFT-01.
-**Date:** 2026-11-26. No application or protocol implementation exists.
+**Date:** 2026-11-26. The first local M2 implementation covers part of this design;
+see [actual evidence and remaining gaps](../project/M2-LOCAL.md).
 
 The owner instructed continuation after M0 publication. This is approval to
-develop the reuse-first M1 design, not external scientific sign-off or permission
-for a later remote push. The proposed first path is a Rust htsget-oriented core
+develop the reuse-first M1 design. Subsequent local continuation authorized M2;
+external scientific sign-off and remote publication are not inferred. The proposed first path is a Rust htsget-oriented core
 with a synchronous Python high-level extension.
 
 | Document | Contract |
@@ -19,7 +20,7 @@ with a synchronous Python high-level extension.
 | [Candidate vectors](vectors/cases.json) | Machine-readable scenario expectations, not executable tests |
 
 The three [architecture diagrams](../../assets/diagrams) now represent this
-**proposed M1 subset**. They do not show implemented features.
+**proposed M1 subset**. They identify partial local components; their complete contracts remain design targets.
 
 ## Conventions and compatibility
 
@@ -55,8 +56,9 @@ The design separates upstream facts from proposed client choices:
   server, selected for future evaluation rather than deployed here.
 
 Sources were rechecked on 2026-11-26. These reviewed versions are design inputs,
-not installed dependencies or a lockfile. Pin and audit actual releases/build
-features before M2 execution. No benchmark result from another project is a
+not by themselves a lockfile. The local prototype now pins actual dependencies;
+its HTSlib decoder version differs from the reviewed manual. Further feature and
+security review remains in the M2 ledger. No benchmark result from another project is a
 GeneWire result. The broader prior-art record remains in
 [M0 sources](../research/sources.md).
 

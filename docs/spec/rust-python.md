@@ -1,6 +1,8 @@
 # Rust core and Python boundary
 
-**GW-M1-DRAFT-01 — Proposed architecture and API sketches, not working interfaces.**
+**GW-M1-DRAFT-01 — Design architecture and API sketches.**
+The working partial interface is documented in [local development](../development.md);
+these responsibility sketches are not a complete implemented API contract.
 The owner chose Rust for the core and Python for convenient high-level integration.
 
 ## Logical components
@@ -112,9 +114,10 @@ do not execute an inherited native runtime inside a forked child.
 
 ## Packaging and measured evidence
 
-Maturin is a candidate build/package tool, not an installed GeneWire workflow.
-No package name, Cargo workspace, wheel, installation command or binary artifact
-is created in M1. [Packaging option](https://www.maturin.rs/).
+Maturin began as the design candidate; the local M2 workflow now uses version
+1.16.0. See the development guide for commands exercised on the current runner.
+M1 did not create a package or Cargo workspace. The subsequent local M2 increment
+now contains both; wheel/support qualification remains incomplete. [Packaging option](https://www.maturin.rs/).
 
 Future M2 evidence must cover native ownership, interpreter shutdown, explicit
 close, consumer failure, simultaneous cancel/read and error translation. Compare

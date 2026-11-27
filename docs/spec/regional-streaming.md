@@ -1,7 +1,7 @@
 # Regional access profile
 
-**GW-M1-DRAFT-01 — Proposed, unimplemented.** Requirements below apply to a future
-GeneWire client. They are not amendments to upstream htsget.
+**GW-M1-DRAFT-01 — Draft requirements.** The local M2 client implements a subset;
+[the evidence ledger](../project/M2-LOCAL.md) is authoritative for current behavior. They are not amendments to upstream htsget.
 
 ## Input scope
 

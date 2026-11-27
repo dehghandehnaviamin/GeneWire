@@ -1,6 +1,7 @@
 # RFC 0001 — Regional streaming over htsget
 
-**State:** Draft for owner review; no implementation or conformance claim.
+**State:** Design direction adopted for local M2 evaluation; full conformance
+and independent scientific/security review remain unclaimed.
 **Date:** 2026-11-26.
 
 ## Problem and scope
@@ -78,9 +79,12 @@ The [security model](../spec/security-model.md) records threats and residual ris
 ## Validation and open review
 
 The [conformance plan](../spec/conformance.md) and
-[candidate vectors](../spec/vectors/cases.json) are unrun design artifacts.
+[candidate vectors](../spec/vectors/cases.json) are design inputs. Selected
+behaviors now have [local executable evidence](../project/M2-LOCAL.md).
 No package, endpoint, throughput target or release is established by this RFC.
 Owner review, domain review of expanded query semantics, actual baseline
-provisioning, dependency/support choices and M2 implementation approval remain.
+provisioning and broader dependency/support qualification remain. The owner
+authorized local implementation and delegated product/business decisions.
 
-Starting M1 authorizes preparation of this draft; it does not mark RFC 0001 accepted.
+Local adoption is an engineering direction, not proof that every requirement is
+implemented or an approval for remote publication.

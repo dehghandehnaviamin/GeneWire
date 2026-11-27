@@ -1,7 +1,8 @@
 # Stream lifecycle and completion
 
-**GW-M1-DRAFT-01 — Proposed, unimplemented.** This is a local application state
-model, not a wire state machine imposed on the server.
+**GW-M1-DRAFT-01 — Draft state model.** This is a local application state
+model, not a wire state machine imposed on the server. Consult
+[partial M2 evidence](../project/M2-LOCAL.md) before treating a requirement as verified.
 
 ## State model
 

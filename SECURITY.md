@@ -2,9 +2,9 @@
 
 ## Current support status
 
-GeneWire is **experimental, pre-alpha, and documentation-only**. There are no
+GeneWire is **experimental and pre-alpha, with a local prototype**. There are no
 released or supported software versions, security audit results, production
-guarantees, or implemented cryptographic protections. No response-time SLA or bug
+guarantees, or independently verified security guarantees. No response-time SLA or bug
 bounty is offered. Future release support will be documented before release.
 
 ## Report privately
@@ -41,8 +41,9 @@ requirements. A checksum alone does not authenticate a peer, and encryption alon
 does not authorize a transfer or establish consent.
 
 The [M1 security model](docs/spec/security-model.md) proposes controls and
-candidate tests for the initial regional-streaming subset. They are not
-implemented protections, an audit result or production approval.
+candidate tests for the initial regional-streaming subset. The
+[local implementation ledger](docs/project/M2-LOCAL.md) records partial controls,
+checks and gaps. These do not constitute an audit or production approval.
 
 Access control, legal permission, consent, data minimization, retention, and
 deployment policy cannot be inferred from successful data transmission. GeneWire
