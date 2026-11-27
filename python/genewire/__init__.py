@@ -79,6 +79,8 @@ class Client:
             (timeout_ms, result_bytes),
             additional_ca_pem,
         )
+        # Bind local recovery receipts to the configured service without persisting it.
+        self._service = service
 
     def open(self, object_id: str, reference: str, start: int, end: int) -> Stream:
         if any(type(n) is not int or not 0 <= n <= 2**32 - 1 for n in (start, end)):

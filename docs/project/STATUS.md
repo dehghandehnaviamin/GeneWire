@@ -1,6 +1,6 @@
 # Project status
 
-**Experimental — Pre-alpha — Narrow M2 reference gate complete**
+**Experimental — Pre-alpha — Narrow M2 reference gate complete; local M3 in development**
 
 Snapshot: 2026-11-27. Status must be updated when verified evidence changes.
 
@@ -16,6 +16,7 @@ Snapshot: 2026-11-27. Status must be updated when verified evidence changes.
 | M0 research | Published; direction accepted for M1 | [5e28a62](https://github.com/dehghandehnaviamin/GeneWire/commit/5e28a6283fed0445b89c09df17c3ec3087a6c5ec); no independent domain sign-off or experiments |
 | M1 design | Direction adopted for local prototype | [RFC 0001](../rfcs/0001-regional-streaming-profile.md); complete contract remains provisional |
 | M2 reference implementation | Narrow engineering gate complete | Rust/Python byte reader and supervised BAM adapter; [exit evidence and limits](CI-VALIDATION.md) |
+| M3 recovery | Local verified-BAM-job increment | [RFC 0002](../rfcs/0002-recoverable-bam-jobs.md) and [local evidence](M3-LOCAL.md); complete-source reuse and publication receipts, full M3 exit open |
 | Testing and CI | Verified on the observed Linux/macOS runners with Node.js 24 actions | Each passed 47 Rust and 34 Python/native tests without skips; [workflow 46021619658](https://github.com/dehghandehnaviamin/GeneWire/actions/runs/46021619658); no warning annotations, one macOS capacity notice |
 | Scientific evaluation | Tiny controlled oracle exercised; university review deferred | Q1–Q5 and negative controls; owner will arrange final review, no independent sign-off yet |
 | Performance and interoperability | Narrow local evidence | Pinned real htsget-rs and two HTSlib paths matched Q1–Q5; one 64 MiB opaque resource probe per retention mode; no ranking or full resource certification |
@@ -85,3 +86,11 @@ Node.js 24 runtimes. Fresh run 46021619658 succeeded on both runners with the sa
 test counts, source-checked Q1–Q5 and resource gates. The Node.js 20 warnings are
 absent; the macOS hosted-capacity notice remains. The final evidence-only update
 does not change the tested implementation or workflow; no later milestone starts.
+
+**D020 local M3 update:** The owner's subsequent instruction starts the recovery
+increment in RFC 0002. The local tree now contains private locked receipts,
+SHA-256-pinned full input spools and recoverable no-overwrite result publication.
+Local Python/native and Rust suites plus process/storage fault evidence are
+recorded in the M3 ledger. The earlier CI result qualifies its historical M2
+revision; this new increment has not been pushed or observed in remote CI.
+Full M3, power-loss durability and scientific review remain open.

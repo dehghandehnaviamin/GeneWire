@@ -132,6 +132,49 @@ SIGINT cleanup and abrupt decoder death have dedicated checks. A hard-killed
 supervisor cannot run finalizers or promise removal of its provisional files;
 crash recovery is outside the current contract.
 
+## Optional recoverable BAM jobs
+
+Import `recover_bam` and `RecoveryReport` from `genewire.recovery`. This separate
+local M3 adapter takes `(client, object_id, reference, start, end, destination,
+workspace, *, expected_sha256=...)`. Pass an expected lowercase SHA-256 for the
+exact encoded upstream regional response obtained through a trusted external
+channel. It is not the digest of a separately re-encoded filtered BAM. Digest
+discovery and server manifest support are not implemented.
+
+Use an absent destination and an absent or existing private mode-0700 workspace
+in the same parent directory on a local POSIX filesystem. Keep both outside the
+repository. Reinvoke with the same service/object/region/destination/limits/digest
+to recover. Incomplete downloads restart from zero. A synced, complete, verified
+source is reused for supervised decoding without another network request. The
+verified result and receipt remain retained after publication to recognize a
+post-link crash or retry without creating a new output inode. Do not remove or
+replace the workspace/lock while another job owns it.
+
+Inspect `state`, `error`, `phase`, `source_reused`, `source_bytes`, `output_bytes`,
+`output_committed`, `sync_confirmed` and `transport`. Complete means the required
+sync calls and original output publication were confirmed. A post-link failure
+can report `output_committed=True`, `sync_confirmed=False`; retry the same job.
+False does not assert no conflicting path exists. A recovered invocation has
+`transport=None`; it does not invent a network attempt. Local invalid scalar
+options raise GeneWireError before touching disk; runtime failures return
+categories including CheckpointInvalid, CheckpointMismatch, IntegrityFailed,
+DestinationExists, RecoveryBusy, StorageFailure and the existing stream/consumer
+categories. KeyboardInterrupt propagates; the next invocation can recover.
+
+Defaults are 1 GiB each for `max_source_bytes` and `max_output_bytes`, plus the
+same decoder deadline/cleanup defaults as `filter_bam`. Network deadlines still
+come from Client. File payload is bounded separately from filesystem metadata,
+device caches and process memory. Sync confirmation is not proof against power
+loss. The local recovery harness and its source-bound report were exercised:
+
+```bash
+.venv/bin/python tools/check_recovery.py --report /tmp/genewire-recovery.json
+```
+
+It uses synthetic loopback data, fresh child clients and actual SIGKILL plus
+injected storage errors. See [M3 evidence and remaining gates](project/M3-LOCAL.md).
+The full unittest discovery command above also includes the recovery tests.
+
 ## Independent server and resource checks
 
 The recorded htsget-axum build uses MIT-licensed

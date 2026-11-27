@@ -361,3 +361,28 @@ Decisions record rationale and limits, not implementation claims.
   synthetic evidence. Verify all implementation/build/workflow inputs remain
   byte-identical to dc46c2b and use a docs-only CI skip. Attribute successful CI
   to the tested revision; do not imply another run for the evidence commit.
+
+## D020 — Start local M3 with verified complete-source BAM job recovery
+
+- **Date:** 2026-11-27. After the M3 proposal, the owner instructed proceeding.
+- **Authorization:** Local design, implementation and tests. Preserve previous
+  work; the earlier M2 push/CI approval does not authorize an unrelated M3 push,
+  release or deployment. University review remains deferred to the owner.
+- **Decision:** Adopt [RFC 0002](../rfcs/0002-recoverable-bam-jobs.md) for the first
+  recovery subset. The existing htsget stream lacks a safe authenticated offset
+  resume contract. Restart incomplete input; reuse only a complete synced source
+  matching an externally trusted expected SHA-256. Do not join fresh-ticket bytes
+  to old bytes or pretend a checksum establishes scientific completeness.
+- **Implementation:** A Python job wrapper retains mode-0600 files in a private
+  sibling workspace, holds a nonblocking advisory lock and atomically records
+  Downloading/Verified/Ready/Committed receipts. Reuse the existing supervised
+  decoder. A synced result is published by no-overwrite hard link; the retained
+  result inode reconciles a crash after publication but before the final receipt.
+- **Failure policy:** Corruption, unknown/stale state, wrong query/destination or
+  limits and unrelated output fail closed. A failed post-link sync reports the
+  recognized publication separately from unconfirmed sync completion. Never
+  signal a stored PID or fabricate a recovered network transport report.
+- **Evidence:** [M3 ledger](M3-LOCAL.md) records local source-bound process/storage
+  checks and regression results. This is a first local M3 increment, not full M3
+  exit, power-loss qualification, byte-offset resume, a stable API or scientific
+  approval. Sync confirmation means successful fsync calls on the observed host.

@@ -58,3 +58,4 @@ scratch/
 *.bcf
 *.tbi
 *.csi
+*.partial

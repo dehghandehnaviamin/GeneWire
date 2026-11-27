@@ -12,6 +12,7 @@ with a synchronous Python high-level extension.
 | Document | Contract |
 | --- | --- |
 | [RFC 0001](../rfcs/0001-regional-streaming-profile.md) | Problem, proposal, alternatives and approval scope |
+| [RFC 0002](../rfcs/0002-recoverable-bam-jobs.md) | Subsequent local M3 verified-source BAM jobs; separate from byte-stream resume |
 | [Regional access profile](regional-streaming.md) | Inputs, upstream behavior, output meaning, resource limits and errors |
 | [Stream lifecycle](stream-lifecycle.md) | State transitions, exposure boundary, retry, cancellation and final outcomes |
 | [Rust/Python boundary](rust-python.md) | Runtime ownership, proposed API responsibilities, buffers and integration |

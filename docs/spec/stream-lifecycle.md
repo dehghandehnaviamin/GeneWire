@@ -77,10 +77,16 @@ may start a fresh query only as new work and must invalidate the old analysis.
 | Fresh ticket after a failed exposed prefix | New query identity; old prefix cannot be reused |
 | HTTP stream completes but BAM decoder rejects the result | Transport may be complete; analysis is failed |
 
-No persistent checkpoint format or resume token is defined. Future M3 work must
+No persistent byte-stream checkpoint format or resume token is defined. Future M3 work must
 specify durable state, authenticated source identity, consumer replay policy and
 cleanup before promising more. Upstream retry guidance alone does not establish
 these application-level guarantees.
+
+[RFC 0002](../rfcs/0002-recoverable-bam-jobs.md) adds a separate local job receipt
+for complete SHA-256-pinned BAM sources. Incomplete input starts a new query; a
+verified full spool can be reprocessed without network. This does not resume an
+exposed block or change the stream's terminal/retry rules. See its
+[local evidence and limits](../project/M3-LOCAL.md).
 
 ## Cancellation, close and cleanup
 

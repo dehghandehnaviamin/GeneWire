@@ -45,6 +45,13 @@ candidate tests for the initial regional-streaming subset. The
 [local implementation ledger](docs/project/M2-LOCAL.md) records partial controls,
 checks and gaps. These do not constitute an audit or production approval.
 
+The optional [local M3 job wrapper](docs/project/M3-LOCAL.md) retains full BAM
+source/result files in a private workspace. Its expected digest needs trusted
+external provenance; it is not a server-authentication or scientific-completeness
+proof. Local receipts assume an owner-controlled stable directory on a local
+POSIX filesystem. They do not protect against a malicious same-user process or
+establish power-loss durability. Keep private workspaces outside this repository.
+
 Access control, legal permission, consent, data minimization, retention, and
 deployment policy cannot be inferred from successful data transmission. GeneWire
 does not claim clinical suitability or regulatory compliance.

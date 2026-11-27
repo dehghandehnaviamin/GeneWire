@@ -3,6 +3,9 @@
 **Evaluation:** 2026-11-26 through 2026-11-27. **State:** Narrow M2 engineering
 gate complete; broader qualification and scientific review remain unclaimed.
 
+The subsequent [M3 local increment](M3-LOCAL.md) adds a separate opt-in verified
+source/receipt wrapper. It does not retroactively qualify M3 under M2's CI run.
+
 **D016/D017 follow-up:** The owner approved remaining engineering checks,
 commit/push and actual CI verification. The prepared D015 state is preserved at
 f4d8866; later payload/copy instrumentation and process-failure checks passed

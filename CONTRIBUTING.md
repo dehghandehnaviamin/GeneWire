@@ -13,6 +13,10 @@ reviews are as valuable as code.
 > exact scope. The narrow reference path passed [Linux/macOS CI](docs/project/CI-VALIDATION.md).
 > No software release exists.
 
+The subsequent [M3 job wrapper](docs/project/M3-LOCAL.md) is under local
+qualification. Changes to it require the recovery fault harness in addition to
+the normal Python/native suite; do not attribute M2's historical CI to M3.
+
 The owner selected regional retrieval and streaming for analysis tools, a Rust
 core and a possible Python high-level integration. See the
 [research pack](docs/research/README.md) before proposing implementation or a new

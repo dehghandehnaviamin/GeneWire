@@ -30,6 +30,12 @@ and process-failure checks, committing/pushing the prepared M2 changes, and
 running CI on 2026-11-27. This authorization includes necessary CI fixes and
 evidence/status updates on main. It does not authorize a release or deployment.
 
+After the narrow M2 exit and Node.js 24 CI migration, the owner explicitly
+instructed starting M3 recovery work. Continue local design, implementation and
+failure checks for the verified BAM job subset in RFC 0002. Record evidence and
+limits in the M3 ledger; do not infer M3 remote publication or release approval
+from the earlier M2 push authorization.
+
 Read `docs/project/STATUS.md`, `docs/project/TASKS.md`,
 `docs/project/DECISIONS.md`, `CONTRIBUTING.md`, and `SECURITY.md` before work.
 Keep status, roadmap, architecture diagrams, and contributor instructions aligned
