@@ -1,4 +1,4 @@
-use genewire_core::{Category, Client, Configuration, Destination, Query, State};
+use genewire_core::{Category, Client, Configuration, Destination, Phase, Query, State};
 use serde_json::json;
 use std::{
     io::{Read, Write},
@@ -305,6 +305,8 @@ fn exposed_chunked_prefix_is_never_retried() {
         Category::TransportFailed
     );
     assert_eq!(r.result().retries, 0);
+    assert_eq!(r.result().phase, Phase::Fetching);
+    assert!(r.result().may_have_partial_output);
     assert_eq!(s.requests.lock().unwrap().len(), 2);
     r.close().unwrap();
 }
@@ -738,4 +740,298 @@ fn rejecting_nested_runtime_close_does_not_cancel_queries() {
     assert_eq!(stream.result().state, State::New);
     client.close().unwrap();
     assert!(stream.result().cleanup_complete);
+}
+
+#[test]
+fn transient_ticket_statuses_retry_before_acceptance_and_keep_credentials_scoped() {
+    for code in [429, 500, 502, 503, 504] {
+        let attempts = Arc::new(AtomicUsize::new(0));
+        let seen = attempts.clone();
+        let s = Server::new(move |req, o| {
+            if req.starts_with("GET /reads/") {
+                assert!(req.contains("Bearer synthetic-token"));
+                if seen.fetch_add(1, Ordering::SeqCst) < 2 {
+                    return response(
+                        &format!("{code} Transient"),
+                        "Retry-After: 0\r\n",
+                        b"private remote error",
+                    );
+                }
+                ticket(json!([{"url":format!("{o}/block")}]))
+            } else {
+                assert!(!req.to_lowercase().contains("authorization:"));
+                response("200 OK", "", b"AB")
+            }
+        });
+        let mut cfg = s.config();
+        cfg.control_token = Some("synthetic-token".into());
+        let c = Client::new(cfg).unwrap();
+        let r = c.open(query()).unwrap();
+        assert_eq!(r.read_chunk(8).unwrap(), b"AB");
+        assert!(r.read_chunk(8).unwrap().is_empty());
+        let report = r.finish().unwrap();
+        assert_eq!(report.retries, 2);
+        assert_eq!(report.phase, Phase::Draining);
+        assert!(!report.may_have_partial_output);
+        assert_eq!(attempts.load(Ordering::SeqCst), 3);
+        r.close().unwrap();
+    }
+}
+
+#[test]
+fn ticket_attempt_budget_is_independent_of_the_first_block_budget() {
+    let tickets = Arc::new(AtomicUsize::new(0));
+    let blocks = Arc::new(AtomicUsize::new(0));
+    let (t, b) = (tickets.clone(), blocks.clone());
+    let s = Server::new(move |req, o| {
+        let n = if req.starts_with("GET /reads/") {
+            t.fetch_add(1, Ordering::SeqCst)
+        } else {
+            b.fetch_add(1, Ordering::SeqCst)
+        };
+        if n < 2 {
+            response("503 Transient", "Retry-After: 0\r\n", b"")
+        } else if req.starts_with("GET /reads/") {
+            ticket(json!([{"url":format!("{o}/block")}]))
+        } else {
+            response("200 OK", "", b"AB")
+        }
+    });
+    let c = Client::new(s.config()).unwrap();
+    let r = c.open(query()).unwrap();
+    assert_eq!(r.read_chunk(8).unwrap(), b"AB");
+    assert!(r.read_chunk(8).unwrap().is_empty());
+    assert_eq!(r.finish().unwrap().retries, 4);
+    assert_eq!(tickets.load(Ordering::SeqCst), 3);
+    assert_eq!(blocks.load(Ordering::SeqCst), 3);
+    r.close().unwrap();
+}
+
+#[test]
+fn exhausted_ticket_retries_fail_without_fetching_or_exposing_data() {
+    let s = Server::new(|_, _| response("503 Transient", "Retry-After: 0\r\n", b"private"));
+    let c = Client::new(s.config()).unwrap();
+    let r = c.open(query()).unwrap();
+    assert_eq!(
+        r.read_chunk(8).unwrap_err().category,
+        Category::TransportFailed
+    );
+    let failed = r.result();
+    assert_eq!(failed.phase, Phase::Ticketing);
+    assert_eq!(failed.retries, 2);
+    assert_eq!(failed.bytes_delivered, 0);
+    assert!(!failed.may_have_partial_output);
+    assert_eq!(s.requests.lock().unwrap().len(), 3);
+    r.cancel();
+    r.close().unwrap();
+    assert_eq!(r.result().state, failed.state);
+    assert_eq!(r.result().error, failed.error);
+    assert_eq!(r.result().phase, failed.phase);
+    assert_eq!(r.result().retries, failed.retries);
+}
+
+#[test]
+fn a_partial_unaccepted_ticket_is_discarded_on_transient_disconnect() {
+    let attempts = Arc::new(AtomicUsize::new(0));
+    let seen = attempts.clone();
+    let s = Server::new(move |_, _| {
+        if seen.fetch_add(1, Ordering::SeqCst) == 0 {
+            b"HTTP/1.1 200 OK\r\nTransfer-Encoding: chunked\r\nConnection: close\r\n\r\n1\r\n{\r\n"
+                .to_vec()
+        } else {
+            ticket(json!([{"url":"data:;base64,QUI="}]))
+        }
+    });
+    let c = Client::new(s.config()).unwrap();
+    let r = c.open(query()).unwrap();
+    assert_eq!(r.read_chunk(8).unwrap(), b"AB");
+    assert_eq!(r.result().retries, 1);
+    assert_eq!(attempts.load(Ordering::SeqCst), 2);
+    r.close().unwrap();
+    assert!(r.result().may_have_partial_output);
+}
+
+#[test]
+fn ticket_validation_authorization_and_framing_failures_are_not_retried() {
+    for (wire, category) in [
+        (
+            response("401 Denied", "", b"private"),
+            Category::AccessDenied,
+        ),
+        (
+            response("403 Denied", "", b"private"),
+            Category::AccessDenied,
+        ),
+        (
+            response("404 Missing", "", b"private"),
+            Category::ResponseInvalid,
+        ),
+        (response("200 OK", "", b"{invalid"), Category::TicketInvalid),
+        (
+            response("200 OK", "Content-Encoding: gzip\r\n", b"{}"),
+            Category::ResponseInvalid,
+        ),
+        (
+            b"HTTP/1.1 200 OK\r\nContent-Length: 20\r\nConnection: close\r\n\r\n{}".to_vec(),
+            Category::ResponseInvalid,
+        ),
+    ] {
+        let s = Server::new(move |_, _| wire.clone());
+        let c = Client::new(s.config()).unwrap();
+        let r = c.open(query()).unwrap();
+        assert_eq!(r.read_chunk(8).unwrap_err().category, category);
+        assert_eq!(r.result().phase, Phase::Ticketing);
+        assert_eq!(r.result().retries, 0);
+        assert!(!r.result().may_have_partial_output);
+        assert_eq!(s.requests.lock().unwrap().len(), 1);
+        r.close().unwrap();
+    }
+}
+
+#[test]
+fn ticket_retry_wait_is_bounded_by_both_phase_and_overall_deadlines() {
+    for phase_deadline in [true, false] {
+        let s = Server::new(|_, _| response("429 Busy", "Retry-After: 5\r\n", b""));
+        let mut cfg = s.config();
+        if phase_deadline {
+            cfg.limits.ticket_timeout = Duration::from_millis(100);
+        } else {
+            cfg.limits.query_timeout = Duration::from_millis(100);
+        }
+        let c = Client::new(cfg).unwrap();
+        let r = c.open(query()).unwrap();
+        assert_eq!(
+            r.read_chunk(8).unwrap_err().category,
+            Category::DeadlineExceeded
+        );
+        assert_eq!(r.result().phase, Phase::Ticketing);
+        assert_eq!(r.result().retries, 0);
+        assert_eq!(s.requests.lock().unwrap().len(), 1);
+        r.close().unwrap();
+    }
+}
+
+#[test]
+fn cancellation_interrupts_a_ticket_retry_wait_and_preserves_its_phase() {
+    let s = Server::new(|_, _| response("503 Busy", "Retry-After: 5\r\n", b""));
+    let c = Client::new(s.config()).unwrap();
+    let r = c.open(query()).unwrap();
+    let reader = r.clone();
+    let task = thread::spawn(move || reader.read_chunk(8));
+    let deadline = Instant::now() + Duration::from_secs(2);
+    while r.result().state != State::RetryWait {
+        assert!(Instant::now() < deadline, "retry wait did not begin");
+        thread::sleep(Duration::from_millis(1));
+    }
+    r.cancel();
+    r.close().unwrap();
+    assert_eq!(
+        task.join().unwrap().unwrap_err().category,
+        Category::Cancelled
+    );
+    assert_eq!(r.result().phase, Phase::Ticketing);
+    assert_eq!(r.result().retries, 0);
+    assert!(!r.result().may_have_partial_output);
+    assert!(r.result().cleanup_complete);
+    assert_eq!(s.requests.lock().unwrap().len(), 1);
+}
+
+#[test]
+fn ticket_phase_budget_does_not_restart_after_a_retry() {
+    let attempts = Arc::new(AtomicUsize::new(0));
+    let seen = attempts.clone();
+    let s = Server::new(move |_, _| {
+        seen.fetch_add(1, Ordering::SeqCst);
+        thread::sleep(Duration::from_millis(200));
+        response("503 Busy", "Retry-After: 0\r\n", b"")
+    });
+    let mut cfg = s.config();
+    cfg.limits.ticket_timeout = Duration::from_millis(300);
+    let c = Client::new(cfg).unwrap();
+    let r = c.open(query()).unwrap();
+    assert_eq!(
+        r.read_chunk(8).unwrap_err().category,
+        Category::DeadlineExceeded
+    );
+    assert_eq!(r.result().retries, 1);
+    assert_eq!(attempts.load(Ordering::SeqCst), 2);
+    r.close().unwrap();
+}
+
+#[test]
+fn ticket_retries_recheck_redirect_policy_before_data_access() {
+    let forbidden = Server::new(|_, _| response("200 OK", "", b"must not be requested"));
+    let target = forbidden.origin.clone();
+    let attempts = Arc::new(AtomicUsize::new(0));
+    let seen = attempts.clone();
+    let s = Server::new(move |_, _| {
+        if seen.fetch_add(1, Ordering::SeqCst) == 0 {
+            response("503 Busy", "Retry-After: 0\r\n", b"")
+        } else {
+            response(
+                "302 Found",
+                &format!("Location: {target}/reads/private\r\n"),
+                b"",
+            )
+        }
+    });
+    let c = Client::new(s.config()).unwrap();
+    let r = c.open(query()).unwrap();
+    assert_eq!(
+        r.read_chunk(8).unwrap_err().category,
+        Category::NetworkPolicy
+    );
+    assert_eq!(r.result().retries, 1);
+    assert_eq!(r.result().phase, Phase::Ticketing);
+    assert_eq!(attempts.load(Ordering::SeqCst), 2);
+    assert!(forbidden.requests.lock().unwrap().is_empty());
+    r.close().unwrap();
+}
+
+#[test]
+fn excessive_retry_after_does_not_panic_or_retry_early() {
+    let s = Server::new(|_, _| response("503 Busy", "Retry-After: 18446744073709551615\r\n", b""));
+    let mut cfg = s.config();
+    cfg.limits.ticket_timeout = Duration::from_millis(100);
+    let c = Client::new(cfg).unwrap();
+    let r = c.open(query()).unwrap();
+    assert_eq!(
+        r.read_chunk(8).unwrap_err().category,
+        Category::DeadlineExceeded
+    );
+    assert_eq!(r.result().retries, 0);
+    assert_eq!(s.requests.lock().unwrap().len(), 1);
+    r.close().unwrap();
+}
+
+#[test]
+fn a_fresh_query_after_exposed_failure_never_splices_the_old_prefix() {
+    let blocks = Arc::new(AtomicUsize::new(0));
+    let seen = blocks.clone();
+    let server = Server::new(move |req, origin| {
+        if req.starts_with("GET /reads/") {
+            ticket(json!([{"url": format!("{origin}/block")}]))
+        } else if seen.fetch_add(1, Ordering::SeqCst) == 0 {
+            b"HTTP/1.1 200 OK\r\nTransfer-Encoding: chunked\r\nConnection: close\r\n\r\n2\r\nAB\r\n"
+                .to_vec()
+        } else {
+            response("200 OK", "", b"CD")
+        }
+    });
+    let client = Client::new(server.config()).unwrap();
+    let old = client.open(query()).unwrap();
+    assert_eq!(old.read_chunk(8).unwrap(), b"AB");
+    assert_eq!(
+        old.read_chunk(8).unwrap_err().category,
+        Category::TransportFailed
+    );
+    old.close().unwrap();
+    let fresh = client.open(query()).unwrap();
+    assert_eq!(fresh.read_chunk(8).unwrap(), b"CD");
+    assert!(fresh.read_chunk(8).unwrap().is_empty());
+    assert_eq!(fresh.finish().unwrap().bytes_delivered, 2);
+    assert_eq!(old.result().state, State::Failed);
+    assert!(old.result().may_have_partial_output);
+    assert_eq!(blocks.load(Ordering::SeqCst), 2);
+    fresh.close().unwrap();
 }

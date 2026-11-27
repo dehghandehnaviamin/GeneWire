@@ -102,7 +102,9 @@ be aborted. [Tokio task semantics](https://docs.rs/tokio/1.54.1/tokio/task/).
 
 ## Consumer supervision
 
-The proposed supervisor owns the analysis process lifecycle. It treats early
+The supervisor contract below is partially implemented in the local POSIX BAM
+adapter; see the M2 ledger for scope and cleanup limits. It owns the analysis
+process lifecycle and treats early
 exit, failed writes, nonzero exit or failure to consume/decode the full stream
 as ConsumerFailed. It cancels active transport and joins the process under a
 bounded policy. If transport already completed, that status remains immutable,

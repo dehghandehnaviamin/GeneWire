@@ -145,7 +145,8 @@ Decisions record rationale and limits, not implementation claims.
   first increment. Use operator-supplied IP pins without ambient DNS so address
   policy binds to actual connections without an unowned blocking DNS lookup.
 - **Tradeoffs:** HTTP/1 only; per-hop HTTP client; cross-origin redirects rejected;
-  ticket retries and product analysis supervision deferred. Reject an HTTP body
+  ticket retries initially deferred (implemented in D014); product analysis
+  supervision still deferred. Reject an HTTP body
   fragment above 256 KiB. No performance or complete resource-bound claim.
 - **Evidence:** [M2 ledger](M2-LOCAL.md), Rust HTTP/fault tests, Python/native and
   synthetic BAM checks. This does not establish real-server interoperability.
@@ -185,3 +186,87 @@ Decisions record rationale and limits, not implementation claims.
   and unqualified M2 work. Labels, assignees and milestones were preserved.
 - **Limits:** This updates the publication/project record; it does not complete
   M0's remaining review, M2, a real-server evaluation, security audit or release.
+
+## D014 — Continue M2 with bounded ticket retries and explicit failure context
+
+- **Date:** 2026-11-27
+- **Trigger:** The owner instructed starting M2; the existing partial prototype
+  and remaining gates were inspected before continuing local implementation.
+- **Decision:** Retry unaccepted ticket GETs for selected transient transport
+  failures and 429/500/502/503/504, with three total attempts independent of each
+  block's attempt budget. One ticket-phase deadline covers all attempts and waits;
+  overall deadline and cancellation also interrupt them. Reapply destination and
+  credential policy on every attempt. Discard an incomplete unaccepted ticket.
+- **Failure policy:** Authorization, policy, JSON, encoding, resource and declared
+  length failures remain terminal. Connection/TLS setup remains conservatively
+  nonretryable. Release unsuccessful responses before retry waits. An excessive
+  Retry-After cannot overflow the timer or cause an earlier retry.
+- **Reporting:** Retain the active phase on terminal outcomes. Set
+  `may_have_partial_output` only when an unsuccessful query has exposed bytes.
+  Count retries admitted after completed waits; interrupted waits add no retry.
+  Preserve terminal report fields across later cancel/close calls.
+- **Evidence:** [M2 ledger](M2-LOCAL.md); 38 Rust and 14 Python/native tests passed,
+  including new retry/deadline/cancellation/report cases. Clippy and formatting
+  passed. No real-server, full race/panic/cleanup or performance qualification.
+- **Publication:** Local work only; the earlier D012 authorization covered the
+  then-prepared history. No new push, issue update, release or deployment.
+
+## D015 — Continue engineering; defer scientific review to the university
+
+- **Date:** 2026-11-27
+- **Owner instruction:** Continue development; the owner will arrange the final
+  university review. This does not supply independent scientific findings,
+  publication authorization or release approval.
+- **Analysis boundary:** Implement an optional POSIX Python supervisor using a
+  separate mature pysam/HTSlib decoder. Fully decode and apply the explicit mapped
+  read-overlap filter for the original query. Bound the input queue, output,
+  diagnostic bytes and child shutdown. Stage output beside the destination and
+  create the final name only after transport, decoder and owned cleanup succeed.
+  Refuse existing files. Do not claim arbitrary downstream rollback or clinical
+  correctness. `analysis` is an optional dependency extra, not required for bytes.
+- **Core lifecycle:** Expose NotStarted/InProgress/Complete/Failed cleanup and a
+  separate sanitized cleanup error. Serialize competing closes under a finite
+  wait; keep admission occupied after a cleanup timeout until a later successful
+  close. Test panic translation and both handoff/cancel orderings using hooks
+  compiled only into Rust unit tests, with no public injection interface.
+- **Configured capability:** Report HtsgetBamRegional with Configured evidence;
+  no service-info discovery, version inference or conformance claim. Reject an
+  unsupported Python profile before network access.
+- **TLS:** Permit one bounded operator-supplied PEM trust anchor in addition to
+  platform roots. Validate it before query admission; retain hostname/certificate
+  verification. No ticket may choose a root. Positive local CA and wrong-name
+  negative controls exercise the distinction.
+- **Resource finding:** The initial 64 MiB opaque probe failed the prototype's
+  256 KiB HTTP-fragment restriction. Public reads remain ≤256 KiB; library body
+  fragments may now use the remaining draft 2 MiB window after reserving inline
+  bytes and one read copy. Release empty retained Bytes storage before polling
+  again. Oversized fragments still fail; this is not certified RSS accounting.
+- **Independent evaluation:** Pin MIT-licensed htsget-rs source at
+  `2a91e661e6a287e3adf30e65c26a8f47697f3548`, no default features, local generated
+  BAM/BAI only. Q1–Q5 matched through GeneWire, independent HTSlib htsget retrieval
+  and direct indexed HTSlib. Service-info and CLI version strings differ and are
+  retained as observed in the [raw report](evidence/2026-11-27-interop.json).
+- **Evidence:** 45 Rust and 31 Python/native tests passed without skips on this
+  macOS runner. Normal interpreter exit, IPv6 loopback and TLS controls passed.
+  [Resource probe](evidence/2026-11-27-resources.json) records one 64 MiB transfer
+  in each caller-retention mode, source hashes and method limits. No ranking.
+  [Dependency metadata](evidence/2026-11-27-dependencies.json) records 128 resolved
+  packages' effective features and declared licenses on the current target;
+  this is not a vulnerability scan or distribution-compliance attestation.
+- **CI/publication:** Prepare an immutable-action-pinned Linux/macOS workflow.
+  Local commands and YAML parsing are checked; no GitHub run or new push occurred.
+  M2 remains in progress until its remaining qualification and CI gates pass.
+
+## D016 — Authorize the M2 follow-up, publication and CI verification
+
+- **Date:** 2026-11-27
+- **Owner approval:** After the proposed next steps (native/Python resource and
+  copy accounting, abrupt process/timeout/cleanup tests, then commit/push and
+  Linux/macOS CI), the owner explicitly instructed proceeding and approved them.
+- **Scope:** Preserve the prepared M2 work and history, complete those checks,
+  commit and push main without rewriting history, fix failures exposed by CI,
+  and publish the accompanying evidence/status updates. Follow CI to its terminal
+  result; local checks alone are not evidence of a passing remote workflow.
+- **Limits:** No release/deployment or scientific sign-off is implied. Continue
+  the narrow synthetic BAM subset; record any remaining unsupported failure or
+  resource behavior honestly. University review remains the owner's later step.

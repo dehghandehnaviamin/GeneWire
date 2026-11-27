@@ -10,7 +10,8 @@ reviews are as valuable as code.
 > contains a local experimental Rust core, Python binding and tests alongside
 > research/design documents. Follow [local development](docs/development.md) for
 > verified setup/check commands and [M2 evidence](docs/project/M2-LOCAL.md) for
-> exact scope. No CI workflow or software release exists.
+> exact scope. A CI workflow is prepared locally; remote execution is unverified.
+> No software release exists.
 
 The owner selected regional retrieval and streaming for analysis tools, a Rust
 core and a possible Python high-level integration. See the
@@ -90,8 +91,10 @@ CI validation when configured → Maintainer merge
 ```
 
 For documentation and assets, manual rendering and link checks are appropriate.
-Implementation changes require meaningful automated tests. CI remains
-unconfigured; local test success is not a passing GitHub workflow.
+Implementation changes require meaningful automated tests. The prepared CI
+workflow has no verified remote run; local test success is not a passing GitHub
+workflow. Include applicable supervised-analysis and independent-server checks
+from the development guide when changing the regional BAM path.
 
 ## Engineering standards
 

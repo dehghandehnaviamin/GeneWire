@@ -7,6 +7,11 @@ name = "genewire"
 version = "0.1.0.dev1"
 source = { editable = "." }
 
+[package.optional-dependencies]
+analysis = [
+    { name = "pysam" },
+]
+
 [package.dev-dependencies]
 test = [
     { name = "maturin" },
@@ -14,6 +19,8 @@ test = [
 ]
 
 [package.metadata]
+requires-dist = [{ name = "pysam", marker = "extra == 'analysis'", specifier = "==0.24.1" }]
+provides-extras = ["analysis"]
 
 [package.metadata.requires-dev]
 test = [

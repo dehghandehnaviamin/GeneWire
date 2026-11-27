@@ -132,7 +132,7 @@ before work; there is no unlimited mode in the initial profile.
 | Connect / ticket / idle-read budgets | 10 s / 30 s / 30 s |
 | Overall query deadline | 600 s, including caller backpressure |
 | Cleanup wait budget | 5 s; a timeout reports unfinished cleanup |
-| Redirects / attempts per block | Three policy-approved redirects / three attempts including the first |
+| Redirects / attempts per ticket or block | Three policy-approved redirects / three attempts including the first |
 
 HTTP/TLS library buffers, metadata and Python-retained output are additional
 memory. Account for them in measured RSS; the payload window is not a process

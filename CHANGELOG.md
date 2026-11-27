@@ -6,6 +6,14 @@ Notable project changes will be recorded here. GeneWire has no software release 
 
 ### Added
 
+- Local supervised BAM filtering with separate transport/analysis outcomes,
+  atomic staging and bounded process cleanup; configured-profile/cleanup reports,
+  explicit CA trust, IPv6 and native race/panic tests.
+- Reproducible independent htsget-rs/HTSlib checks and 64 MiB resource probes with
+  source-file hashes; pinned CI workflow prepared locally, remote runs unverified.
+- Bounded ticket retries with shared phase/overall deadlines and cancellation;
+  Rust/Python reports retain the transport phase and mark exposed partial output
+  after failure or early close. Local evidence only; no release or CI claim.
 - First local Rust/Tokio htsget byte-stream core and synchronous PyO3/Python binding.
 - Locked build/test dependencies, local development guide and M2 evidence ledger.
 - Rust HTTP/failure checks and Python/native tests, including five tiny BAM queries

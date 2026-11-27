@@ -69,10 +69,11 @@ Proposed evaluation candidates:
 | Existing htsget client comparator | Select a maintained independent implementation during M2 setup | Confirm documented subset/version and correct configuration before any ranking |
 | Fault harness | Controlled local endpoints with synthetic credentials | Deterministic redirects, DNS/address policy, delays, disconnects and response corruption |
 
-The server README describes its Rust implementation and local-server support.
-No server was installed or started here, and its upstream tests/benchmarks are not
-GeneWire evidence. A missing independent client comparator prevents comparative
-product claims; it does not justify inventing an intentionally weak baseline.
+The subsequent [M2 evaluation](../project/M2-LOCAL.md) ran a pinned local
+htsget-rs server with original generated BAM/BAI. HTSlib's independent htsget
+retrieval and indexed local reads matched the five tiny queries. Its upstream
+tests/benchmarks are not GeneWire evidence, and no comparative timing ranking or
+broader server-conformance result follows from those local checks.
 
 Before use, record versions, licenses, generated-fixture provenance, feature flags,
 TLS roots, allowed origins, effective limits and run environment. No production

@@ -87,6 +87,9 @@ pub struct Configuration {
     pub destinations: Vec<Destination>,
     pub control_token: Option<String>,
     pub limits: Limits,
+    pub upstream_profile: UpstreamProfile,
+    /// Additional operator-configured trust anchors, never read from tickets.
+    pub additional_ca_pem: Option<Vec<u8>>,
     /// Only loopback HTTP destinations can use this explicit test mode.
     pub loopback_http_for_tests: bool,
 }
@@ -108,9 +111,17 @@ impl Configuration {
             destinations,
             control_token: None,
             limits: Limits::default(),
+            upstream_profile: UpstreamProfile::HtsgetBamRegional,
+            additional_ca_pem: None,
             loopback_http_for_tests: false,
         })
     }
+}
+
+/// A configured subset assumption, never inferred from a successful request.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum UpstreamProfile {
+    HtsgetBamRegional,
 }
 
 #[derive(Clone)]

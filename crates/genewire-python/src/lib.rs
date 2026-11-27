@@ -14,15 +14,15 @@ struct NativeClient {
 #[pymethods]
 impl NativeClient {
     #[new]
-    #[pyo3(signature = (service, destinations, token, loopback_http, timeout_ms, result_bytes))]
+    #[pyo3(signature = (service, destinations, token, loopback_http, limits, additional_ca_pem))]
     fn new(
         py: Python<'_>,
         service: String,
         destinations: Vec<(String, Vec<String>, bool)>,
         token: Option<String>,
         loopback_http: bool,
-        timeout_ms: u64,
-        result_bytes: u64,
+        limits: (u64, u64),
+        additional_ca_pem: Option<Vec<u8>>,
     ) -> PyResult<Self> {
         py.detach(move || {
             let destinations = destinations
@@ -41,8 +41,9 @@ impl NativeClient {
             let mut c = core::Configuration::new(&service, destinations)?;
             c.control_token = token;
             c.loopback_http_for_tests = loopback_http;
-            c.limits.query_timeout = Duration::from_millis(timeout_ms);
-            c.limits.result_bytes = result_bytes;
+            c.limits.query_timeout = Duration::from_millis(limits.0);
+            c.limits.result_bytes = limits.1;
+            c.additional_ca_pem = additional_ca_pem;
             core::Client::new(c).map(|inner| Self { inner })
         })
         .map_err(error)
@@ -71,7 +72,19 @@ impl NativeClient {
 struct NativeStream {
     inner: core::Stream,
 }
-type Snapshot = (String, u64, usize, bool, Option<String>);
+type Snapshot = (
+    String,
+    u64,
+    usize,
+    bool,
+    Option<String>,
+    String,
+    bool,
+    String,
+    Option<String>,
+    String,
+    String,
+);
 fn snapshot(r: core::Report) -> Snapshot {
     (
         format!("{:?}", r.state),
@@ -79,6 +92,12 @@ fn snapshot(r: core::Report) -> Snapshot {
         r.retries,
         r.cleanup_complete,
         r.error.map(|e| format!("{:?}", e.category)),
+        format!("{:?}", r.phase),
+        r.may_have_partial_output,
+        format!("{:?}", r.cleanup),
+        r.cleanup_error.map(|e| format!("{:?}", e.category)),
+        format!("{:?}", r.upstream_profile),
+        format!("{:?}", r.capability_evidence),
     )
 }
 #[pymethods]

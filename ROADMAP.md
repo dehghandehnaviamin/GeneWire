@@ -11,7 +11,7 @@ may lead to a scope reduction, an extension of an existing standard, or a no-go.
 | --- | --- | --- |
 | M0 — Research and Feasibility | Regional use cases, constraints, existing standards, Rust/Python direction, evaluation plan | [Published desk review](docs/research/README.md); direction accepted for M1; domain review and experiments unclaimed |
 | M1 — Protocol Specification | [RFC 0001](docs/rfcs/0001-regional-streaming-profile.md), client profile, lifecycle, boundaries, security and 30 candidate scenarios | Draft prepared; review subset/retry/consumer policy and budgets; no new binary wire format justified |
-| M2 — Core Protocol | Local Rust/Python path, controlled HTTP failures and tiny BAM oracle now work; [evidence/gaps](docs/project/M2-LOCAL.md) | In progress: real-server interoperability, remaining failure/resource/lifetime evidence and CI still required |
+| M2 — Core Protocol | Local Rust/Python transport, supervised BAM adapter, synthetic real-server/HTSlib comparison, failure/race checks and initial resource probes; [evidence/gaps](docs/project/M2-LOCAL.md) | In progress: full resource/dependency qualification, further lifetime/failure variants and exercised CI still required |
 | M3 — Reliable Transfer Engine | Streaming, acknowledgements, object verification, checkpoints, recovery | Fault tests covering interruption, truncation, corruption, stale state, cancellation and resource exhaustion; documented durable acceptance semantics |
 | M4 — Genomic Extensions | Incremental FASTA/FASTQ, SAM/BAM, CRAM, VCF/BCF investigation | Per-format scope and versions; synthetic licensed fixtures; reference/index dependency tests; domain review; explicit opaque-transfer versus semantic-support matrix |
 | M5 — Developer Experience | CLI, Rust/Python integration, packaging, examples, operational guidance | Installation from a real artifact; executable examples; supported toolchain/interpreter and wheel policy; diagnostics that avoid sensitive data; interoperability guide |
@@ -26,6 +26,10 @@ decisions. M1 contracts are provisional beyond verified local behavior. Research
 specification review precedes application or protocol implementation. Testing and
 security review accompany implementation, while comparative benchmarking and
 release preparation require a functioning, correctness-checked system.
+
+The owner will arrange the final university review and has instructed continued
+local development. This defers external scientific review without claiming that
+the fixture or broader genomic semantics have already been independently approved.
 
 There is no stable wire protocol or compatibility commitment yet. No release is
 scheduled. Acceptance of an RFC does not make its feature implemented.

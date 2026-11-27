@@ -20,6 +20,16 @@ main and pushing main. That authorization covers the existing research, design,
 prototype and accompanying publication-status updates; later unrelated pushes,
 releases and deployments still require authorization.
 
+The owner subsequently instructed continuing development and will arrange the
+final university review. Continue local M2 engineering and prepare reproducible
+evidence; do not treat the deferred review as scientific sign-off or a release
+approval. Remote publication remains outside this later development instruction.
+
+After the M2 follow-up plan, the owner explicitly approved completing resource
+and process-failure checks, committing/pushing the prepared M2 changes, and
+running CI on 2026-11-27. This authorization includes necessary CI fixes and
+evidence/status updates on main. It does not authorize a release or deployment.
+
 Read `docs/project/STATUS.md`, `docs/project/TASKS.md`,
 `docs/project/DECISIONS.md`, `CONTRIBUTING.md`, and `SECURITY.md` before work.
 Keep status, roadmap, architecture diagrams, and contributor instructions aligned

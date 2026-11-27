@@ -12,7 +12,7 @@ qualified. The abi3 wheel tag and Python metadata are not a tested support matri
 Rust and uv must already be installed. From the repository root:
 
 ```bash
-uv sync --locked --group test --python 3.14 --reinstall-package genewire
+uv sync --locked --group test --extra analysis --python 3.14 --reinstall-package genewire
 cargo test --workspace --locked
 cargo clippy --workspace --all-targets --locked -- -D warnings
 cargo fmt --all -- --check
@@ -28,9 +28,9 @@ VIRTUAL_ENV="$PWD/.venv" .venv/bin/maturin develop --locked
 ```
 
 The Python test group pins pysam 0.24.1, whose installed HTSlib/samtools reports
-1.24. It is an evaluation decoder, not a production dependency of GeneWire.
-The TLS rejection test also needs an OpenSSL CLI; it reports a skip if absent.
-No test was skipped on the initial runner. Tests bind ephemeral loopback ports
+1.24. It is also the optional `analysis` extra; the byte reader alone does not
+require it. TLS fixture tests need an OpenSSL CLI and report a skip if absent.
+No test was skipped on the recorded runner. Tests bind ephemeral loopback ports
 and create synthetic BAM/certificate material only in temporary directories.
 They require permission to open local sockets; they do not contact a genomic
 service or send data outside the machine.
@@ -42,6 +42,9 @@ Client takes a reads-service URL ending in a slash and a mapping from allowed
 origin to Destination(addresses, allow_ticket_authorization=False). The IPs are
 explicit connection pins; the core does not discover them through ambient DNS.
 The hostname remains in the URL for HTTP authority and TLS validation.
+The explicit default upstream_profile is HtsgetBamRegional; other profiles fail
+Unsupported. Reports label its capability_evidence Configured. The core does not
+fetch service-info or infer server support/version from successful requests.
 
 Client.open(object_id, reference, start, end) accepts one BAM region with explicit
 zero-based half-open coordinates. It returns a lazy Stream; network I/O starts
@@ -54,10 +57,16 @@ available. finish requires exhaustion. Use client/stream context managers or
 explicit close; cleanup status remains inspectable. A stream retains the runtime
 if the client object is collected. Dropping a live stream is best-effort cleanup.
 
+Ticket GETs and each data block have independent limits of three attempts for
+eligible transient failures. Ticket requests and retry waits share one ticket
+phase deadline; the overall deadline and cancellation interrupt waits as well.
+Malformed tickets, authorization/policy failures and declared-length violations
+do not retry. A retry never refreshes a ticket after data has been exposed.
+
 Reads block the calling Python thread while allowing other Python threads to
 run. One reader per stream is supported; concurrent reads fail InvalidState.
-There is no asyncio adapter, decoded-record iterator, file exporter or official
-analysis-process supervisor. Do not reuse native clients after fork or during
+There is no asyncio adapter or decoded-record iterator. The optional supervised
+BAM file adapter is described below. Do not reuse native clients after fork or during
 interpreter shutdown. Blocking Rust entry points reject invocation from inside
 an active Tokio runtime.
 
@@ -65,12 +74,87 @@ HTTPS requires valid certificates and TLS 1.2 or later. Plain HTTP is disabled
 unless loopback_http_for_tests=True and every pinned target is loopback. Control
 tokens are scoped to the configured service; data credentials require separate
 explicit policy. Errors contain local categories, not URLs, IDs or remote bodies.
+For an operator-controlled private CA, additional_ca_pem accepts one PEM
+certificate as bytes (≤64 KiB) and extends platform trust. It is validated before
+queries. Hostname verification remains active; tickets cannot change trust roots.
 
 All bytes are provisional until transport finishes. The result is an upstream
 regional response that may overreturn records. Decoding/filtering and invalidating
 partial downstream effects remain the caller's responsibility. Report states
 are CamelCase spellings of the draft states; source_consistency is Unverified
 and integrity is TransportOnly. These are unstable pre-alpha interfaces.
+
+Reports also expose phase (Admission, Ticketing, Fetching or Draining), retained
+after completion/failure and during retry waits. may_have_partial_output is true
+when a failed/cancelled query has already exposed bytes. Invalidate those bytes
+and their downstream effects; close cannot retract them. The retries count
+includes admitted attempts after completed waits, excluding an interrupted wait.
+cleanup is NotStarted, InProgress, Complete or Failed with separate cleanup_error;
+cleanup_complete is retained for compatibility. CleanupTimeout leaves InProgress
+and occupies the client slot until a later close actually completes. A terminal
+transport error is preserved even if a later cleanup operation also fails.
+
+## Optional supervised BAM output
+
+Import filter_bam and AnalysisReport from genewire.analysis. With an open stream,
+call filter_bam(stream, destination, reference, start, end). It fully consumes and
+closes the stream and returns an AnalysisReport; inspect its state, error,
+transport, exit_code, output_committed and cleanup_complete fields. The filter
+region must match stream.region, the tuple from the original Client.open call.
+Local invalid configuration raises GeneWireError before altering the stream.
+
+The built-in subprocess decodes all BAM through pysam/HTSlib and writes mapped
+records whose reference matches and whose alignment overlaps [start, end).
+AnalysisComplete requires both transport and decoder success. Existing output
+paths are refused. Output is written to a mode-0600 temporary file in the target
+directory and exposed by atomic no-overwrite hard-link creation after the gates.
+Failure removes staging; it does not undo unrelated caller effects.
+
+Defaults: 600 s analysis deadline, 5 s child-cleanup policy, 1 GiB output budget,
+64 KiB discarded diagnostics and one queued 64 KiB input chunk. Child TERM/KILL
+waits share cleanup_timeout_s; input-thread join gets another such budget, then
+stream.close uses its native cleanup budget. Reports identify unfinished cleanup.
+Blocking filesystem/kernel operations are not given a hard termination guarantee.
+The supervisor currently requires POSIX and is locally exercised on macOS;
+Linux awaits CI. Windows, arbitrary spawned descendants and clinical analysis are
+outside this adapter's qualification. No general-purpose subprocess API is public.
+
+## Independent server and resource checks
+
+The recorded htsget-axum build uses MIT-licensed
+[htsget-rs source 2a91e661](https://github.com/umccr/htsget-rs/tree/2a91e661e6a287e3adf30e65c26a8f47697f3548),
+Rust 1.93.0, its Cargo.lock and `-p htsget-axum --no-default-features`.
+Build it separately from this workspace. Keep the upstream checkout/build outside
+the repository and exclude bundled data; the prepared CI workflow records the
+source checkout/build steps. Set HTSGET_AXUM_BIN to that build's executable.
+
+These commands were exercised with a separately built binary:
+
+```bash
+.venv/bin/python tools/check_interop.py --server "$HTSGET_AXUM_BIN" --report /tmp/genewire-interop.json
+.venv/bin/python tools/check_resources.py --report /tmp/genewire-resources.json
+```
+
+The interoperability runner starts two loopback HTTP listeners, generates original
+synthetic BAM/BAI, checks Q1–Q5 through the supervised adapter and compares with
+HTSlib's independent htsget retrieval and indexed local reads. It stops the server
+and removes genomic/config files. The configured server source pin is a build
+input; the harness records the supplied binary hash, not a verified source-to-
+binary attestation. Source hashes and raw reports are in the M2 ledger.
+
+The resource runner serves 64 MiB of opaque pattern bytes from a separate process
+context and measures fresh clients that discard or retain returned chunks. It
+checks byte count and SHA-256. It records RSS high-water marks, Python tracemalloc
+and elapsed time once per mode. The payload is not valid BAM, and timings are not
+a benchmark or advantage claim. Native allocation/copy accounting remains open.
+
+## Prepared continuous integration
+
+[checks.yml](../.github/workflows/checks.yml) pins action commits, Rust/Python/uv
+versions and the independent server source. Its Linux/macOS jobs run native,
+Python, server and resource checks without publishing packages. YAML and local
+commands are checked; no remote run has occurred. A passing local suite is not
+GitHub CI evidence or a Linux support claim.
 
 ## Source layout
 
@@ -82,4 +166,5 @@ and integrity is TransportOnly. These are unstable pre-alpha interfaces.
 - Cargo.lock and uv.lock: dependency resolution for this development build.
 
 Generated native libraries, virtual environments, build output, certificates and
-genomic files must stay untracked. No CI workflow or published artifact exists.
+genomic files must stay untracked. Evaluation JSON contains synthetic outputs and
+method/source hashes only. No published artifact exists.

@@ -10,6 +10,9 @@ requires-python = ">=3.10"
 license = "Apache-2.0"
 classifiers = ["Development Status :: 2 - Pre-Alpha", "Programming Language :: Rust"]
 
+[project.optional-dependencies]
+analysis = ["pysam==0.24.1"]
+
 [dependency-groups]
 test = ["maturin==1.16.0", "pysam==0.24.1"]
 

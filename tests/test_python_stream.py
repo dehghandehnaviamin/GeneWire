@@ -7,6 +7,7 @@ import gc
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import json
 import shutil
+import socket
 import ssl
 from pathlib import Path
 import subprocess
@@ -22,9 +23,10 @@ import pysam
 
 
 @contextmanager
-def service(payload: bytes = b"ABCD", *, delay: float = 0, custom_ticket=None, tls=None):
+def service(payload: bytes = b"ABCD", *, delay: float = 0, custom_ticket=None, tls=None, transient_tickets=0, ipv6=False):
     seen = []
     received = threading.Event()
+    host = "[::1]" if ipv6 else "127.0.0.1"
 
     class Handler(BaseHTTPRequestHandler):
         def log_message(self, *_):
@@ -34,8 +36,14 @@ def service(payload: bytes = b"ABCD", *, delay: float = 0, custom_ticket=None, t
             seen.append((self.path, dict(self.headers)))
             received.set()
             time.sleep(delay)
-            origin = f"{'https' if tls else 'http'}://127.0.0.1:{self.server.server_port}"
+            origin = f"{'https' if tls else 'http'}://{host}:{self.server.server_port}"
             if self.path.startswith("/reads/"):
+                if sum(path.startswith("/reads/") for path, _ in seen) <= transient_tickets:
+                    self.send_response(503)
+                    self.send_header("Retry-After", "0")
+                    self.send_header("Content-Length", "0")
+                    self.end_headers()
+                    return
                 ticket = custom_ticket or {"htsget": {"format": "BAM", "urls": [
                     {"url": "data:;base64," + base64.b64encode(payload[:8]).decode()},
                     {"url": origin + "/block"},
@@ -51,14 +59,17 @@ def service(payload: bytes = b"ABCD", *, delay: float = 0, custom_ticket=None, t
             except (BrokenPipeError, ConnectionResetError):
                 pass
 
-    server = ThreadingHTTPServer(("127.0.0.1", 0), Handler)
+    class LocalServer(ThreadingHTTPServer):
+        address_family = socket.AF_INET6 if ipv6 else socket.AF_INET
+
+    server = LocalServer(("::1" if ipv6 else "127.0.0.1", 0), Handler)
     if tls:
         context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
         context.load_cert_chain(*tls)
         server.socket = context.wrap_socket(server.socket, server_side=True)
     thread = threading.Thread(target=server.serve_forever, kwargs={"poll_interval": .01})
     thread.start()
-    origin = f"{'https' if tls else 'http'}://127.0.0.1:{server.server_port}"
+    origin = f"{'https' if tls else 'http'}://{host}:{server.server_port}"
     try:
         yield origin, seen, received
     finally:
@@ -86,6 +97,15 @@ class PythonStreamTests(unittest.TestCase):
                 self.assertEqual(stream.result().retries, 0)
                 self.assertEqual(seen, [])
 
+    @unittest.skipUnless(socket.has_ipv6, "IPv6 sockets unavailable")
+    def test_explicit_ipv6_loopback_pin_fetches_ticket_and_data(self):
+        with service(ipv6=True) as (origin, seen, _), Client(
+            origin + "/reads/", {origin: Destination(["::1"])}, loopback_http_for_tests=True,
+        ) as c, c.open("s", "chr", 0, 1) as stream:
+            self.assertEqual(b"".join(stream.iter_chunks()), b"ABCD")
+            self.assertEqual(stream.finish().state, "TransportComplete")
+            self.assertEqual(len(seen), 2)
+
     def test_owned_bytes_result_and_context_cleanup(self):
         with service(b"abcdefghijklmnop") as (origin, seen, _), client(origin) as c:
             with c.open("synthetic", "chrSynthetic", 0, 1) as stream:
@@ -94,16 +114,103 @@ class PythonStreamTests(unittest.TestCase):
                 self.assertEqual(result, b"abcdefghijklmnop")
                 self.assertEqual(saved, b"ab")
                 self.assertEqual(stream.finish().state, "TransportComplete")
+                self.assertEqual(stream.finish().phase, "Draining")
+                self.assertFalse(stream.finish().may_have_partial_output)
                 self.assertEqual(stream.result().source_consistency, "Unverified")
+                self.assertEqual(stream.result().upstream_profile, "HtsgetBamRegional")
+                self.assertEqual(stream.result().capability_evidence, "Configured")
                 self.assertEqual(stream.read_chunk(), b"")
             self.assertTrue(stream.result().cleanup_complete)
             self.assertEqual(len(seen), 2)
+
+    @unittest.skipUnless(shutil.which("openssl"), "OpenSSL CLI required for temporary certificate")
+    def test_explicit_ca_preserves_tls_hostname_verification(self):
+        for san, allowed in [("IP:127.0.0.1", True), ("DNS:wrong.invalid", False)]:
+            with self.subTest(san=san), TemporaryDirectory(prefix="genewire-trust-") as directory:
+                cert, key = Path(directory) / "cert.pem", Path(directory) / "key.pem"
+                ca, ca_key = Path(directory) / "ca.pem", Path(directory) / "ca-key.pem"
+                csr, extensions = Path(directory) / "request.csr", Path(directory) / "extensions.cnf"
+                extensions.write_text(f"subjectAltName={san}\nbasicConstraints=critical,CA:FALSE\nkeyUsage=digitalSignature,keyEncipherment\nextendedKeyUsage=serverAuth\n")
+                subprocess.run(["openssl", "req", "-x509", "-newkey", "rsa:2048", "-nodes",
+                                "-keyout", str(ca_key), "-out", str(ca), "-days", "1", "-subj", "/CN=local-test-root",
+                                "-addext", "basicConstraints=critical,CA:TRUE"],
+                               check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=10)
+                subprocess.run(["openssl", "req", "-new", "-newkey", "rsa:2048", "-nodes",
+                                "-keyout", str(key), "-out", str(csr), "-subj", "/CN=local-test"],
+                               check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=10)
+                subprocess.run(["openssl", "x509", "-req", "-in", str(csr), "-CA", str(ca), "-CAkey", str(ca_key),
+                                "-set_serial", "1", "-days", "1", "-extfile", str(extensions), "-out", str(cert)],
+                               check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=10)
+                with service(tls=(cert, key)) as (origin, _, _), client(origin, additional_ca_pem=ca.read_bytes()) as c, c.open("s", "chr", 0, 1) as stream:
+                    if allowed:
+                        self.assertEqual(b"".join(stream.iter_chunks()), b"ABCD")
+                        self.assertEqual(stream.finish().state, "TransportComplete")
+                    else:
+                        with self.assertRaisesRegex(GeneWireError, "NetworkPolicy"):
+                            stream.read_chunk()
+                        self.assertEqual(stream.result().retries, 0)
+
+    def test_invalid_additional_ca_fails_before_network(self):
+        with service() as (origin, seen, _):
+            for pem in [b"", b"invalid", b"x" * 65537, "not bytes"]:
+                with self.assertRaisesRegex(GeneWireError, "InvalidQuery"):
+                    client(origin, additional_ca_pem=pem)
+            self.assertEqual(seen, [])
+
+    def test_client_and_retained_query_allow_normal_interpreter_shutdown(self):
+        with service() as (origin, _, _):
+            code = (
+                "from genewire import Client,Destination; import gc,sys; "
+                "o=sys.argv[1]; c=Client(o+'/reads/',{o:Destination(['127.0.0.1'])},loopback_http_for_tests=True); "
+                "s=c.open('s','chr',0,1); del c; gc.collect(); "
+                "assert b''.join(s.iter_chunks()) == b'ABCD'"
+            )
+            result = subprocess.run([sys.executable, "-c", code, origin], capture_output=True, timeout=10)
+            self.assertEqual(result.returncode, 0, result.stderr.decode(errors="replace"))
+
+    def test_ticket_retries_are_reported_through_the_native_boundary(self):
+        with service(transient_tickets=2) as (origin, seen, _), client(origin) as c, c.open("s", "chr", 0, 1) as stream:
+            self.assertEqual(stream.result().phase, "Admission")
+            self.assertEqual(b"".join(stream.iter_chunks()), b"ABCD")
+            report = stream.finish()
+            self.assertEqual(report.retries, 2)
+            self.assertEqual(report.bytes_delivered, 4)
+            self.assertEqual(report.phase, "Draining")
+            self.assertFalse(report.may_have_partial_output)
+            self.assertEqual(len(seen), 4)
+
+    def test_failure_report_marks_exposed_output_and_preserves_terminal_phase(self):
+        ticket = {"htsget": {"format": "BAM", "urls": [
+            {"url": "data:;base64,QUI="},
+            {"url": "https://sensitive.invalid/token-secret"},
+        ]}}
+        with service(custom_ticket=ticket) as (origin, _, _), client(origin) as c:
+            stream = c.open("private-id", "private-reference", 0, 1)
+            self.assertEqual(stream.read_chunk(), b"AB")
+            with self.assertRaisesRegex(GeneWireError, "NetworkPolicy"):
+                stream.read_chunk()
+            failed = stream.result()
+            self.assertTrue(failed.may_have_partial_output)
+            self.assertEqual(failed.phase, "Fetching")
+            self.assertEqual(failed.bytes_delivered, 2)
+            self.assertNotIn("private", repr(failed))
+            self.assertNotIn("secret", repr(failed))
+            stream.close()
+            self.assertEqual(stream.result().error, failed.error)
+            self.assertEqual(stream.result().phase, failed.phase)
+            self.assertTrue(stream.result().may_have_partial_output)
 
     def test_boolean_float_overflow_and_empty_coordinates_fail_before_network(self):
         with service() as (origin, seen, _), client(origin) as c:
             for start, end in [(True, 2), (0., 1), (0, 2**32), (1, 1), (-1, 1)]:
                 with self.assertRaises(GeneWireError):
                     c.open("synthetic", "chrSynthetic", start, end)
+            self.assertEqual(seen, [])
+
+    def test_unsupported_profile_is_rejected_before_network(self):
+        with service() as (origin, seen, _):
+            with self.assertRaisesRegex(GeneWireError, "Unsupported"):
+                client(origin, upstream_profile="CRAM")
             self.assertEqual(seen, [])
 
     def test_chunk_size_and_early_finish_are_explicit_errors(self):

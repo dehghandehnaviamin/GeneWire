@@ -64,7 +64,7 @@ pub(crate) async fn get(
         {
             return err(Category::NetworkPolicy);
         }
-        let client = reqwest::Client::builder()
+        let mut builder = reqwest::Client::builder()
             .no_proxy()
             .no_gzip()
             .no_brotli()
@@ -78,7 +78,14 @@ pub(crate) async fn get(
             .connect_timeout(config.limits.connect_timeout)
             .tls_version_min(reqwest::tls::Version::TLS_1_2)
             .tls_sslkeylogfile(false)
-            .resolve_to_addrs(host, &addresses)
+            .resolve_to_addrs(host, &addresses);
+        if let Some(pem) = &config.additional_ca_pem {
+            builder = builder.tls_certs_merge(
+                reqwest::Certificate::from_pem_bundle(pem)
+                    .map_err(|_| Error::new(Category::InvalidQuery))?,
+            );
+        }
+        let client = builder
             .build()
             .map_err(|_| Error::new(Category::InternalFailure))?;
         headers.insert("accept-encoding", HeaderValue::from_static("identity"));

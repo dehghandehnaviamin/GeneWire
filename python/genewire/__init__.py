@@ -24,6 +24,12 @@ class Report:
     retries: int
     cleanup_complete: bool
     error: str | None
+    phase: str
+    may_have_partial_output: bool
+    cleanup: str
+    cleanup_error: str | None
+    upstream_profile: str
+    capability_evidence: str
     output_kind: str = "UpstreamRegionalResponse"
     source_consistency: str = "Unverified"
     integrity: str = "TransportOnly"
@@ -39,7 +45,15 @@ class Client:
         loopback_http_for_tests: bool = False,
         timeout_ms: int = 600_000,
         result_bytes: int = 1024**3,
+        upstream_profile: str = "HtsgetBamRegional",
+        additional_ca_pem: bytes | None = None,
     ) -> None:
+        if upstream_profile != "HtsgetBamRegional":
+            raise GeneWireError("Unsupported")
+        if additional_ca_pem is not None and (
+            type(additional_ca_pem) is not bytes or not 0 < len(additional_ca_pem) <= 65536
+        ):
+            raise GeneWireError("InvalidQuery")
         for value in (timeout_ms, result_bytes):
             if type(value) is not int or not 0 < value <= 2**63 - 1:
                 raise GeneWireError("InvalidQuery")
@@ -48,14 +62,14 @@ class Client:
             [(origin, list(d.addresses), d.allow_ticket_authorization) for origin, d in destinations.items()],
             control_token,
             loopback_http_for_tests,
-            timeout_ms,
-            result_bytes,
+            (timeout_ms, result_bytes),
+            additional_ca_pem,
         )
 
     def open(self, object_id: str, reference: str, start: int, end: int) -> Stream:
         if any(type(n) is not int or not 0 <= n <= 2**32 - 1 for n in (start, end)):
             raise GeneWireError("InvalidQuery")
-        return Stream(self._native.open(object_id, reference, start, end))
+        return Stream(self._native.open(object_id, reference, start, end), (reference, start, end))
 
     def close(self) -> None:
         self._native.close()
@@ -68,8 +82,13 @@ class Client:
 
 
 class Stream:
-    def __init__(self, native: NativeStream) -> None:
+    def __init__(self, native: NativeStream, region: tuple[str, int, int] | None = None) -> None:
         self._native = native
+        self._region = region
+
+    @property
+    def region(self) -> tuple[str, int, int] | None:
+        return self._region
 
     def read_chunk(self, max_bytes: int = MAX_CHUNK) -> bytes:
         if type(max_bytes) is not int or not 0 < max_bytes <= MAX_CHUNK:

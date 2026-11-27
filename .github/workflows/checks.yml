@@ -1,0 +1,51 @@
+name: Local reference checks
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  reference:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: '3.14'
+      - uses: astral-sh/setup-uv@d0d8abe699bfb85fec6de9f7adb5ae17292296ff # v6
+        with:
+          version: '0.13.10'
+      - name: Select the evaluated Rust toolchain
+        run: rustup toolchain install 1.93.0 --profile minimal --component clippy --component rustfmt
+      - name: Native checks
+        run: |
+          cargo +1.93.0 fmt --all -- --check
+          cargo +1.93.0 clippy --workspace --all-targets --locked -- -D warnings
+          cargo +1.93.0 test --workspace --locked
+      - name: Rebuild Python extension and exercise supervised analysis
+        env:
+          RUSTUP_TOOLCHAIN: '1.93.0'
+        run: |
+          uv sync --locked --group test --extra analysis --reinstall-package genewire
+          .venv/bin/python -m unittest discover -s tests -v
+      - name: Build pinned independent local server
+        run: |
+          git clone --filter=blob:none --no-checkout https://github.com/umccr/htsget-rs.git "$RUNNER_TEMP/htsget-rs"
+          git -C "$RUNNER_TEMP/htsget-rs" sparse-checkout set htsget-actix htsget-axum htsget-config htsget-http htsget-lambda htsget-search htsget-storage htsget-test
+          git -C "$RUNNER_TEMP/htsget-rs" checkout --detach 2a91e661e6a287e3adf30e65c26a8f47697f3548
+          CARGO_TARGET_DIR="$RUNNER_TEMP/htsget-build" cargo +1.93.0 build --manifest-path "$RUNNER_TEMP/htsget-rs/Cargo.toml" --locked -p htsget-axum --no-default-features
+      - name: Independent interoperability and resource probes
+        run: |
+          .venv/bin/python tools/check_interop.py --server "$RUNNER_TEMP/htsget-build/debug/htsget-axum" --report "$RUNNER_TEMP/interop.json"
+          .venv/bin/python tools/check_resources.py --report "$RUNNER_TEMP/resources.json"

@@ -93,7 +93,7 @@ different outcomes. Read the [draft contracts](docs/spec/README.md) for their li
 | Upstream adapter | Existing htsget request, ticket and ordered data blocks | Local prototype |
 | Rust stream engine | Bounded delivery, exposure-based retry, cancellation and terminal reports | Local prototype |
 | Python integration | Owned byte chunks, typed errors and explicit close | Local prototype |
-| Analysis boundary | Full decode/filter and separate analysis-completion outcome | Test harness only; product supervisor planned |
+| Analysis boundary | Full decode/filter and separate analysis-completion outcome | Local supervised BAM adapter with provisional staging |
 | Network/security policy | Credential isolation, destination checks and finite budgets | Local controls; further review required |
 
 <details>
@@ -111,8 +111,11 @@ ledger defines what has actually been exercised.
 ## Planned capabilities
 
 - **Local prototype:** pull-based byte reads, bounded chunks, cancellation and deadlines.
-- **Local prototype:** retry eligible block failures only before exposure; otherwise report
-  incomplete output and require an explicit fresh attempt.
+- **Local prototype:** bounded retries before ticket acceptance or current-block
+  exposure; failure reports retain the phase and mark exposed partial output.
+- **Local prototype:** supervised full BAM decode/overlap filtering and staged
+  output; five synthetic queries matched an independent local htsget server and
+  HTSlib clients. See the [evaluation ledger](docs/project/M2-LOCAL.md).
 - **Later / under research:** durable checkpoints, object manifests and multi-object recovery.
 - **Under research:** integrity verification granularity and durable checkpoints.
 - **Under research:** authenticated transport and authorization integration.

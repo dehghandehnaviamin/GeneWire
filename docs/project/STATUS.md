@@ -1,6 +1,6 @@
 # Project status
 
-**Experimental — Pre-alpha — Research and Design**
+**Experimental — Pre-alpha — Local M2 evaluation**
 
 Snapshot: 2026-11-27. Status must be updated when verified evidence changes.
 
@@ -15,10 +15,10 @@ Snapshot: 2026-11-27. Status must be updated when verified evidence changes.
 | Technology direction | Owner selected | Rust core; Python can provide high-level integration |
 | M0 research | Published; direction accepted for M1 | [5e28a62](https://github.com/dehghandehnaviamin/GeneWire/commit/5e28a6283fed0445b89c09df17c3ec3087a6c5ec); no independent domain sign-off or experiments |
 | M1 design | Direction adopted for local prototype | [RFC 0001](../rfcs/0001-regional-streaming-profile.md); complete contract remains provisional |
-| M2 reference implementation | First local increment works; milestone in progress | Rust/Tokio byte reader and synchronous PyO3/Python binding; [evidence and gaps](M2-LOCAL.md) |
-| Testing and CI | Local suites exist; no CI | 28 Rust and 12 Python/native tests passed; no tests skipped on this runner |
-| Scientific evaluation | Tiny controlled oracle exercised | Q1–Q5 plus invalid-BAM/omission controls; no independent domain sign-off |
-| Performance and interoperability | Still unqualified | No measured performance comparison or independent real-server run |
+| M2 reference implementation | Local continuation; milestone in progress | Rust/Python byte reader and supervised BAM adapter; configured-profile, phase/partial-output and cleanup reports; [evidence and gaps](M2-LOCAL.md) |
+| Testing and CI | Local checks passed; CI prepared but unexecuted | 45 Rust and 31 Python/native tests passed without skips on this runner; no remote workflow result |
+| Scientific evaluation | Tiny controlled oracle exercised; university review deferred | Q1–Q5 and negative controls; owner will arrange final review, no independent sign-off yet |
+| Performance and interoperability | Narrow local evidence | Pinned real htsget-rs and two HTSlib paths matched Q1–Q5; one 64 MiB opaque resource probe per retention mode; no ranking or full resource certification |
 | Release and security support | No release | No supported version or production readiness |
 
 Diagrams show the design target and partial local components. Only the behavior
@@ -49,5 +49,20 @@ all 70 file hashes matched the local tree, and no Actions workflow/run existed.
 On 2026-11-27, the owner raised issue maintenance; #1–#3 were reconciled and closed
 as published documentation deliverables. #4 remains open for independent domain
 feedback. See D013 and the task register for the scope of those closures.
-No release or deployment is included. M2 remains incomplete, unaudited and without
-real-server interoperability or comparative performance evidence.
+No release or deployment is included. That publication did not supply real-server
+or performance evidence; later local evidence is distinguished below.
+
+The owner's subsequent M2 instruction continued local development under D014.
+Ticket retries and richer failure reports have local executable evidence; these
+changes are not part of the previously verified remote publication.
+
+Under D015 the owner instructed continued development and will arrange the final
+university review. The local tree now includes the supervised BAM path,
+failure/race/cleanup tests, configured CA/TLS and IPv6 checks, independently run
+htsget-rs/HTSlib comparison and source-bound resource reports. CI is prepared
+locally but has no verified remote run. Full memory/copy/dependency qualification
+and further failure/lifetime variants remain. M2 and scientific review are not
+marked complete; no new push, release or deployment occurred.
+
+The [university review handoff](UNIVERSITY-REVIEW.md) identifies the current
+demonstration, original truth cases, reproducible evidence and review questions.

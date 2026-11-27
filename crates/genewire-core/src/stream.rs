@@ -1,5 +1,5 @@
 use crate::{
-    Category, Configuration, Error, MAX_CHUNK, Query, Result,
+    Category, Configuration, Error, MAX_CHUNK, Query, Result, UpstreamProfile,
     error::err,
     network,
     ticket::{self, Block},
@@ -42,6 +42,32 @@ pub struct Report {
     pub bytes_delivered: u64,
     pub retries: usize,
     pub cleanup_complete: bool,
+    /// Last active phase; retained unchanged after a terminal outcome.
+    pub phase: Phase,
+    /// An unsuccessful query exposed bytes that callers must invalidate.
+    pub may_have_partial_output: bool,
+    pub cleanup: Cleanup,
+    pub cleanup_error: Option<Error>,
+    pub upstream_profile: UpstreamProfile,
+    pub capability_evidence: CapabilityEvidence,
+}
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum CapabilityEvidence {
+    Configured,
+}
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum Cleanup {
+    NotStarted,
+    InProgress,
+    Complete,
+    Failed,
+}
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum Phase {
+    Admission,
+    Ticketing,
+    Fetching,
+    Draining,
 }
 fn lock<T>(m: &Mutex<T>) -> MutexGuard<'_, T> {
     m.lock().unwrap_or_else(|e| e.into_inner())
@@ -60,6 +86,7 @@ impl Shared {
                 State::Failed
             };
             r.error = Some(error);
+            r.may_have_partial_output = r.bytes_delivered > 0;
         }
         self.cancel.cancel();
     }
@@ -67,6 +94,12 @@ impl Shared {
         let mut r = lock(&self.report);
         if !r.state.terminal() {
             r.state = state;
+            r.phase = match state {
+                State::Ticketing => Phase::Ticketing,
+                State::Fetching => Phase::Fetching,
+                State::Draining => Phase::Draining,
+                _ => r.phase,
+            };
         }
     }
 }
@@ -85,6 +118,23 @@ pub struct Client {
 impl Client {
     pub fn new(config: Configuration) -> Result<Self> {
         config.limits.validate()?;
+        if let Some(pem) = &config.additional_ca_pem {
+            if pem.is_empty() || pem.len() > 65536 {
+                return err(Category::InvalidQuery);
+            }
+            let certs = reqwest::Certificate::from_pem_bundle(pem)
+                .map_err(|_| Error::new(Category::InvalidQuery))?;
+            if certs.len() != 1 {
+                return err(Category::InvalidQuery);
+            }
+            // PEM decoding is lazy under rustls. Validate DER in a root store
+            // before admitting a query; no network request is made here.
+            reqwest::Client::builder()
+                .no_proxy()
+                .tls_certs_only(certs)
+                .build()
+                .map_err(|_| Error::new(Category::InvalidQuery))?;
+        }
         if config.destinations.is_empty() || tokio::runtime::Handle::try_current().is_ok() {
             return err(Category::InvalidQuery);
         }
@@ -130,6 +180,12 @@ impl Client {
                 bytes_delivered: 0,
                 retries: 0,
                 cleanup_complete: false,
+                phase: Phase::Admission,
+                may_have_partial_output: false,
+                cleanup: Cleanup::NotStarted,
+                cleanup_error: None,
+                upstream_profile: self.owner.config.upstream_profile,
+                capability_evidence: CapabilityEvidence::Configured,
             }),
             cancel: CancellationToken::new(),
         });
@@ -158,6 +214,9 @@ impl Client {
                 expected: None,
             }),
             watchdog: Mutex::new(Some(watchdog)),
+            cleanup: Mutex::new(()),
+            #[cfg(test)]
+            hooks: TestHooks::default(),
         });
         admission.queries.push(Arc::downgrade(&inner));
         Ok(Stream { inner })
@@ -189,6 +248,16 @@ struct Inner {
     shared: Arc<Shared>,
     reader: Mutex<Reader>,
     watchdog: Mutex<Option<JoinHandle<()>>>,
+    cleanup: Mutex<()>,
+    #[cfg(test)]
+    hooks: TestHooks,
+}
+#[cfg(test)]
+#[derive(Default)]
+struct TestHooks {
+    panic_read: std::sync::atomic::AtomicBool,
+    before_handoff: Mutex<Option<Box<dyn FnOnce() + Send>>>,
+    after_handoff: Mutex<Option<Box<dyn FnOnce() + Send>>>,
 }
 impl Drop for Inner {
     fn drop(&mut self) {
@@ -241,12 +310,21 @@ impl Stream {
                 return Ok(Vec::new());
             }
         }
-        let output = catch_unwind(AssertUnwindSafe(|| self.inner.owner.runtime.block_on(async {
+        let output = catch_unwind(AssertUnwindSafe(|| {
+            #[cfg(test)]
+            if self.inner.hooks.panic_read.swap(false, std::sync::atomic::Ordering::SeqCst) {
+                panic!("injected native reader failure");
+            }
+            self.inner.owner.runtime.block_on(async {
             tokio::select! { biased;
                 _ = shared.cancel.cancelled() => Err(lock(&shared.report).error.clone().unwrap_or(Error::new(Category::Cancelled))),
                 result = reader.read(&self.inner.owner.config, shared, max_bytes) => result,
             }
-        }))).unwrap_or_else(|_| err(Category::InternalFailure));
+        })})).unwrap_or_else(|_| err(Category::InternalFailure));
+        #[cfg(test)]
+        if let Some(hook) = lock(&self.inner.hooks.before_handoff).take() {
+            hook();
+        }
         match output {
             Ok(data) => {
                 let mut r = lock(&shared.report);
@@ -260,6 +338,11 @@ impl Stream {
                 } else {
                     reader.exposed = reader.current.is_some();
                     r.bytes_delivered += data.len() as u64;
+                }
+                drop(r);
+                #[cfg(test)]
+                if let Some(hook) = lock(&self.inner.hooks.after_handoff).take() {
+                    hook();
                 }
                 Ok(data)
             }
@@ -280,6 +363,23 @@ impl Stream {
             return err(Category::InvalidState);
         }
         self.cancel();
+        {
+            let mut report = lock(&self.inner.shared.report);
+            if report.cleanup_complete {
+                return Ok(());
+            }
+            report.cleanup = Cleanup::InProgress;
+        }
+        // A competing close must not wait on an unbounded mutex acquisition.
+        let _cleanup = loop {
+            if let Ok(guard) = self.inner.cleanup.try_lock() {
+                break guard;
+            }
+            if Instant::now() >= deadline {
+                return self.cleanup_failed(Category::CleanupTimeout);
+            }
+            thread::sleep(Duration::from_millis(1));
+        };
         loop {
             if let Ok(mut reader) = self.inner.reader.try_lock() {
                 reader.current = None;
@@ -288,7 +388,7 @@ impl Stream {
                 break;
             }
             if Instant::now() >= deadline {
-                return err(Category::CleanupTimeout);
+                return self.cleanup_failed(Category::CleanupTimeout);
             }
             thread::sleep(Duration::from_millis(1));
         }
@@ -304,14 +404,29 @@ impl Stream {
                 Ok(Ok(())) => {}
                 Ok(Err(_)) => {
                     task.take();
-                    return err(Category::InternalFailure);
+                    return self.cleanup_failed(Category::InternalFailure);
                 }
-                Err(_) => return err(Category::CleanupTimeout),
+                Err(_) => return self.cleanup_failed(Category::CleanupTimeout),
             }
             task.take();
         }
-        lock(&self.inner.shared.report).cleanup_complete = true;
+        let mut report = lock(&self.inner.shared.report);
+        report.cleanup_complete = true;
+        report.cleanup = Cleanup::Complete;
+        report.cleanup_error = None;
         Ok(())
+    }
+    fn cleanup_failed(&self, category: Category) -> Result<()> {
+        let mut report = lock(&self.inner.shared.report);
+        if !report.cleanup_complete {
+            report.cleanup = if category == Category::CleanupTimeout {
+                Cleanup::InProgress
+            } else {
+                Cleanup::Failed
+            };
+            report.cleanup_error = Some(Error::new(category));
+        }
+        err(category)
     }
 }
 
@@ -336,44 +451,22 @@ impl Reader {
     ) -> Result<Vec<u8>> {
         if self.blocks.is_none() {
             shared.state(State::Ticketing);
-            let url = self.query.url(&config.service)?;
-            let bytes = tokio::time::timeout(config.limits.ticket_timeout, async {
-                let mut response = network::get(config, url, HeaderMap::new(), true).await?;
-                status(&response)?;
-                network::identity(&response)?;
-                if response.status() != 200 {
-                    return err(Category::ResponseInvalid);
-                }
-                let expected = network::length(&response)?;
-                if expected.is_some_and(|n| n > config.limits.ticket_bytes as u64) {
-                    return err(Category::ResourceLimit);
-                }
-                let mut data = Vec::new();
-                while let Some(chunk) =
-                    tokio::time::timeout(config.limits.idle_timeout, response.chunk())
-                        .await
-                        .map_err(|_| Error::new(Category::DeadlineExceeded))?
-                        .map_err(network::classify)?
-                {
-                    if data.len() + chunk.len() > config.limits.ticket_bytes {
-                        return err(Category::ResourceLimit);
-                    }
-                    data.extend_from_slice(&chunk);
-                }
-                if expected.is_some_and(|n| n != data.len() as u64) {
-                    return err(Category::ResponseInvalid);
-                }
-                Ok(data)
-            })
-            .await
-            .map_err(|_| Error::new(Category::DeadlineExceeded))??;
-            self.blocks = Some(ticket::parse(&bytes)?.into());
+            // One phase budget covers all attempts, body reads, parsing and waits.
+            self.blocks = Some(
+                tokio::time::timeout(config.limits.ticket_timeout, self.ticket(config, shared))
+                    .await
+                    .map_err(|_| Error::new(Category::DeadlineExceeded))??
+                    .into(),
+            );
             shared.state(State::Fetching);
         }
         loop {
             if !self.pending.is_empty() {
                 return Ok(self.pending.split_to(max.min(self.pending.len())).to_vec());
             }
+            // An empty Bytes view may still retain its entire prior allocation.
+            // Release it before awaiting the next library-owned HTTP fragment.
+            self.pending = Bytes::new();
             if let Some(response) = self.current.as_mut() {
                 // Start the idle clock for this active poll, excluding caller pauses.
                 let chunk = tokio::time::timeout(config.limits.idle_timeout, response.chunk())
@@ -381,9 +474,20 @@ impl Reader {
                     .map_err(|_| Error::new(Category::DeadlineExceeded))?;
                 match chunk {
                     Ok(Some(bytes)) => {
-                        // An unusually large HTTP frame is rejected rather than exceeding
-                        // our initial native payload policy. HTTP/2 is disabled.
-                        if bytes.len() > MAX_CHUNK {
+                        // Library body fragments are not public chunk boundaries.
+                        // Reserve space for remaining inline bytes and one owned
+                        // public read copy in the draft 2 MiB payload window.
+                        let inline_bytes: usize = self
+                            .blocks
+                            .as_ref()
+                            .into_iter()
+                            .flatten()
+                            .map(|block| match block {
+                                Block::Inline(data) => data.len(),
+                                _ => 0,
+                            })
+                            .sum();
+                        if bytes.len() > 2 * 1024 * 1024 - MAX_CHUNK - inline_bytes {
                             return err(Category::ResourceLimit);
                         }
                         self.accepted = self
@@ -459,12 +563,9 @@ impl Reader {
                         }
                         Err(e) => return Err(e),
                     };
-                    if matches!(response.status().as_u16(), 429 | 500 | 502 | 503 | 504) {
-                        let wait = response
-                            .headers()
-                            .get("retry-after")
-                            .and_then(|s| s.to_str().ok())
-                            .and_then(retry_after);
+                    if transient_status(&response) {
+                        let wait = server_wait(&response);
+                        drop(response);
                         self.retry(shared, wait).await?;
                         continue;
                     }
@@ -520,6 +621,35 @@ impl Reader {
             }
         }
     }
+    async fn ticket(&self, config: &Configuration, shared: &Shared) -> Result<Vec<Block>> {
+        let url = self.query.url(&config.service)?;
+        for attempt in 1..=3 {
+            let response = network::get(config, url.clone(), HeaderMap::new(), true).await;
+            let response = match response {
+                Ok(response) => response,
+                Err(error) if error.category == Category::TransportFailed => {
+                    retry_wait(shared, attempt, None, State::Ticketing).await?;
+                    continue;
+                }
+                Err(error) => return Err(error),
+            };
+            if transient_status(&response) {
+                let wait = server_wait(&response);
+                // Release the unsuccessful response before waiting or retrying.
+                drop(response);
+                retry_wait(shared, attempt, wait, State::Ticketing).await?;
+                continue;
+            }
+            match ticket_body(config, response).await {
+                Ok(bytes) => return ticket::parse(&bytes),
+                Err(error) if error.category == Category::TransportFailed => {
+                    retry_wait(shared, attempt, None, State::Ticketing).await?;
+                }
+                Err(error) => return Err(error),
+            }
+        }
+        err(Category::TransportFailed)
+    }
     fn reset_block(&mut self) {
         self.exposed = false;
         self.block_received = 0;
@@ -528,16 +658,82 @@ impl Reader {
         self.expected = None;
     }
     async fn retry(&self, shared: &Shared, server_wait: Option<Duration>) -> Result<()> {
-        if self.attempts >= 3 || self.exposed {
+        if self.exposed {
             return err(Category::TransportFailed);
         }
-        shared.state(State::RetryWait);
-        lock(&shared.report).retries += 1;
-        tokio::time::sleep(server_wait.unwrap_or(Duration::from_secs(self.attempts.max(1) as u64)))
-            .await;
-        shared.state(State::Fetching);
-        Ok(())
+        retry_wait(shared, self.attempts, server_wait, State::Fetching).await
     }
+}
+
+async fn ticket_body(config: &Configuration, mut response: Response) -> Result<Vec<u8>> {
+    status(&response)?;
+    network::identity(&response)?;
+    if response.status() != 200 {
+        return err(Category::ResponseInvalid);
+    }
+    let expected = network::length(&response)?;
+    if expected.is_some_and(|n| n > config.limits.ticket_bytes as u64) {
+        return err(Category::ResourceLimit);
+    }
+    let mut data = Vec::new();
+    loop {
+        let chunk = tokio::time::timeout(config.limits.idle_timeout, response.chunk())
+            .await
+            .map_err(|_| Error::new(Category::DeadlineExceeded))?;
+        match chunk {
+            Ok(Some(chunk)) => {
+                if data.len() + chunk.len() > config.limits.ticket_bytes {
+                    return err(Category::ResourceLimit);
+                }
+                data.extend_from_slice(&chunk);
+            }
+            Ok(None) => break,
+            // A declared-length violation is not an eligible transient.
+            Err(_) if expected.is_some() => return err(Category::ResponseInvalid),
+            Err(error) => return Err(network::classify(error)),
+        }
+    }
+    if expected.is_some_and(|n| n != data.len() as u64) {
+        return err(Category::ResponseInvalid);
+    }
+    Ok(data)
+}
+
+async fn retry_wait(
+    shared: &Shared,
+    attempts: usize,
+    server_wait: Option<Duration>,
+    target: State,
+) -> Result<()> {
+    if attempts >= 3 {
+        return err(Category::TransportFailed);
+    }
+    shared.state(State::RetryWait);
+    // The phase/overall timeout and outer select also bound and cancel this wait.
+    let wait = server_wait.unwrap_or(Duration::from_secs(attempts.max(1) as u64));
+    let until = tokio::time::Instant::now()
+        .checked_add(wait)
+        .ok_or(Error::new(Category::DeadlineExceeded))?;
+    tokio::time::sleep_until(until).await;
+    // Count an admitted new attempt, not an interrupted retry wait.
+    let mut report = lock(&shared.report);
+    if let Some(error) = &report.error {
+        return Err(error.clone());
+    }
+    report.retries += 1;
+    report.state = target;
+    Ok(())
+}
+
+fn transient_status(response: &Response) -> bool {
+    matches!(response.status().as_u16(), 429 | 500 | 502 | 503 | 504)
+}
+fn server_wait(response: &Response) -> Option<Duration> {
+    response
+        .headers()
+        .get("retry-after")
+        .and_then(|s| s.to_str().ok())
+        .and_then(retry_after)
 }
 fn status(response: &Response) -> Result<()> {
     match response.status().as_u16() {
@@ -558,4 +754,182 @@ fn retry_after(s: &str) -> Option<Duration> {
             .ok()
             .map(|t| t.duration_since(SystemTime::now()).unwrap_or_default())
     })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::Destination;
+    use std::sync::{Barrier, atomic::Ordering};
+
+    fn local() -> (Client, Stream) {
+        let mut config = Configuration::new(
+            "https://synthetic.invalid/reads/",
+            vec![
+                Destination::new(
+                    "https://synthetic.invalid",
+                    vec!["127.0.0.1".parse().unwrap()],
+                )
+                .unwrap(),
+            ],
+        )
+        .unwrap();
+        config.limits.cleanup_timeout = Duration::from_millis(20);
+        config.limits.max_queries = 1;
+        let client = Client::new(config).unwrap();
+        let stream = client.open(Query::new("s", "chr", 0, 1).unwrap()).unwrap();
+        lock(&stream.inner.reader).blocks =
+            Some(VecDeque::from([Block::Inline(Bytes::from_static(b"AB"))]));
+        stream.inner.shared.state(State::Fetching);
+        (client, stream)
+    }
+
+    #[test]
+    fn cleanup_timeout_keeps_the_slot_and_can_be_retried() {
+        let (client, stream) = local();
+        let reader = lock(&stream.inner.reader);
+        assert_eq!(
+            stream.close().unwrap_err().category,
+            Category::CleanupTimeout
+        );
+        let report = stream.result();
+        assert_eq!(report.cleanup, Cleanup::InProgress);
+        assert!(!report.cleanup_complete);
+        assert_eq!(
+            report.cleanup_error.unwrap().category,
+            Category::CleanupTimeout
+        );
+        assert_eq!(
+            client
+                .open(Query::new("s", "chr", 0, 1).unwrap())
+                .err()
+                .unwrap()
+                .category,
+            Category::ResourceLimit
+        );
+        drop(reader);
+        stream.close().unwrap();
+        assert_eq!(stream.result().cleanup, Cleanup::Complete);
+        assert!(stream.result().cleanup_error.is_none());
+        assert_eq!(stream.result().state, State::Cancelled);
+        let next = client.open(Query::new("s", "chr", 0, 1).unwrap()).unwrap();
+        next.close().unwrap();
+    }
+
+    #[test]
+    fn competing_close_obeys_its_own_cleanup_budget() {
+        let (_client, stream) = local();
+        let cleanup = lock(&stream.inner.cleanup);
+        assert_eq!(
+            stream.close().unwrap_err().category,
+            Category::CleanupTimeout
+        );
+        assert_eq!(stream.result().cleanup, Cleanup::InProgress);
+        drop(cleanup);
+        stream.close().unwrap();
+        assert_eq!(stream.result().cleanup, Cleanup::Complete);
+    }
+
+    #[test]
+    fn reader_panic_becomes_sanitized_failure_and_remains_closable() {
+        let (_client, stream) = local();
+        stream.inner.hooks.panic_read.store(true, Ordering::SeqCst);
+        assert_eq!(
+            stream.read_chunk(8).unwrap_err().category,
+            Category::InternalFailure
+        );
+        assert_eq!(stream.result().state, State::Failed);
+        assert!(!stream.result().may_have_partial_output);
+        assert_eq!(
+            stream.read_chunk(8).unwrap_err().category,
+            Category::InternalFailure
+        );
+        stream.close().unwrap();
+        assert_eq!(stream.result().cleanup, Cleanup::Complete);
+        assert_eq!(
+            stream.result().error.unwrap().category,
+            Category::InternalFailure
+        );
+    }
+
+    #[test]
+    fn watchdog_join_failure_is_separate_from_the_transport_outcome() {
+        let (_client, stream) = local();
+        let old = lock(&stream.inner.watchdog).take().unwrap();
+        old.abort();
+        stream.inner.owner.runtime.block_on(async {
+            let _ = old.await;
+        });
+        let failed = stream
+            .inner
+            .owner
+            .runtime
+            .spawn(async { panic!("injected worker failure") });
+        lock(&stream.inner.watchdog).replace(failed);
+        assert_eq!(
+            stream.close().unwrap_err().category,
+            Category::InternalFailure
+        );
+        assert_eq!(stream.result().state, State::Cancelled);
+        assert_eq!(stream.result().cleanup, Cleanup::Failed);
+        assert_eq!(
+            stream.result().cleanup_error.unwrap().category,
+            Category::InternalFailure
+        );
+        stream.close().unwrap();
+        assert_eq!(stream.result().cleanup, Cleanup::Complete);
+    }
+
+    fn gate() -> (Arc<Barrier>, Arc<Barrier>, Box<dyn FnOnce() + Send>) {
+        let arrived = Arc::new(Barrier::new(2));
+        let resume = Arc::new(Barrier::new(2));
+        let (a, r) = (arrived.clone(), resume.clone());
+        (
+            arrived,
+            resume,
+            Box::new(move || {
+                a.wait();
+                r.wait();
+            }),
+        )
+    }
+
+    #[test]
+    fn cancellation_before_handoff_prevents_new_exposure() {
+        let (_client, stream) = local();
+        let (arrived, resume, hook) = gate();
+        lock(&stream.inner.hooks.before_handoff).replace(hook);
+        let reader = stream.clone();
+        let task = thread::spawn(move || reader.read_chunk(8));
+        arrived.wait();
+        stream.cancel();
+        resume.wait();
+        assert_eq!(
+            task.join().unwrap().unwrap_err().category,
+            Category::Cancelled
+        );
+        assert_eq!(stream.result().bytes_delivered, 0);
+        assert!(!stream.result().may_have_partial_output);
+        stream.close().unwrap();
+    }
+
+    #[test]
+    fn a_committed_handoff_can_finish_after_cancellation_is_observed() {
+        let (_client, stream) = local();
+        let (arrived, resume, hook) = gate();
+        lock(&stream.inner.hooks.after_handoff).replace(hook);
+        let reader = stream.clone();
+        let task = thread::spawn(move || reader.read_chunk(8));
+        arrived.wait();
+        stream.cancel();
+        assert_eq!(stream.result().bytes_delivered, 2);
+        assert!(stream.result().may_have_partial_output);
+        resume.wait();
+        assert_eq!(task.join().unwrap().unwrap(), b"AB");
+        assert_eq!(
+            stream.read_chunk(8).unwrap_err().category,
+            Category::Cancelled
+        );
+        stream.close().unwrap();
+    }
 }

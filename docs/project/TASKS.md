@@ -74,15 +74,30 @@ basis; the full contract is not verified. See D013 in the decision register.
 - [x] Check Python-owned output and retained runtime lifetime.
 - [x] Match Q1–Q5 through an external decoder; add invalid-BAM and omission controls.
 - [x] Verify local setup, formatting, static checks and Rust/Python suites.
-- [ ] Run a real independent htsget server and qualify baseline clients.
-- [ ] Complete ticket retry/capability, cleanup-timeout, panic and race evidence.
-- [ ] Build/review product analysis-process supervision.
-- [ ] Measure memory/copies/latency and qualify TLS/IPv6/additional platforms.
-- [ ] Configure and exercise CI before claiming M2 exit.
+- [x] Run pinned htsget-rs locally on generated BAM/BAI; match Q1–Q5 through
+  GeneWire, independent HTSlib htsget retrieval and direct indexed HTSlib.
+- [x] Implement bounded ticket retries and exercise admission, exhaustion,
+  cancellation, shared deadlines and nonretryable failures locally.
+- [x] Expose retained transport phase and partial-output failure flag in Rust/Python.
+- [x] Report the configured upstream subset assumption and separate cleanup states.
+- [x] Exercise cleanup timeout/retry, panic translation and both sides of the
+  committed-handoff cancellation boundary with test-only scheduling hooks.
+- [x] Implement supervised full BAM decode/filter with bounded process shutdown,
+  provisional staging, existing-file protection and failure-path tests.
+- [x] Measure one 64 MiB opaque transfer per caller-retention mode; exercise
+  configured-CA TLS, hostname rejection, IPv6 pins and normal interpreter shutdown.
+- [x] Inspect and record the current target's resolved Rust feature/license graph.
+- [ ] Complete native payload/copy accounting, broader dependency qualification
+  and additional platform/lifetime/failure variants.
+- [x] Prepare pinned CI workflow with Rust/Python and independent-server checks.
+- [ ] Publish and exercise CI under later publication authorization before M2 exit.
 
 See [M2 evidence/gaps](M2-LOCAL.md) and [working local commands](../development.md).
 On 2026-11-27 the owner authorized integrating the prepared history into main and
 pushing main. This publication does not complete the remaining M2 evidence gates.
+
+The owner will arrange the final university review and instructed continued
+development. External scientific review is deferred, not recorded as completed.
 
 ## Later milestones
 
