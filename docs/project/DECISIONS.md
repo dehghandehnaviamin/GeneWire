@@ -504,3 +504,14 @@ Decisions record rationale and limits, not implementation claims.
   Q1–Q5 independent comparisons and both resource modes passed. Source-bound
   [reports and method limits](M3-LOCAL.md#workspace-and-storage-follow-up) are
   retained. Publication/CI qualification of this increment is pending.
+- **Observed CI:** Published e599df7f668951449dde21a26224bc76dfea2b20 passed
+  run 46068024173 on Ubuntu x86_64 and macOS arm64. Each passed 47 Rust and
+  81 Python/native tests, zero skips, and the repeated 47-case job harness.
+  The 108 storage observations, seven workspace points and independent-server/
+  resource gates passed. All six reports matched the 31 source inputs; downloaded
+  ZIP digests matched GitHub metadata. Neither runner has warnings; macOS has
+  only the capacity notice. [Permanent evidence](evidence/ci-46068024173/summary.json)
+  preserves runner/artifact identities and exact source/workflow/report hashes.
+- **Final evidence publication:** Keep implementation/build/workflow/assets
+  byte-identical to e599df7 and publish documentation/evidence with a docs-only
+  CI skip. Attribute observed success to that tested run; full M3 remains open.

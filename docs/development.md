@@ -12,6 +12,8 @@ Ubuntu 26.04.1 x86_64 and macOS 26.7.2 arm64 with CPython 3.14.10. This records
 those runners; the abi3 wheel tag/Python metadata do not establish broader support.
 The M3 cancellation follow-up also passed these CI targets with 65 Python/native
 tests and its repeated 31-case job harness; see the separate M3 evidence scope.
+The subsequent workspace/storage increment passed 81 Python/native tests and
+its repeated 47-case job harness on both targets. Each also passed 47 Rust tests.
 Rust and uv must already be installed. From the repository root:
 
 ```bash
@@ -157,7 +159,7 @@ Import `inspect_bam_job`, `clean_bam_job` and `WorkspaceReport` from
 expected digest and byte budgets as recovery, plus optional cancellation; they
 do not take decoder timeouts. They use the existing nonblocking lock, create no
 missing workspace/lock and issue no network request. Inspection verifies the
-phase-appropriate retained files without changing metadata; `sync_confirmed`
+phase-appropriate retained files without writing job files or receipts; `sync_confirmed`
 is false because it performs no storage writes. Missing jobs return
 CheckpointMissing; invalid layouts or a removed initialized lock fail closed.
 
@@ -182,6 +184,10 @@ historical input length after release. A partial/cancelled cleanup is retryable;
 removed_files lists only successfully unlinked basenames, and a failure does not
 confirm sync. RecoveryBusy means another operation owns the lock. Keep the lock
 inode and destination stable even after cleanup.
+`cleanup_complete` describes closing this invocation's owned resources; only a
+Cleaned state confirms the requested artifact policy. A busy/failed inspection
+does not establish that the workspace was cleaned. Filesystem read-access times
+are controlled by the host's mount policy even during read-only inspection.
 
 For `recover_bam`, inspect `state`, `error`, `phase`, `source_reused`, `source_bytes`, `output_bytes`,
 `output_committed`, `sync_confirmed` and `transport`. Complete means the required

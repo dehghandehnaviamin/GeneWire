@@ -175,8 +175,20 @@ passed. No production failure is inferred from that instrumentation error.
 Raw source-bound reports: [job/storage](evidence/2026-11-27-m3-storage.json),
 [independent server](evidence/2026-11-27-m3-storage-interop.json) and
 [resources](evidence/2026-11-27-m3-storage-resources.json). Their hashes identify
-the current local implementation/tests. This follow-up has not yet been remotely
-qualified; preceding CI evidence remains attached to 7f15c77.
+e599df7 implementation/tests. These are local results; preceding cancellation
+CI remains attached to 7f15c77 and the storage CI is recorded separately below.
+
+The published storage increment e599df7 passed
+[run 46068024173](https://github.com/dehghandehnaviamin/GeneWire/actions/runs/46068024173)
+on Ubuntu x86_64 and macOS arm64. Each passed 47 Rust and 81 Python/native tests
+without skips, then repeated the 47-case job harness. All 108 storage observations
+and seven workspace points, the earlier recovery/cancellation gates, Q1–Q5
+independent-server/HTSlib comparisons and both resource modes passed.
+[Permanent runner evidence](CI-VALIDATION.md#m3-workspace-management-and-storage-faults)
+records the six source-matched reports, verified downloaded ZIP digests and
+annotations. Neither runner has warnings; macOS retains only the hosted-capacity
+notice. The final documentation/evidence update preserves the tested code,
+build, workflow and assets; success belongs to the actual e599df7 run.
 
 ## Remaining gates
 

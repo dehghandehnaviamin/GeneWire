@@ -136,7 +136,7 @@ explicitly outside this exit claim and part of later qualification work.
   Releasing/Released; preserve accepted output and the original lock inode.
 - [x] Exercise 48 storage boundaries with SIGKILL and EIO, plus 12 file-I/O fault
   cases, fresh-process retry and phase-preserving cleanup locally; archive hashes.
-- [ ] Follow the D024 storage increment through Linux/macOS CI and archive each
+- [x] Follow the D024 storage increment through Linux/macOS CI and archive each
   runner's source-checked reports before claiming cross-platform qualification.
 
 See [M3 source-bound evidence and exclusions](M3-LOCAL.md).

@@ -191,3 +191,48 @@ its normalized hashes do not assert byte equality with the original ZIP entries.
 Only documentation/evidence changes follow 7f15c77 in the final publication,
 with CI skipped after checking implementation/build/workflow/assets are unchanged.
 The observed success belongs to that actual run, not to an unrun docs commit.
+
+## M3 workspace management and storage faults
+
+Evaluation date: 2026-11-27. Source
+[e599df7](https://github.com/dehghandehnaviamin/GeneWire/commit/e599df7f668951449dde21a26224bc76dfea2b20)
+passed [run 46068024173](https://github.com/dehghandehnaviamin/GeneWire/actions/runs/46068024173).
+
+| Observed job | Rust | Python/native | Repeated job harness | Skips |
+| --- | --- | --- | --- | --- |
+| [Ubuntu x86_64](https://github.com/dehghandehnaviamin/GeneWire/actions/runs/46068024173/job/140737954771) | 47 passed | 81 passed | 47 passed | 0 |
+| [macOS arm64](https://github.com/dehghandehnaviamin/GeneWire/actions/runs/46068024173/job/140737954404) | 47 passed | 81 passed | 47 passed | 0 |
+
+The 47-case job harness repeats 19 recovery, 12 cancellation, 13 workspace and
+three storage matrix tests from the 81-case suite. Each runner passed 48 distinct
+before/after storage points with SIGKILL and EIO, plus 12 short-write/ENOSPC/
+flush/close faults: 108 structured storage observations. The seven workspace
+observations, existing crash/cancellation/truth gates, independent htsget-rs and
+both HTSlib Q1–Q5 comparisons and both 64 MiB resource modes passed. Fresh-process
+retries preserve accepted output identity, avoid re-fetch after a verified
+receipt and forbid network/decoder work for released input. These are injected
+filesystem/process-crash checks, not physical disk-full or power-loss tests.
+
+The permanent [summary](evidence/ci-46068024173/summary.json) records source and
+workflow hashes, actual log counts, job/artifact identities, annotations, the
+downloaded ZIP digests and normalized report hashes:
+
+- Ubuntu: [job/storage](evidence/ci-46068024173/ubuntu-recovery.json),
+  [interoperability](evidence/ci-46068024173/ubuntu-interop.json),
+  [resources](evidence/ci-46068024173/ubuntu-resources.json).
+- macOS: [job/storage](evidence/ci-46068024173/macos-recovery.json),
+  [interoperability](evidence/ci-46068024173/macos-interop.json),
+  [resources](evidence/ci-46068024173/macos-resources.json).
+
+All six reports matched all 31 implementation/build/test/tool inputs. Downloaded
+ZIP SHA-256 values matched GitHub's reported archive digests. Normalized JSON
+adds source_commit and is not claimed byte-identical to the ZIP entries. CPython
+3.14.10, Rust 1.93.0, uv 0.13.10 and the existing action/dependency pins were
+preserved. Ubuntu had no annotations; macOS retained only the capacity notice.
+Neither runner had warning annotations or a Node.js 20 deprecation warning.
+
+This qualifies the documented inspection/release/storage subset on those observed
+runners; full M3, broader filesystems/platforms and release remain outside it.
+The final update changes only documentation/evidence after checking code/build/
+workflow/assets are unchanged from e599df7, with CI skipped. No success is claimed
+for an unrun documentation revision.

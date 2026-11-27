@@ -17,8 +17,8 @@ Snapshot: 2026-11-27. Status must be updated when verified evidence changes.
 | M1 design | Direction adopted for local prototype | [RFC 0001](../rfcs/0001-regional-streaming-profile.md); complete contract remains provisional |
 | M2 reference implementation | Narrow engineering gate complete | Rust/Python byte reader and supervised BAM adapter; [exit evidence and limits](CI-VALIDATION.md) |
 | M3 recovery | First verified-BAM-job subset published and CI-checked | [RFC 0002](../rfcs/0002-recoverable-bam-jobs.md) and [evidence](M3-LOCAL.md); complete-source reuse and publication receipts, full M3 exit open |
-| M3 workspace/storage follow-up | Locally checked; remote CI pending | Existing-job inspection, recoverable source release, 81 Python/native and 47 Rust tests; [48-boundary fault matrix](M3-LOCAL.md#workspace-and-storage-follow-up) |
-| Testing and CI | Verified on the observed Linux/macOS runners with Node.js 24 actions | Each passed 47 Rust and 65 Python/native tests without skips, plus a repeated 31-case recovery/cancellation harness; [workflow 46039605642](https://github.com/dehghandehnaviamin/GeneWire/actions/runs/46039605642); no warning annotations, one macOS capacity notice |
+| M3 workspace/storage follow-up | Published and checked on observed Linux/macOS runners | Existing-job inspection, recoverable source release, 81 Python/native and 47 Rust tests; [48-boundary fault matrix](M3-LOCAL.md#workspace-and-storage-follow-up) |
+| Testing and CI | Verified on the observed Linux/macOS runners with Node.js 24 actions | Each passed 47 Rust and 81 Python/native tests without skips, plus a repeated 47-case job harness; [workflow 46068024173](https://github.com/dehghandehnaviamin/GeneWire/actions/runs/46068024173); no warning annotations, one macOS capacity notice |
 | Correctness evaluation | Tiny controlled oracle and negative controls exercised | Q1–Q5, independent HTSlib paths and source-bound failure evidence; expanded cases need their own executable expectations |
 | Performance and interoperability | Narrow local evidence | Pinned real htsget-rs and two HTSlib paths matched Q1–Q5; one 64 MiB opaque resource probe per retention mode; no ranking or full resource certification |
 | Release and security support | No release | No supported version or production readiness |
@@ -131,3 +131,10 @@ EIO retry, plus 12 file-I/O faults. Independent-server/resource regressions pass
 Source-bound reports are in the [M3 ledger](M3-LOCAL.md#workspace-and-storage-follow-up).
 Publication/CI qualification for this increment remains pending; older CI reports
 do not qualify these new changes. Full M3 remains open.
+
+**D024 verified publication:** e599df7 is published on main and passed the fresh
+Linux/macOS run 46068024173. Both runners passed all counts/gates above, including
+108 storage observations. The six downloaded reports matched all 31 source inputs;
+ZIP digests matched GitHub metadata. [Archived evidence](CI-VALIDATION.md#m3-workspace-management-and-storage-faults)
+records actual runner results and annotations. The final evidence-only update
+preserves the tested implementation/build/workflow/assets. Full M3 remains open.
