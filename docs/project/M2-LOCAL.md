@@ -7,7 +7,9 @@ gate complete; broader qualification and scientific review remain unclaimed.
 commit/push and actual CI verification. The prepared D015 state is preserved at
 f4d8866; later payload/copy instrumentation and process-failure checks passed
 47 Rust and 34 Python/native tests locally. Under D018, publication and actual
-Linux/macOS CI succeeded for da92bc9. See [CI exit evidence](CI-VALIDATION.md).
+Linux/macOS CI succeeded for da92bc9. D019's Node.js 24 action migration at
+dc46c2b passed a fresh run on both targets without the Node.js 20 warnings;
+the hosted macOS capacity notice remains. See [CI exit evidence](CI-VALIDATION.md).
 
 The owner instructed continued development and will arrange the final university
 review. This defers external scientific review; it does not establish scientific
@@ -125,7 +127,7 @@ the 1.25 manual reviewed during M1 and is not a platform support matrix.
 | Independent server | Q1–Q5 through real local htsget-rs; full supervised decode and exact declared filtering matched truth |
 | Independent baselines | HTSlib's own htsget ticket/block retrieval and direct indexed HTSlib both matched the same five cases |
 | Resource probe | One 64 MiB opaque transfer in each of two fresh client processes; byte count/SHA-256 matched, server RSS excluded |
-| CI | Actual Linux/macOS run succeeded at da92bc9; each passed the suites, real-server/baseline and resource gates; artifacts source-checked and archived |
+| CI | Initial da92bc9 and Node.js 24 migration dc46c2b runs succeeded on Linux/macOS; each passed the suites, real-server/baseline and resource gates; artifacts source-checked and archived |
 | Documentation/assets | 158 local Markdown file links resolved; SVG structure/accessibility and evidence source hashes checked; updated architecture/lifecycle PNG renders inspected |
 
 Source and method details: [interoperability report](evidence/2026-11-27-interop.json),

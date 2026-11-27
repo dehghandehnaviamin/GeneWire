@@ -350,3 +350,14 @@ Decisions record rationale and limits, not implementation claims.
 - **Verification:** YAML/input/runtime metadata checked before push. Record actual
   run results and annotation counts after execution; do not infer their absence
   from a local configuration change.
+- **Observed outcome:** dc46c2b8eb045149de396f439f6e4c445cf6ceba passed run
+  46021619658 on Ubuntu and macOS. Each passed 47 Rust and 34 Python/native tests
+  without skips, independent-server Q1–Q5 and both 64 MiB resource modes.
+  Downloaded report hashes matched the tested source; normalized reports and
+  workflow hash are [archived](evidence/ci-46021619658/summary.json).
+  Both jobs have zero warning annotations; Ubuntu has no annotations and macOS
+  retains only the hosted-capacity notice. Logs contain no Node.js 20 warning.
+- **Evidence publication:** The final update changes only documentation and
+  synthetic evidence. Verify all implementation/build/workflow inputs remain
+  byte-identical to dc46c2b and use a docs-only CI skip. Attribute successful CI
+  to the tested revision; do not imply another run for the evidence commit.

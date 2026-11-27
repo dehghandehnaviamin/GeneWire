@@ -42,6 +42,8 @@ later local M2 increment introduces the partial client described above.
 
 - Upgraded all four CI actions to official Node.js 24 releases pinned by commit;
   kept the Rust/Python/uv evaluation versions and Linux/macOS arm64 matrix.
+  Fresh CI passed on both runners without Node.js 20 warning annotations;
+  the hosted macOS capacity notice remains.
 - M0 publication/owner continuation recorded; M1 is a draft for review.
 - Three conceptual diagrams now show the proposed regional-streaming subset and
   distinguish transport completion from analysis/oracle outcomes.

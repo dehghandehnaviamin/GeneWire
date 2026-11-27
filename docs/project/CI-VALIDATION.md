@@ -1,16 +1,17 @@
 # M2 cross-platform CI evidence
 
 Evaluation date: 2026-11-27. The narrow reference implementation at
-[da92bc9](https://github.com/dehghandehnaviamin/GeneWire/commit/da92bc9a1d56b51bed7f7035e980c71da026b424)
-passed [workflow 45995255517](https://github.com/dehghandehnaviamin/GeneWire/actions/runs/45995255517).
+[dc46c2b](https://github.com/dehghandehnaviamin/GeneWire/commit/dc46c2b8eb045149de396f439f6e4c445cf6ceba)
+passed [workflow 46021619658](https://github.com/dehghandehnaviamin/GeneWire/actions/runs/46021619658)
+after the Node.js 24 action migration.
 Both jobs finished with success. This evidence qualifies that tested revision;
 later implementation or workflow changes require their own checks. The archived
 result is not a substitute for observing subsequent workflow runs.
 
 | Observed job | Rust | Python/native | Skips | Runtime |
 | --- | --- | --- | --- | --- |
-| [Ubuntu](https://github.com/dehghandehnaviamin/GeneWire/actions/runs/45995255517/job/140492922731) | 47 passed | 34 passed | 0 | Ubuntu 26.04.1 x86_64, CPython 3.14.10 |
-| [macOS](https://github.com/dehghandehnaviamin/GeneWire/actions/runs/45995255517/job/140492923229) | 47 passed | 34 passed | 0 | macOS 26.7.2 arm64, CPython 3.14.10 |
+| [Ubuntu](https://github.com/dehghandehnaviamin/GeneWire/actions/runs/46021619658/job/140582420528) | 47 passed | 34 passed | 0 | Ubuntu 26.04.1 x86_64, CPython 3.14.10 |
+| [macOS](https://github.com/dehghandehnaviamin/GeneWire/actions/runs/46021619658/job/140582420004) | 47 passed | 34 passed | 0 | macOS 26.7.2 arm64, CPython 3.14.10 |
 
 Both used Rust 1.93.0, uv 0.13.10, locked project dependencies, pysam 0.24.1 /
 HTSlib 1.24, and independently built the pinned htsget-rs source. Each passed
@@ -20,16 +21,23 @@ probe in both caller-retention modes.
 
 ## Permanent evidence
 
-[Run summary](evidence/ci-45995255517/summary.json) records job/commit/artifact
+[Run summary](evidence/ci-46021619658/summary.json) records job/commit/artifact
 identity, observed test counts and archive/report hashes. The GitHub-reported ZIP
 digest is metadata; the downloaded JSON was independently checked against source
 file hashes and result gates. Archived JSON adds source_commit provenance and is
 not claimed byte-identical to the original ZIP entries.
 
-- Ubuntu: [interoperability](evidence/ci-45995255517/ubuntu-interop.json),
-  [resources](evidence/ci-45995255517/ubuntu-resources.json).
-- macOS: [interoperability](evidence/ci-45995255517/macos-interop.json),
-  [resources](evidence/ci-45995255517/macos-resources.json).
+- Ubuntu: [interoperability](evidence/ci-46021619658/ubuntu-interop.json),
+  [resources](evidence/ci-46021619658/ubuntu-resources.json).
+- macOS: [interoperability](evidence/ci-46021619658/macos-interop.json),
+  [resources](evidence/ci-46021619658/macos-resources.json).
+
+The initial successful run for da92bc9 remains preserved in its
+[historical summary](evidence/ci-45995255517/summary.json). Its two Node.js 20
+warnings remain in that run's history; the new run has zero warning annotations,
+zero Ubuntu annotations and one macOS capacity notice. Job logs also contain no
+Node.js 20 deprecation warning. The latest summary binds the tested workflow hash
+as well as implementation hashes and records the actual annotation messages.
 
 Each returned the expected five name/multiplicity sets, with successful full BAM
 decode/filter and cleanup. For both resource modes on both runners, each named
@@ -62,7 +70,7 @@ Scientific review remains deferred to the owner's university process.
 
 ## Action runtime maintenance
 
-The first successful run above reported Node.js 20 deprecation warnings for the
+The initial successful run reported Node.js 20 deprecation warnings for the
 four pinned actions. D019 upgrades them to immutable official releases whose
 `action.yml` explicitly selects Node.js 24:
 
@@ -75,5 +83,8 @@ four pinned actions. D019 upgrades them to immutable official releases whose
 
 The hosted runner's separate macOS arm64 capacity notice concerns queue time.
 The matrix retains arm64 coverage; it does not substitute an Intel runner or hide
-annotations. The runtime change requires a new observed CI run, recorded after
-completion; the earlier run is retained as historical evidence.
+annotations. Run 46021619658 completed successfully on both targets and verified
+the migration without those warnings. Only the infrastructure capacity notice
+remains. The final evidence-only publication preserves all implementation,
+build and workflow inputs from dc46c2b and uses a docs-only CI skip; the observed
+success above belongs to dc46c2b, not to an unrun documentation commit.

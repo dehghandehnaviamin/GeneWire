@@ -94,6 +94,8 @@ basis; the full contract is not verified. See D013 in the decision register.
   allocator/TLS/HTTP/JSON memory and crash recovery remain distinct exclusions.
 - [x] Prepare pinned CI workflow with Rust/Python and independent-server checks.
 - [x] Publish under D016 approval and verify actual Linux/macOS CI before M2 exit.
+- [x] Upgrade the four action pins to Node.js 24; verify a fresh successful
+  Linux/macOS run and archive results with no Node.js 20 warnings (D019).
 
 See [M2 evidence/gaps](M2-LOCAL.md) and [working local commands](../development.md).
 On 2026-11-27 the owner authorized integrating the prepared history into main and

@@ -16,7 +16,7 @@ Snapshot: 2026-11-27. Status must be updated when verified evidence changes.
 | M0 research | Published; direction accepted for M1 | [5e28a62](https://github.com/dehghandehnaviamin/GeneWire/commit/5e28a6283fed0445b89c09df17c3ec3087a6c5ec); no independent domain sign-off or experiments |
 | M1 design | Direction adopted for local prototype | [RFC 0001](../rfcs/0001-regional-streaming-profile.md); complete contract remains provisional |
 | M2 reference implementation | Narrow engineering gate complete | Rust/Python byte reader and supervised BAM adapter; [exit evidence and limits](CI-VALIDATION.md) |
-| Testing and CI | Verified on the observed Linux/macOS runners | Each passed 47 Rust and 34 Python/native tests without skips; [workflow 45995255517](https://github.com/dehghandehnaviamin/GeneWire/actions/runs/45995255517) |
+| Testing and CI | Verified on the observed Linux/macOS runners with Node.js 24 actions | Each passed 47 Rust and 34 Python/native tests without skips; [workflow 46021619658](https://github.com/dehghandehnaviamin/GeneWire/actions/runs/46021619658); no warning annotations, one macOS capacity notice |
 | Scientific evaluation | Tiny controlled oracle exercised; university review deferred | Q1–Q5 and negative controls; owner will arrange final review, no independent sign-off yet |
 | Performance and interoperability | Narrow local evidence | Pinned real htsget-rs and two HTSlib paths matched Q1–Q5; one 64 MiB opaque resource probe per retention mode; no ranking or full resource certification |
 | Release and security support | No release | No supported version or production readiness |
@@ -79,3 +79,9 @@ is complete, with the [scope and permanent raw evidence](CI-VALIDATION.md)
 recorded. Earlier pending/local-only statements above describe their respective
 snapshots. M3–M6 remain planned and university review remains pending. No software
 release or deployment has occurred.
+
+**D019 verified update:** dc46c2b upgrades the four action pins to declared
+Node.js 24 runtimes. Fresh run 46021619658 succeeded on both runners with the same
+test counts, source-checked Q1–Q5 and resource gates. The Node.js 20 warnings are
+absent; the macOS hosted-capacity notice remains. The final evidence-only update
+does not change the tested implementation or workflow; no later milestone starts.

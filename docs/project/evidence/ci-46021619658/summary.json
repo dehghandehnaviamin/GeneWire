@@ -1,0 +1,84 @@
+{
+  "source_commit": "dc46c2b8eb045149de396f439f6e4c445cf6ceba",
+  "workflow_run_id": 46021619658,
+  "workflow_url": "https://github.com/dehghandehnaviamin/GeneWire/actions/runs/46021619658",
+  "workflow_conclusion": "success",
+  "rust_toolchain": "1.93.0",
+  "uv": "0.13.10",
+  "scope": "Narrow single-region BAM reference path; no release, full conformance, broad platform support or comparative performance claim",
+  "jobs": [
+    {
+      "runner": "ubuntu",
+      "job_id": 140582420528,
+      "job_url": "https://github.com/dehghandehnaviamin/GeneWire/actions/runs/46021619658/job/140582420528",
+      "conclusion": "success",
+      "rust_tests_passed": 47,
+      "python_tests_passed": 34,
+      "skipped_tests": 0,
+      "artifact_id": 15208412861,
+      "artifact_url": "https://github.com/dehghandehnaviamin/GeneWire/actions/runs/46021619658/artifacts/15208412861",
+      "github_reported_archive_sha256": "51bd84a43c6f522e1c3d07547f6403b4107a47eacf49f29db2be24d78819e3fd",
+      "annotations": [],
+      "archived_report_sha256": {
+        "ubuntu-interop.json": "7eaa0552bfe4ee16679f3da631b87787e7916fcb6629742e45b0f32647f7e66a",
+        "ubuntu-resources.json": "9e5cebdc9b39a135a60cf4909b2d18447cc36a1812ade7aed973d26f51a25000"
+      },
+      "platform": "Linux-7.0.0-1020-azure-x86_64-with-glibc2.43",
+      "python": "3.14.10",
+      "pysam": "0.24.1",
+      "htslib_samtools": "1.24"
+    },
+    {
+      "runner": "macos",
+      "job_id": 140582420004,
+      "job_url": "https://github.com/dehghandehnaviamin/GeneWire/actions/runs/46021619658/job/140582420004",
+      "conclusion": "success",
+      "rust_tests_passed": 47,
+      "python_tests_passed": 34,
+      "skipped_tests": 0,
+      "artifact_id": 15207969946,
+      "artifact_url": "https://github.com/dehghandehnaviamin/GeneWire/actions/runs/46021619658/artifacts/15207969946",
+      "github_reported_archive_sha256": "c3b444ad0fee31785c6e33e71a94a80b0dc47c7de12675703767322bf7ba04d8",
+      "annotations": [
+        {
+          "annotation_level": "notice",
+          "title": "",
+          "message": "Due to capacity constraints, jobs targeting macOS arm64 runners may experience longer queue times."
+        }
+      ],
+      "archived_report_sha256": {
+        "macos-interop.json": "f6b58ba0bdd6fd465f656177bfdd9f04233cf080cf05469d79726f7dbafb9106",
+        "macos-resources.json": "3c81173006dde9b3705b55683242d2a0b60faabd3208233dce1e1eb9794ff294"
+      },
+      "platform": "macOS-26.7.2-arm64-arm-64bit-Mach-O",
+      "python": "3.14.10",
+      "pysam": "0.24.1",
+      "htslib_samtools": "1.24"
+    }
+  ],
+  "implementation_file_sha256": {
+    "Cargo.lock": "9234d1600e45afcb4ddd1c28f722ca1eddc9e9425212c2c1ce4f2b02e0e18554",
+    "Cargo.toml": "026670dc1d647e0a7f0c7873144db075ba107fe8849ad010a045cc7f7d1390aa",
+    "crates/genewire-core/Cargo.toml": "f5599b71db59b5838a4cc91b8b3051f7e7b112adaab4a73868d057dbbaa8f308",
+    "crates/genewire-core/src/error.rs": "97663d71a93caee3884469bce0c92566e7ff4b6cb5c12342b25b2c539d6eeb3a",
+    "crates/genewire-core/src/lib.rs": "3e3db4badd586ebad801da94d62fbbcd848107c14f9c7dc47d97d67ae5a1836c",
+    "crates/genewire-core/src/model.rs": "11410892db931f6dfb58f3e9ab6459819b73d108a3f779e8ac5fc0d93572880b",
+    "crates/genewire-core/src/network.rs": "bafeb1ab2635a0a18483dcb58af2379f606077b4a0df58cb2f41e046cc470d85",
+    "crates/genewire-core/src/stream.rs": "065632185a8357b99144b74ff3597d005e829dfd964f6e240a3313265148b157",
+    "crates/genewire-core/src/ticket.rs": "bab65f2b5fd1035ca95f5115c7f2fa0cb5e412f46da56a3af77efb57ef72690f",
+    "crates/genewire-core/tests/streaming.rs": "9ecc2db895995abb12e12464641f0976bf23f4bb7b61973e06113b0dc9ccc41d",
+    "crates/genewire-python/Cargo.toml": "ff4d51ec9cbb2ed3d7f66e53c0b43a96b559dc914dedce8783f768f41d410683",
+    "crates/genewire-python/src/lib.rs": "51575b3a61f0b207b0a90a2a6a9c45642952a06ebbfb11fb9fe70d9ae0b8805a",
+    "pyproject.toml": "bcc8d22cb29e9ed6cd1cc899371375550333e1661f7936559634b159486f6e8a",
+    "python/genewire/__init__.py": "9facff4caf978c20cb647234354941e4e7e3cf7f0927e1d9cb86cccbadfcab7b",
+    "python/genewire/_bam_consumer.py": "5f5f39912652996a6f132d36ed11ae012d755973c2cd5a91e91f1bf30362b1a8",
+    "python/genewire/analysis.py": "dc63bc03f3aa6bfc0399bbf614ddb1946509c7574db10e2d61893bbe06094647",
+    "tests/test_analysis.py": "0c20632788c69184b5683632b28d8eee229529e5c9a2c7e398e34f9201320a48",
+    "tests/test_python_stream.py": "ccf8ac9201df3fbed1114de39f7bebed0cd49d215a93b8020415a652928699af",
+    "tools/_evidence.py": "303159ca657f3e5f81ef87e647a33b87c0044fed30e2e34541dca5d945e2facb",
+    "tools/check_interop.py": "261e081732ee5ac8733a15d6715e167bbdd3d37c1271d4ad61fb5ff3659145e5",
+    "tools/check_resources.py": "820923ee0fdbca3620210a0246184e102c127586167adc3e216f49f9ad22ab28",
+    "uv.lock": "074b916b880b80af240d199837139fe8d8737d229df903eabf083cc75d0417e5"
+  },
+  "workflow_file_sha256": "599b045613b5944f31a775a23f2bfcd2c78cde9dd6db9a4962c98dbbf9e5d2a0"
+}
