@@ -941,12 +941,20 @@ fn ticket_phase_budget_does_not_restart_after_a_retry() {
     let attempts = Arc::new(AtomicUsize::new(0));
     let seen = attempts.clone();
     let s = Server::new(move |_, _| {
-        seen.fetch_add(1, Ordering::SeqCst);
-        thread::sleep(Duration::from_millis(200));
-        response("503 Busy", "Retry-After: 0\r\n", b"")
+        if seen.fetch_add(1, Ordering::SeqCst) == 0 {
+            thread::sleep(Duration::from_secs(2));
+            response("503 Busy", "Retry-After: 0\r\n", b"")
+        } else {
+            // Each response fits a fresh five-second budget, but the combined
+            // six-second path must exceed the single shared ticket deadline.
+            // Leave seconds of admission headroom on busy hosted runners; the
+            // former 200/300 ms fixture could expire before the first retry.
+            thread::sleep(Duration::from_secs(4));
+            ticket(json!([{"url":"data:;base64,QUI="}]))
+        }
     });
     let mut cfg = s.config();
-    cfg.limits.ticket_timeout = Duration::from_millis(300);
+    cfg.limits.ticket_timeout = Duration::from_secs(5);
     let c = Client::new(cfg).unwrap();
     let r = c.open(query()).unwrap();
     assert_eq!(

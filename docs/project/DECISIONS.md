@@ -400,3 +400,14 @@ Decisions record rationale and limits, not implementation claims.
   source hashes and annotations before claiming cross-platform qualification.
 - **Limits:** This approval does not close the full M3 milestone or authorize
   release/deployment, power-loss claims, broader APIs or scientific sign-off.
+- **First CI observation:** Run 46034485690 failed on macOS before the M3 tests:
+  `ticket_phase_budget_does_not_restart_after_a_retry` observed zero retries when
+  the old 300 ms total deadline expired before its delayed first response could
+  admit a retry. This is a pre-existing wall-clock fixture with only 100 ms
+  admission headroom, not evidence of a recovery failure.
+- **CI fix:** Preserve the shared-phase deadline behavior. Give the fixture a
+  five-second phase budget, two-second initial transient response and four-second
+  successful retry. Each response fits an incorrectly reset per-attempt budget,
+  while their six-second total must fail the correct shared deadline. This widens
+  initial scheduling headroom and strengthens the negative control without
+  changing production timeouts or removing the retry-count assertions.
