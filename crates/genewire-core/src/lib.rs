@@ -9,4 +9,4 @@ mod ticket;
 pub use error::{Category, Error, Result};
 pub use model::{Configuration, Destination, Limits, MAX_CHUNK, Query, UpstreamProfile};
 pub use network::ip;
-pub use stream::{CapabilityEvidence, Cleanup, Client, Phase, Report, State, Stream};
+pub use stream::{CapabilityEvidence, Cleanup, Client, MemoryReport, Phase, Report, State, Stream};

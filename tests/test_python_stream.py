@@ -114,6 +114,9 @@ class PythonStreamTests(unittest.TestCase):
                 self.assertEqual(result, b"abcdefghijklmnop")
                 self.assertEqual(saved, b"ab")
                 self.assertEqual(stream.finish().state, "TransportComplete")
+                self.assertEqual(stream.finish().memory.rust_output_copy_bytes, len(result))
+                self.assertEqual(stream.finish().memory.python_output_copy_bytes, len(result))
+                self.assertGreater(stream.finish().memory.peak_payload_bytes, 0)
                 self.assertEqual(stream.finish().phase, "Draining")
                 self.assertFalse(stream.finish().may_have_partial_output)
                 self.assertEqual(stream.result().source_consistency, "Unverified")
@@ -121,6 +124,7 @@ class PythonStreamTests(unittest.TestCase):
                 self.assertEqual(stream.result().capability_evidence, "Configured")
                 self.assertEqual(stream.read_chunk(), b"")
             self.assertTrue(stream.result().cleanup_complete)
+            self.assertEqual(stream.result().memory.current_payload_bytes, 0)
             self.assertEqual(len(seen), 2)
 
     @unittest.skipUnless(shutil.which("openssl"), "OpenSSL CLI required for temporary certificate")
@@ -167,6 +171,17 @@ class PythonStreamTests(unittest.TestCase):
             )
             result = subprocess.run([sys.executable, "-c", code, origin], capture_output=True, timeout=10)
             self.assertEqual(result.returncode, 0, result.stderr.decode(errors="replace"))
+
+    def test_abrupt_process_exit_with_partial_native_output_does_not_hang(self):
+        with service() as (origin, _, _):
+            code = (
+                "from genewire import Client,Destination; import os,sys; "
+                "o=sys.argv[1]; c=Client(o+'/reads/',{o:Destination(['127.0.0.1'])},loopback_http_for_tests=True); "
+                "s=c.open('s','chr',0,1); assert s.read_chunk(1)==b'A'; "
+                "assert s.result().state=='Fetching'; os._exit(17)"
+            )
+            result = subprocess.run([sys.executable, "-c", code, origin], capture_output=True, timeout=5)
+            self.assertEqual(result.returncode, 17, result.stderr.decode(errors="replace"))
 
     def test_ticket_retries_are_reported_through_the_native_boundary(self):
         with service(transient_tickets=2) as (origin, seen, _), client(origin) as c, c.open("s", "chr", 0, 1) as stream:

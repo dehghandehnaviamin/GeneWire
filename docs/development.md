@@ -94,6 +94,15 @@ cleanup_complete is retained for compatibility. CleanupTimeout leaves InProgress
 and occupies the client slot until a later close actually completes. A terminal
 transport error is preserved even if a later cleanup operation also fails.
 
+Report.memory exposes current_payload_bytes, peak_payload_bytes,
+largest_http_fragment_bytes, rust_output_copy_bytes and python_output_copy_bytes.
+Payload counts include retained inline blocks, the original accepted extent of
+a sliced pending fragment, and a native output Vec until handoff. The largest
+HTTP fragment is observed even if admission rejects it. Copy counters name the
+Rust read-Vec and Python-owned-bytes operations, excluding JSON/base64/TLS/HTTP
+internals and allocator slack. Read after exhaustion/close for stable comparison;
+concurrent handoff can temporarily precede the corresponding Python copy count.
+
 ## Optional supervised BAM output
 
 Import filter_bam and AnalysisReport from genewire.analysis. With an open stream,
@@ -118,6 +127,9 @@ Blocking filesystem/kernel operations are not given a hard termination guarantee
 The supervisor currently requires POSIX and is locally exercised on macOS;
 Linux awaits CI. Windows, arbitrary spawned descendants and clinical analysis are
 outside this adapter's qualification. No general-purpose subprocess API is public.
+SIGINT cleanup and abrupt decoder death have dedicated checks. A hard-killed
+supervisor cannot run finalizers or promise removal of its provisional files;
+crash recovery is outside the current contract.
 
 ## Independent server and resource checks
 

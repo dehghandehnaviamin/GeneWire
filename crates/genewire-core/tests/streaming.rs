@@ -1035,3 +1035,49 @@ fn a_fresh_query_after_exposed_failure_never_splices_the_old_prefix() {
     assert_eq!(blocks.load(Ordering::SeqCst), 2);
     fresh.close().unwrap();
 }
+
+#[test]
+fn mixed_large_blocks_reserve_inline_and_pending_payload_without_replay() {
+    use base64::{Engine, engine::general_purpose::STANDARD};
+    let prefix = STANDARD.encode(vec![b'A'; 200_000]);
+    let suffix = STANDARD.encode(vec![b'C'; 200_000]);
+    let server = Server::new(move |req, origin| {
+        if req.starts_with("GET /reads/") {
+            ticket(json!([
+                {"url":format!("data:;base64,{prefix}")},
+                {"url":format!("{origin}/block")},
+                {"url":format!("data:;base64,{suffix}")}
+            ]))
+        } else {
+            response("200 OK", "", &vec![b'B'; 600_000])
+        }
+    });
+    let client = Client::new(server.config()).unwrap();
+    let stream = client.open(query()).unwrap();
+    let mut offset = 0;
+    loop {
+        let bytes = stream.read_chunk(8192).unwrap();
+        if bytes.is_empty() {
+            break;
+        }
+        for byte in &bytes {
+            let expected = if offset < 200_000 {
+                b'A'
+            } else if offset < 800_000 {
+                b'B'
+            } else {
+                b'C'
+            };
+            assert_eq!(*byte, expected);
+            offset += 1;
+        }
+        assert!(stream.result().memory.peak_payload_bytes <= 2 * 1024 * 1024);
+    }
+    assert_eq!(offset, 1_000_000);
+    let memory = stream.finish().unwrap().memory;
+    assert_eq!(memory.current_payload_bytes, 0);
+    assert_eq!(memory.rust_output_copy_bytes, offset);
+    assert!(memory.largest_http_fragment_bytes > 0);
+    stream.close().unwrap();
+    assert_eq!(stream.result().memory.current_payload_bytes, 0);
+}

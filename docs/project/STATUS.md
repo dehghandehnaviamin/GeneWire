@@ -16,7 +16,7 @@ Snapshot: 2026-11-27. Status must be updated when verified evidence changes.
 | M0 research | Published; direction accepted for M1 | [5e28a62](https://github.com/dehghandehnaviamin/GeneWire/commit/5e28a6283fed0445b89c09df17c3ec3087a6c5ec); no independent domain sign-off or experiments |
 | M1 design | Direction adopted for local prototype | [RFC 0001](../rfcs/0001-regional-streaming-profile.md); complete contract remains provisional |
 | M2 reference implementation | Local continuation; milestone in progress | Rust/Python byte reader and supervised BAM adapter; configured-profile, phase/partial-output and cleanup reports; [evidence and gaps](M2-LOCAL.md) |
-| Testing and CI | Local checks passed; CI prepared but unexecuted | 45 Rust and 31 Python/native tests passed without skips on this runner; no remote workflow result |
+| Testing and CI | Follow-up local checks passed; CI publication authorized | 47 Rust and 34 Python/native tests passed without skips on this runner; remote result pending |
 | Scientific evaluation | Tiny controlled oracle exercised; university review deferred | Q1–Q5 and negative controls; owner will arrange final review, no independent sign-off yet |
 | Performance and interoperability | Narrow local evidence | Pinned real htsget-rs and two HTSlib paths matched Q1–Q5; one 64 MiB opaque resource probe per retention mode; no ranking or full resource certification |
 | Release and security support | No release | No supported version or production readiness |
@@ -66,3 +66,8 @@ marked complete; no new push, release or deployment occurred.
 
 The [university review handoff](UNIVERSITY-REVIEW.md) identifies the current
 demonstration, original truth cases, reproducible evidence and review questions.
+
+D016 authorizes publishing the prepared M2 work and necessary follow-up fixes.
+D017 adds explicit accepted-payload/output-copy counters and actual process
+failure checks. The initial implementation is preserved at f4d8866. Publication
+and CI results will be appended when observed; no release/deployment is included.

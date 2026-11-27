@@ -87,10 +87,13 @@ basis; the full contract is not verified. See D013 in the decision register.
 - [x] Measure one 64 MiB opaque transfer per caller-retention mode; exercise
   configured-CA TLS, hostname rejection, IPv6 pins and normal interpreter shutdown.
 - [x] Inspect and record the current target's resolved Rust feature/license graph.
-- [ ] Complete native payload/copy accounting, broader dependency qualification
-  and additional platform/lifetime/failure variants.
+- [x] Add explicit accepted-payload/output-copy counters, test retained fragment
+  extents and mixed large blocks, and check the counters on 64 MiB transfers.
+- [x] Exercise abrupt decoder/native-process exit and supervisor SIGINT cleanup.
+- [ ] Qualify the current counters/failure checks on CI and record their scope;
+  allocator/TLS/HTTP/JSON memory and crash recovery remain distinct exclusions.
 - [x] Prepare pinned CI workflow with Rust/Python and independent-server checks.
-- [ ] Publish and exercise CI under later publication authorization before M2 exit.
+- [ ] Publish under D016 approval and verify actual Linux/macOS CI before M2 exit.
 
 See [M2 evidence/gaps](M2-LOCAL.md) and [working local commands](../development.md).
 On 2026-11-27 the owner authorized integrating the prepared history into main and

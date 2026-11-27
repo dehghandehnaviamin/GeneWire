@@ -1,6 +1,9 @@
 use genewire_core as core;
 use pyo3::{create_exception, exceptions::PyRuntimeError, prelude::*, types::PyBytes};
-use std::time::Duration;
+use std::{
+    sync::atomic::{AtomicU64, Ordering},
+    time::Duration,
+};
 
 create_exception!(_native, GeneWireError, PyRuntimeError);
 fn error(e: core::Error) -> PyErr {
@@ -59,7 +62,10 @@ impl NativeClient {
         py.detach(|| {
             self.inner
                 .open(core::Query::new(&object, &reference, start, end)?)
-                .map(|inner| NativeStream { inner })
+                .map(|inner| NativeStream {
+                    inner,
+                    python_copy_bytes: AtomicU64::new(0),
+                })
         })
         .map_err(error)
     }
@@ -71,7 +77,9 @@ impl NativeClient {
 #[pyclass(frozen, module = "genewire._native")]
 struct NativeStream {
     inner: core::Stream,
+    python_copy_bytes: AtomicU64,
 }
+type MemorySnapshot = (u64, u64, u64, u64, u64);
 type Snapshot = (
     String,
     u64,
@@ -84,8 +92,9 @@ type Snapshot = (
     Option<String>,
     String,
     String,
+    MemorySnapshot,
 );
-fn snapshot(r: core::Report) -> Snapshot {
+fn snapshot(r: core::Report, python_copy_bytes: u64) -> Snapshot {
     (
         format!("{:?}", r.state),
         r.bytes_delivered,
@@ -98,6 +107,13 @@ fn snapshot(r: core::Report) -> Snapshot {
         r.cleanup_error.map(|e| format!("{:?}", e.category)),
         format!("{:?}", r.upstream_profile),
         format!("{:?}", r.capability_evidence),
+        (
+            r.memory.current_payload_bytes,
+            r.memory.peak_payload_bytes,
+            r.memory.largest_http_fragment_bytes,
+            r.memory.rust_output_copy_bytes,
+            python_copy_bytes,
+        ),
     )
 }
 #[pymethods]
@@ -106,13 +122,22 @@ impl NativeStream {
         let bytes = py
             .detach(|| self.inner.read_chunk(max_bytes))
             .map_err(error)?;
-        Ok(PyBytes::new(py, &bytes))
+        let output = PyBytes::new(py, &bytes);
+        self.python_copy_bytes
+            .fetch_add(bytes.len() as u64, Ordering::Relaxed);
+        Ok(output)
     }
     fn result(&self) -> Snapshot {
-        snapshot(self.inner.result())
+        snapshot(
+            self.inner.result(),
+            self.python_copy_bytes.load(Ordering::Relaxed),
+        )
     }
     fn finish(&self) -> PyResult<Snapshot> {
-        self.inner.finish().map(snapshot).map_err(error)
+        self.inner
+            .finish()
+            .map(|r| snapshot(r, self.python_copy_bytes.load(Ordering::Relaxed)))
+            .map_err(error)
     }
     fn cancel(&self) {
         self.inner.cancel();

@@ -50,6 +50,15 @@ pub struct Report {
     pub cleanup_error: Option<Error>,
     pub upstream_profile: UpstreamProfile,
     pub capability_evidence: CapabilityEvidence,
+    pub memory: MemoryReport,
+}
+/// Logical data-plane byte accounting, not allocator/TLS/process memory.
+#[derive(Clone, Debug, Default)]
+pub struct MemoryReport {
+    pub current_payload_bytes: u64,
+    pub peak_payload_bytes: u64,
+    pub largest_http_fragment_bytes: u64,
+    pub rust_output_copy_bytes: u64,
 }
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum CapabilityEvidence {
@@ -77,6 +86,20 @@ struct Shared {
     cancel: CancellationToken,
 }
 impl Shared {
+    fn payload(&self, retained: usize, output_copy: usize, fragment: usize) {
+        let mut r = lock(&self.report);
+        r.memory.current_payload_bytes = (retained + output_copy) as u64;
+        r.memory.peak_payload_bytes = r
+            .memory
+            .peak_payload_bytes
+            .max(r.memory.current_payload_bytes);
+        r.memory.largest_http_fragment_bytes =
+            r.memory.largest_http_fragment_bytes.max(fragment as u64);
+        r.memory.rust_output_copy_bytes = r
+            .memory
+            .rust_output_copy_bytes
+            .saturating_add(output_copy as u64);
+    }
     fn fail(&self, error: Error) {
         let mut r = lock(&self.report);
         if !r.state.terminal() {
@@ -186,6 +209,7 @@ impl Client {
                 cleanup_error: None,
                 upstream_profile: self.owner.config.upstream_profile,
                 capability_evidence: CapabilityEvidence::Configured,
+                memory: MemoryReport::default(),
             }),
             cancel: CancellationToken::new(),
         });
@@ -206,6 +230,7 @@ impl Client {
                 blocks: None,
                 current: None,
                 pending: Bytes::new(),
+                pending_storage_bytes: 0,
                 accepted: 0,
                 exposed: false,
                 block_received: 0,
@@ -329,6 +354,7 @@ impl Stream {
             Ok(data) => {
                 let mut r = lock(&shared.report);
                 // This lock is the public handoff's linearization point.
+                r.memory.current_payload_bytes = reader.retained_payload() as u64;
                 if let Some(e) = &r.error {
                     return Err(e.clone());
                 }
@@ -347,6 +373,7 @@ impl Stream {
                 Ok(data)
             }
             Err(error) => {
+                shared.payload(reader.retained_payload(), 0, 0);
                 shared.fail(error);
                 Err(lock(&shared.report)
                     .error
@@ -384,7 +411,9 @@ impl Stream {
             if let Ok(mut reader) = self.inner.reader.try_lock() {
                 reader.current = None;
                 reader.pending = Bytes::new();
+                reader.pending_storage_bytes = 0;
                 reader.blocks = None;
+                self.inner.shared.payload(0, 0, 0);
                 break;
             }
             if Instant::now() >= deadline {
@@ -435,6 +464,8 @@ struct Reader {
     blocks: Option<VecDeque<Block>>,
     current: Option<Response>,
     pending: Bytes,
+    // A sliced Bytes view retains the whole accepted fragment allocation extent.
+    pending_storage_bytes: usize,
     accepted: u64,
     exposed: bool,
     block_received: u64,
@@ -443,6 +474,20 @@ struct Reader {
     expected: Option<u64>,
 }
 impl Reader {
+    fn inline_bytes(&self) -> usize {
+        self.blocks
+            .as_ref()
+            .into_iter()
+            .flatten()
+            .map(|block| match block {
+                Block::Inline(data) => data.len(),
+                _ => 0,
+            })
+            .sum()
+    }
+    fn retained_payload(&self) -> usize {
+        self.pending_storage_bytes + self.inline_bytes()
+    }
     async fn read(
         &mut self,
         config: &Configuration,
@@ -458,15 +503,20 @@ impl Reader {
                     .map_err(|_| Error::new(Category::DeadlineExceeded))??
                     .into(),
             );
+            shared.payload(self.retained_payload(), 0, 0);
             shared.state(State::Fetching);
         }
         loop {
             if !self.pending.is_empty() {
-                return Ok(self.pending.split_to(max.min(self.pending.len())).to_vec());
+                let output = self.pending.split_to(max.min(self.pending.len())).to_vec();
+                shared.payload(self.retained_payload(), output.len(), 0);
+                return Ok(output);
             }
             // An empty Bytes view may still retain its entire prior allocation.
             // Release it before awaiting the next library-owned HTTP fragment.
             self.pending = Bytes::new();
+            self.pending_storage_bytes = 0;
+            shared.payload(self.retained_payload(), 0, 0);
             if let Some(response) = self.current.as_mut() {
                 // Start the idle clock for this active poll, excluding caller pauses.
                 let chunk = tokio::time::timeout(config.limits.idle_timeout, response.chunk())
@@ -474,19 +524,11 @@ impl Reader {
                     .map_err(|_| Error::new(Category::DeadlineExceeded))?;
                 match chunk {
                     Ok(Some(bytes)) => {
+                        shared.payload(self.retained_payload(), 0, bytes.len());
                         // Library body fragments are not public chunk boundaries.
                         // Reserve space for remaining inline bytes and one owned
                         // public read copy in the draft 2 MiB payload window.
-                        let inline_bytes: usize = self
-                            .blocks
-                            .as_ref()
-                            .into_iter()
-                            .flatten()
-                            .map(|block| match block {
-                                Block::Inline(data) => data.len(),
-                                _ => 0,
-                            })
-                            .sum();
+                        let inline_bytes = self.inline_bytes();
                         if bytes.len() > 2 * 1024 * 1024 - MAX_CHUNK - inline_bytes {
                             return err(Category::ResourceLimit);
                         }
@@ -504,7 +546,9 @@ impl Reader {
                                 Category::ResponseInvalid
                             });
                         }
+                        self.pending_storage_bytes = bytes.len();
                         self.pending = bytes;
+                        shared.payload(self.retained_payload(), 0, 0);
                     }
                     Ok(None) => {
                         if self.expected.is_some_and(|n| self.block_received != n) {
@@ -545,7 +589,9 @@ impl Reader {
                     }
                     self.accepted += bytes.len() as u64;
                     self.pending = std::mem::take(bytes);
+                    self.pending_storage_bytes = self.pending.len();
                     self.blocks.as_mut().expect("validated blocks").pop_front();
+                    shared.payload(self.retained_payload(), 0, 0);
                     self.reset_block();
                 }
                 Block::Http {
@@ -850,6 +896,23 @@ mod tests {
             stream.result().error.unwrap().category,
             Category::InternalFailure
         );
+    }
+
+    #[test]
+    fn partial_reads_account_for_the_entire_retained_storage_and_output_copy() {
+        let (_client, stream) = local();
+        assert_eq!(stream.read_chunk(1).unwrap(), b"A");
+        let memory = stream.result().memory;
+        assert_eq!(memory.current_payload_bytes, 2);
+        assert_eq!(memory.peak_payload_bytes, 3);
+        assert_eq!(memory.rust_output_copy_bytes, 1);
+        assert_eq!(stream.read_chunk(1).unwrap(), b"B");
+        // An empty slice still retains the original two-byte backing storage.
+        assert_eq!(stream.result().memory.current_payload_bytes, 2);
+        assert!(stream.read_chunk(1).unwrap().is_empty());
+        assert_eq!(stream.result().memory.current_payload_bytes, 0);
+        assert_eq!(stream.result().memory.rust_output_copy_bytes, 2);
+        stream.close().unwrap();
     }
 
     #[test]

@@ -1,6 +1,9 @@
 """Supervised analysis gates, provisional staging and bounded failure cleanup."""
 import os
+import json
 from pathlib import Path
+import signal
+import subprocess
 import sys
 from tempfile import TemporaryDirectory
 import time
@@ -70,6 +73,70 @@ class AnalysisTests(unittest.TestCase):
                 self.assertFalse(report.output_committed)
                 self.assertTrue(report.cleanup_complete)
                 self.assertEqual(list(Path(directory).iterdir()), [])
+
+    def test_abrupt_decoder_kill_cancels_transport_and_removes_staging(self):
+        with TemporaryDirectory() as directory, service(delay=.3) as (origin, _, _), client(origin) as c:
+            stream = c.open("s", "chr", 0, 1)
+            code = "import os,signal; os.kill(os.getpid(), signal.SIGKILL)"
+            report = _supervise(stream, [sys.executable, "-c", code], Path(directory) / "out")
+            self.assertEqual(report.exit_code, -signal.SIGKILL)
+            self.assertEqual(report.error, "ConsumerFailed")
+            self.assertEqual(report.transport.state, "Cancelled")
+            self.assertTrue(report.cleanup_complete)
+            self.assertEqual(list(Path(directory).iterdir()), [])
+
+    def test_interrupting_the_supervisor_reaps_child_and_closes_the_native_stream(self):
+        code = r'''
+import json,os,sys
+from dataclasses import asdict
+from pathlib import Path
+from genewire import Client,Destination
+from genewire.analysis import _supervise
+origin, directory = sys.argv[1:]
+root=Path(directory)
+client=Client(origin+'/reads/', {origin:Destination(['127.0.0.1'])},loopback_http_for_tests=True)
+stream=client.open('s','chr',0,1)
+read=stream.read_chunk
+def announced_read(size):
+    (root/'ready').touch()
+    return read(size)
+stream.read_chunk=announced_read
+try:
+    _supervise(stream,[sys.executable,'-c','import time; time.sleep(30)'],root/'out')
+except KeyboardInterrupt:
+    reaped=False
+    try:
+        os.waitpid(-1,os.WNOHANG)
+    except ChildProcessError:
+        reaped=True
+    (root/'result.json').write_text(json.dumps({'transport':asdict(stream.result()),'child_reaped':reaped}))
+    client.close()
+    raise SystemExit(130)
+raise SystemExit(99)
+'''
+        with TemporaryDirectory() as directory, service(delay=.5) as (origin, _, _):
+            root = Path(directory)
+            process = subprocess.Popen([sys.executable, "-c", code, origin, directory],
+                                       stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            try:
+                deadline = time.monotonic() + 5
+                while not (root / "ready").exists():
+                    self.assertIsNone(process.poll(), "supervisor exited before input started")
+                    self.assertLess(time.monotonic(), deadline, "input did not start")
+                    time.sleep(.01)
+                process.send_signal(signal.SIGINT)
+                _, errors = process.communicate(timeout=5)
+                self.assertEqual(process.returncode, 130, errors.decode(errors="replace"))
+                result = json.loads((root / "result.json").read_text())
+                self.assertTrue(result["child_reaped"])
+                self.assertEqual(result["transport"]["state"], "Cancelled")
+                self.assertTrue(result["transport"]["cleanup_complete"])
+                self.assertFalse((root / "out").exists())
+                self.assertEqual(list(root.glob("*.partial")), [])
+            finally:
+                if process.poll() is None:
+                    process.kill()
+                    process.communicate(timeout=5)
 
     def test_stalled_process_is_killed_and_a_blocked_native_read_is_cancelled(self):
         with TemporaryDirectory() as directory, service(delay=.5) as (origin, _, _), client(origin) as c:

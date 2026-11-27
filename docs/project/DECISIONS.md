@@ -270,3 +270,32 @@ Decisions record rationale and limits, not implementation claims.
 - **Limits:** No release/deployment or scientific sign-off is implied. Continue
   the narrow synthetic BAM subset; record any remaining unsupported failure or
   resource behavior honestly. University review remains the owner's later step.
+
+## D017 — Account for accepted payload/copies and extend process-failure checks
+
+- **Date:** 2026-11-27; execution under D016.
+- **Decision:** Expose a nested MemoryReport through Rust/Python. Count retained
+  inline bytes and each pending fragment's original accepted extent, including
+  empty Bytes views; account for a Rust output Vec until handoff. Track current
+  and peak accepted payload, largest observed HTTP fragment, bytes copied into
+  Rust read results, and bytes copied into Python-owned outputs.
+- **Scope:** These are logical data-plane extents and named copy operations, not
+  allocator-capacity/TLS/HTTP/JSON accounting or a process-memory cap. Caller
+  retention and bridge copies are additional to native retained payload. Counts
+  can change during cleanup/handoff; compare them after exhaustion/close.
+- **Checks:** A sliced-buffer unit test retains the original allocation extent;
+  a mixed million-byte inline/HTTP/inline test preserves order and the accepted
+  payload budget. The 64 MiB probe checks zero retained payload after close,
+  accepted payload peak ≤2 MiB and exactly 64 MiB counted at each output-copy
+  boundary. RSS/tracemalloc and limitations remain recorded separately.
+- **Process lifetime:** Add actual decoder SIGKILL, supervisor SIGINT and native
+  process os._exit checks. Interruption reaps the owned child, cancels native I/O
+  and removes staging; abrupt native process exit returns promptly. A hard-killed
+  supervisor cannot run finalizers or promise removal of its staging files or
+  daemonized descendants; crash recovery remains outside this P0 contract.
+- **Observed locally:** 47 Rust and 34 Python/native tests passed without skips,
+  clippy/formatting passed, independent-server cases still matched. CI will retain
+  synthetic source-bound JSON artifacts for verification on each runner.
+- **Evidence chronology:** Reports from D015 are anchored to prepared commit
+  f4d886692f8b4c32f4803ef8556b164db2ea1060. Follow-up reports contain the new
+  source hashes. Neither report set implies that a different revision was tested.

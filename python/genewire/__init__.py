@@ -6,7 +6,7 @@ from typing import Iterator, Mapping, Sequence
 
 from ._native import GeneWireError, NativeClient, NativeStream
 
-__all__ = ["Client", "Destination", "GeneWireError", "Report", "Stream"]
+__all__ = ["Client", "Destination", "GeneWireError", "MemoryReport", "Report", "Stream"]
 MAX_CHUNK = 256 * 1024
 
 
@@ -15,6 +15,15 @@ class Destination:
     """Explicit IP allowlist for one origin; no implicit credential forwarding."""
     addresses: Sequence[str]
     allow_ticket_authorization: bool = False
+
+
+@dataclass(frozen=True)
+class MemoryReport:
+    current_payload_bytes: int
+    peak_payload_bytes: int
+    largest_http_fragment_bytes: int
+    rust_output_copy_bytes: int
+    python_output_copy_bytes: int
 
 
 @dataclass(frozen=True)
@@ -30,9 +39,14 @@ class Report:
     cleanup_error: str | None
     upstream_profile: str
     capability_evidence: str
+    memory: MemoryReport
     output_kind: str = "UpstreamRegionalResponse"
     source_consistency: str = "Unverified"
     integrity: str = "TransportOnly"
+
+
+def _report(snapshot: tuple) -> Report:
+    return Report(*snapshot[:-1], MemoryReport(*snapshot[-1]))
 
 
 class Client:
@@ -100,10 +114,10 @@ class Stream:
             yield chunk
 
     def result(self) -> Report:
-        return Report(*self._native.result())
+        return _report(self._native.result())
 
     def finish(self) -> Report:
-        return Report(*self._native.finish())
+        return _report(self._native.finish())
 
     def cancel(self) -> None:
         self._native.cancel()

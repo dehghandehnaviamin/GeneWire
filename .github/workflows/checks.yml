@@ -49,3 +49,13 @@ jobs:
         run: |
           .venv/bin/python tools/check_interop.py --server "$RUNNER_TEMP/htsget-build/debug/htsget-axum" --report "$RUNNER_TEMP/interop.json"
           .venv/bin/python tools/check_resources.py --report "$RUNNER_TEMP/resources.json"
+      - name: Retain synthetic evaluation reports
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: evaluation-${{ matrix.os }}
+          path: |
+            ${{ runner.temp }}/interop.json
+            ${{ runner.temp }}/resources.json
+          if-no-files-found: ignore
+          retention-days: 7

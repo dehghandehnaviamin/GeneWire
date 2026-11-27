@@ -49,6 +49,10 @@ def consume(origin: str, size: int, retain: bool) -> dict:
         tracemalloc.stop()
         if count != size:
             raise RuntimeError("byte count mismatch")
+        memory = report.memory
+        if (memory.current_payload_bytes != 0 or memory.peak_payload_bytes > 2 * 1024**2
+                or memory.rust_output_copy_bytes != size or memory.python_output_copy_bytes != size):
+            raise RuntimeError("accounted payload/copy boundary mismatch")
         return {"retained_by_caller": retain, "bytes": count, "sha256": checksum.hexdigest(),
                 "elapsed_ns": elapsed, "rss_before_bytes": before, "rss_peak_bytes": rss(),
                 "python_traced_current_bytes": current, "python_traced_peak_bytes": peak,
@@ -104,7 +108,7 @@ def run(size: int) -> dict:
         return {"platform": platform.platform(), "python": platform.python_version(),
                 "implementation_file_sha256": source_hashes(),
                 "method": "fresh client processes; server RSS excluded; one run per retention mode; 64 KiB reads",
-                "limits": "opaque synthetic bytes, not valid BAM; RSS high-water marks and tracemalloc, not allocation/copy accounting or a 2 MiB proof",
+                "limits": "opaque bytes, not valid BAM; logical accepted-payload extents and two output-copy counters exclude allocator slack, HTTP/TLS/JSON buffers and caller memory; not a process-memory cap or throughput benchmark",
                 "results": results}
     finally:
         server.shutdown()

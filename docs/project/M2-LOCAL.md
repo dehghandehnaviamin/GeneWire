@@ -3,6 +3,12 @@
 **Evaluation:** 2026-11-26 through 2026-11-27. **State:** Working local M2 path;
 remaining qualification and remote CI gates are open.
 
+**D016/D017 follow-up:** The owner approved remaining engineering checks,
+commit/push and actual CI verification. The prepared D015 state is preserved at
+f4d8866; later payload/copy instrumentation and process-failure checks passed
+47 Rust and 34 Python/native tests locally. Publication/CI verification is now
+authorized; remote results will be recorded after observation.
+
 The owner instructed continued development and will arrange the final university
 review. This defers external scientific review; it does not establish scientific
 sign-off, production readiness, release approval or new publication authorization.
@@ -156,6 +162,22 @@ machine paths. It is not a vulnerability scan or a redistribution-license audit.
 
 ## Candidate scenarios and remaining gates
 
+The [follow-up resource report](evidence/2026-11-27-followup-resources.json)
+checks current/peak accepted payload, original pending storage extents and
+both named output-copy boundaries. In each 64 MiB retention mode, accepted peak
+was 483,328 bytes, each copy counter was 67,108,864 bytes, and retained payload
+was zero after close. This excludes allocator slack, TLS/HTTP/JSON buffers and
+caller retention. Those exclusions are not silently represented as zero memory.
+The [follow-up server report](evidence/2026-11-27-followup-interop.json) records
+the same five matched cases with the instrumented implementation.
+
+Actual process-failure checks now cover decoder SIGKILL, supervisor SIGINT
+(child reaped, native stream closed and staging removed), and native os._exit
+with provisional output. SIGKILL of the supervisor itself cannot execute cleanup;
+staging files/daemonized descendants after such a crash are outside this contract.
+The initial D015 reports above carry source_commit=f4d8866; follow-up hashes are
+checked against the later source. Do not relabel an old measurement as a new run.
+
 Executable tests address selected variants across C01–C30; the draft JSON remains
 design input rather than a runnable or fully passing suite. D015 adds dedicated
 C06 fresh-query separation, C20 handoff orderings, C22 cleanup timeout/retry,
@@ -164,11 +186,10 @@ case. C12 full native allocation/copy accounting and other variants remain open.
 
 Before M2 exit:
 
-- Complete payload/copy accounting and extend dependency qualification beyond the
-  recorded target's feature/license metadata;
-  the resource probe does not certify the entire 2 MiB envelope or decoder RSS.
-- Extend lifetime, cleanup and malformed-response evidence beyond the controlled
-  hooks; normal exit does not qualify abrupt termination or interpreter teardown.
+- Qualify the accepted-payload accounting and process checks on CI runners. Do
+  not reinterpret those counters as allocator/TLS/HTTP/JSON/decoder RSS limits.
+- Retain explicit exclusions for interpreter teardown, hard-killed supervisors,
+  arbitrary descendants and other failure variants beyond the narrow P0 path.
 - Exercise the prepared CI on actual Linux/macOS runners after authorized remote
   publication. Local YAML/command checks do not supply a passing GitHub run.
 - Keep domain/scientific review deferred to the owner's university process and
